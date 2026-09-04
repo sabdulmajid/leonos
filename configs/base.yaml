@@ -1,0 +1,85 @@
+experiment:
+  name: leonos-v1
+  seed: 42
+  sensitivity_seeds: [43, 44]
+  timezone: America/New_York
+
+sources:
+  dataset:
+    repo_id: twelvedata/financial-world-model
+    revision: 88b972b547078237865255d9e15e4e16e1dd855f
+    allow_patterns:
+      - bars_1day/train.parquet
+      - bars_1day/val.parquet
+      - bars_1day/test.parquet
+      - README.md
+      - LICENSE*
+  dataset_code:
+    url: https://github.com/twelvedata/twelvedata-world-model-dataset
+    revision: bbb4cbbfea92677e1a7cc0363be9a01c90e4fbc6
+  kronos_code:
+    url: https://github.com/shiyu-coder/Kronos
+    revision: 67b630e67f6a18c9e9be918d9b4337c960db1e9a
+  kronos_model:
+    repo_id: NeoQuasar/Kronos-base
+    revision: 2b554741eca47781b64468546e77fef3e85130e6
+  kronos_tokenizer:
+    repo_id: NeoQuasar/Kronos-Tokenizer-base
+    revision: 0e0117387f39004a9016484a186a908917e22426
+  qlib:
+    url: https://github.com/microsoft/qlib
+    revision: 79633dd9506ea689e5400dea0197717b5b3d74b7
+
+paths:
+  raw_data: data/raw/twelve_data
+  prepared_data: data/prepared
+  checkpoints: checkpoints
+  artifacts: artifacts
+  summaries: results/summary
+
+forecast:
+  context_sessions: 90
+  horizon_sessions: 10
+  kronos:
+    temperature: 0.6
+    top_p: 0.9
+    top_k: null
+    sample_count: 10
+    max_context: 512
+
+splits:
+  development_label_end_max: 2023-12-31
+  validation_origin_min: 2024-07-01
+  validation_origin_max: 2024-12-31
+  validation_label_end_max: 2024-12-31
+  final_refit_label_end_max: 2024-12-31
+  test_origin_min: 2025-01-01
+
+lightgbm:
+  objective: regression
+  metric: l1
+  num_threads: 8
+  max_search_configs: 12
+  early_stopping_rounds: 50
+  max_rounds: 1000
+
+evaluation:
+  minimum_daily_coverage: 3
+  bootstrap:
+    replicates: 2000
+    block_length: 20
+    sensitivity_block_lengths: [10, 40]
+    seed: 42
+
+portfolio:
+  topk: 5
+  n_drop: 1
+  hold_thresh: 5
+  target_exposure: 0.95
+  initial_cash: 1000000.0
+  cost_bps_per_side: 5
+  cost_sensitivity_bps_per_side: [0, 15]
+  cash_daily_return: 0.0
+  execution_price: open
+  execution_lag_sessions: 1
+  force_final_liquidation: false

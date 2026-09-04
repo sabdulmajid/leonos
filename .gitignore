@@ -1,0 +1,25 @@
+.venv/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.ruff_cache/
+.coverage
+htmlcov/
+build/
+dist/
+*.egg-info/
+
+# Large or machine-local experiment state
+data/
+artifacts/
+checkpoints/
+.cache/
+*.log
+
+# Editors and local environment
+.env
+.env.*
+!.env.example
+.idea/
+.vscode/
+.DS_Store
