@@ -245,6 +245,135 @@ def simulate_topk_dropout(
     )
 
 
+def simulate_equal_weight_buy_hold(
+    bars: pd.DataFrame,
+    *,
+    start_session: object,
+    end_session: object,
+    target_exposure: float = 0.95,
+    initial_cash: float = 1_000_000.0,
+    cost_bps_per_side: float = 5.0,
+) -> LedgerResult:
+    """Buy the first-open eligible basket once and mark it without liquidation.
+
+    Whole shares match the Qlib U.S. backtest's one-share trade unit. Eligibility
+    and fills inspect only the first session's open; later missing closes may carry
+    the most recent mark but are never treated as tradable quotes.
+    """
+
+    if not 0.0 <= target_exposure <= 1.0:
+        raise ValueError("target_exposure must be between zero and one")
+    if initial_cash <= 0 or cost_bps_per_side < 0:
+        raise ValueError("capital must be positive and cost nonnegative")
+    required = {"session", "ticker", "open", "close"}
+    missing = required.difference(bars.columns)
+    if missing:
+        raise ValueError(f"bars missing required columns: {sorted(missing)}")
+    clean = bars.loc[:, ["session", "ticker", "open", "close"]].copy()
+    clean["session"] = (
+        pd.to_datetime(clean["session"], utc=True).dt.tz_convert(None).dt.normalize()
+    )
+    clean["ticker"] = clean["ticker"].astype(str)
+    if clean.duplicated(["session", "ticker"]).any():
+        raise ValueError("duplicate bar keys")
+    start = pd.Timestamp(start_session).tz_localize(None).normalize()
+    end = pd.Timestamp(end_session).tz_localize(None).normalize()
+    if end < start:
+        raise ValueError("end_session precedes start_session")
+    clean = clean.loc[clean["session"].between(start, end)].sort_values(
+        ["session", "ticker"], kind="stable"
+    )
+    sessions = pd.DatetimeIndex(clean["session"].unique()).sort_values()
+    if len(sessions) == 0 or sessions[0] != start or sessions[-1] != end:
+        raise ValueError("requested start/end sessions are absent from bars")
+
+    first = clean.loc[clean["session"].eq(start)].copy()
+    numeric_open = pd.to_numeric(first["open"], errors="coerce")
+    eligible = first.loc[np.isfinite(numeric_open) & numeric_open.gt(0)].sort_values(
+        "ticker", kind="stable"
+    )
+    if eligible.empty:
+        raise ValueError("no equities have a tradable first-evaluation open")
+    fee_rate = cost_bps_per_side / 10_000.0
+    per_name_budget = initial_cash * target_exposure / len(eligible)
+    holdings: dict[str, Holding] = {}
+    fills: list[Fill] = []
+    cash = float(initial_cash)
+    for row in eligible.itertuples(index=False):
+        shares = float(
+            np.floor(per_name_budget / ((1.0 + fee_rate) * float(row.open)))
+        )
+        if shares <= 0:
+            continue
+        gross = shares * float(row.open)
+        fee = gross * fee_rate
+        cash -= gross + fee
+        ticker = str(row.ticker)
+        holdings[ticker] = Holding(shares=shares, entry_date=start)
+        fills.append(
+            Fill(
+                start,
+                start,
+                ticker,
+                "buy",
+                shares,
+                float(row.open),
+                gross,
+                fee,
+                "reference_entry",
+            )
+        )
+    if not holdings:
+        raise ValueError("capital was insufficient to buy an eligible equity")
+
+    lookup = clean.set_index(["session", "ticker"])
+    last_marks: dict[str, float] = {}
+    accounts: list[dict[str, Any]] = []
+    total_entry_value = sum(fill.gross_value for fill in fills)
+    total_fees = sum(fill.fee for fill in fills)
+    for session in sessions:
+        market_value = 0.0
+        carried = 0
+        for ticker, holding in holdings.items():
+            key = (pd.Timestamp(session), ticker)
+            close = float(lookup.loc[key, "close"]) if key in lookup.index else np.nan
+            if np.isfinite(close) and close > 0:
+                last_marks[ticker] = close
+            else:
+                close = last_marks.get(ticker, np.nan)
+                carried += 1
+            if not np.isfinite(close):
+                raise ValueError(
+                    f"no valid valuation for held {ticker} on {pd.Timestamp(session).date()}"
+                )
+            market_value += holding.shares * close
+        accounts.append(
+            {
+                "session": pd.Timestamp(session),
+                "cash": cash,
+                "market_value": market_value,
+                "account_value": cash + market_value,
+                "fees": total_fees if session == sessions[0] else 0.0,
+                "traded_value": total_entry_value if session == sessions[0] else 0.0,
+                "positions": len(holdings),
+                "carried_valuations": carried,
+            }
+        )
+    account = pd.DataFrame(accounts)
+    account["net_return"] = account["account_value"].pct_change()
+    account.loc[account.index[0], "net_return"] = (
+        account.loc[account.index[0], "account_value"] / initial_cash - 1.0
+    )
+    return LedgerResult(
+        account=account,
+        fills=pd.DataFrame(
+            [asdict(fill) for fill in fills], columns=list(Fill.__annotations__)
+        ),
+        final_positions={ticker: holding.shares for ticker, holding in holdings.items()},
+        rejected_orders=pd.DataFrame(),
+    )
+
+
 def portfolio_metrics(account: pd.DataFrame, *, annualization: int = 252) -> dict[str, float]:
     """Compute metrics from reconciled, compounded account value."""
     if account.empty or "account_value" not in account or "net_return" not in account:

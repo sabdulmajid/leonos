@@ -1,7 +1,7 @@
 # Leonos v1 protocol
 
-Frozen before final-test inspection; exact accepted symbols and exchange dates are
-added after the byte-level data audit.
+Frozen before final-test inspection. Exact dates and the accepted panel below were
+resolved from the pinned bytes and XNYS calendar, not inferred from the data card.
 
 ## Question and adaptation
 
@@ -35,8 +35,10 @@ This average-price appreciation label is not a directly executable ten-session
 return. Prediction artifacts are saved before labels are joined. Development
 labels end no later than 2023-12-31. Validation origins are exchange sessions in
 July-December 2024 and labels end by 2024-12-31. After validation-only selection,
-LightGBM is refit once on all labels ending by 2024-12-31. Final test origins begin
-in 2025 and end early enough for ten observed future sessions. Kronos never fits.
+LightGBM is refit once on all labels ending by 2024-12-31. Validation contains
+6,018 origins from 2024-07-01 through 2024-12-16. Test contains 20,859 origins
+from 2025-01-02 through 2026-08-20, whose labels end by the snapshot endpoint
+2026-09-03. Kronos never fits.
 
 ## Data and adjustment gate
 
@@ -50,6 +52,15 @@ available only after its close. Leonos preserves source columns and will select 
 split-consistent OHLCV basis only after auditing source collection code and known
 corporate actions. Adjusted close is never mixed with incompatible raw OHLC. A
 present-day historical snapshot is not called point-in-time-vintage data.
+
+The byte-level audit found 515,857 raw rows. The deterministic acceptance policy
+removed 77 nonpositive-volume rows and one non-XNYS historical row, leaving
+515,779 rows and all 51 published symbols. There were no duplicate keys,
+non-finite prices, or inconsistent candles. Source `close_adj` equals `close`
+throughout; collection code supplies that fallback rather than a separately
+verified dividend-adjusted series. Representative AAPL (2020), NVDA (2024), and
+AVGO (2024) split checks support treating the supplied OHLCV channels together as
+a retroactively split-consistent, price-only basis. No dividends are added.
 
 ## Models
 

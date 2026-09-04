@@ -1,0 +1,2856 @@
+{
+  "acceptance": {
+    "accepted": false,
+    "error_count": 2,
+    "warning_count": 44
+  },
+  "adjustments": {
+    "channel_policy": {
+      "close_adj_with_other_ohl": "not used; close_adj carries no independent evidence here",
+      "model_prices": "use the source OHLC channels together without substitution",
+      "portfolio_returns": "adjusted-price convention; dividends are not added separately",
+      "volume": "source volume preserved exactly; no factor inversion"
+    },
+    "close_adj_exactly_equals_close": true,
+    "close_adj_over_close_diagnostic_only": {
+      "count": 515857,
+      "equal_to_one_count": 515857,
+      "max": 1.0,
+      "min": 1.0,
+      "warning": "This ratio is not assumed to be a valid split factor; it may include dividend adjustment and must not be inverted into volume."
+    },
+    "documented_split_checks": [
+      {
+        "adjusted_close_is_continuous": true,
+        "adjusted_pre_close_over_effective_close": 0.9672001679479363,
+        "effective_session": "2020-08-31",
+        "effective_volume": 225702700.0,
+        "pre_volume": 187630000.0,
+        "prior_session": "2020-08-28",
+        "ratio_new_to_old": 4.0,
+        "raw_pre_close_over_effective_close": 0.9672001679479363,
+        "source": "https://investor.apple.com/dividend-history/default.aspx",
+        "source_close_is_split_consistent": true,
+        "status": "pass",
+        "symbol": "AAPL",
+        "unadjusted_ratio_sized_drop_detected": false
+      },
+      {
+        "adjusted_close_is_continuous": true,
+        "adjusted_pre_close_over_effective_close": 0.9925938090155185,
+        "effective_session": "2024-06-10",
+        "effective_volume": 314162700.0,
+        "pre_volume": 412386000.0,
+        "prior_session": "2024-06-07",
+        "ratio_new_to_old": 10.0,
+        "raw_pre_close_over_effective_close": 0.9925938090155185,
+        "source": "https://investor.nvidia.com/news/press-release-details/2024/NVIDIA-Announces-Financial-Results-for-First-Quarter-Fiscal-2025/default.aspx",
+        "source_close_is_split_consistent": true,
+        "status": "pass",
+        "symbol": "NVDA",
+        "unadjusted_ratio_sized_drop_detected": false
+      },
+      {
+        "adjusted_close_is_continuous": true,
+        "adjusted_pre_close_over_effective_close": 0.9921071053552679,
+        "effective_session": "2024-07-15",
+        "effective_volume": 22999200.0,
+        "pre_volume": 30453000.0,
+        "prior_session": "2024-07-12",
+        "ratio_new_to_old": 10.0,
+        "raw_pre_close_over_effective_close": 0.9921071053552679,
+        "source": "https://investors.broadcom.com/news-releases/news-release-details/broadcom-inc-announces-second-quarter-fiscal-year-2024-financial",
+        "source_close_is_split_consistent": true,
+        "status": "pass",
+        "symbol": "AVGO",
+        "unadjusted_ratio_sized_drop_detected": false
+      }
+    ],
+    "observed_price_convention": "source OHLC prices are tested as retroactively split-consistent; close_adj is an exact close alias in this snapshot",
+    "published_dividend_adjustment_claim_supported": false,
+    "status": "pass"
+  },
+  "calendar": {
+    "date_max": "2026-09-03",
+    "date_min": "1970-01-02",
+    "session_count": 14290,
+    "unexpected_observed_sessions": [
+      "1985-09-27"
+    ],
+    "weekday_fallback_used": false
+  },
+  "configuration": {
+    "calendar": "XNYS",
+    "context_sessions": 90,
+    "horizon_sessions": 10,
+    "source_timezone": "America/New_York"
+  },
+  "coverage_boundary_interpretation": "Starts/ends are reported, but bars alone cannot distinguish IPO, rename, or delisting.",
+  "coverage_by_split": {
+    "test": {
+      "date_max": "2026-09-03",
+      "date_min": "2025-01-02",
+      "rows": 21369,
+      "ticker_count": 51
+    },
+    "train": {
+      "date_max": "2023-12-29",
+      "date_min": "1970-01-02",
+      "rows": 481636,
+      "ticker_count": 51
+    },
+    "val": {
+      "date_max": "2024-12-31",
+      "date_min": "2024-01-02",
+      "rows": 12852,
+      "ticker_count": 51
+    }
+  },
+  "coverage_by_ticker": {
+    "AAPL": {
+      "by_split": {
+        "test": {
+          "first_session": "2025-01-02",
+          "last_session": "2026-09-03",
+          "rows": 419
+        },
+        "train": {
+          "first_session": "1980-12-12",
+          "last_session": "2023-12-29",
+          "rows": 10851
+        },
+        "val": {
+          "first_session": "2024-01-02",
+          "last_session": "2024-12-31",
+          "rows": 252
+        }
+      },
+      "ends_before_panel": false,
+      "first_session": "1980-12-12",
+      "last_session": "2026-09-03",
+      "missing_exchange_sessions": 2,
+      "missing_session_sample": [
+        "1986-11-24",
+        "2006-09-21"
+      ],
+      "rows": 11522,
+      "starts_after_panel": true
+    },
+    "ABBV": {
+      "by_split": {
+        "test": {
+          "first_session": "2025-01-02",
+          "last_session": "2026-09-03",
+          "rows": 419
+        },
+        "train": {
+          "first_session": "2013-01-02",
+          "last_session": "2023-12-29",
+          "rows": 2768
+        },
+        "val": {
+          "first_session": "2024-01-02",
+          "last_session": "2024-12-31",
+          "rows": 252
+        }
+      },
+      "ends_before_panel": false,
+      "first_session": "2013-01-02",
+      "last_session": "2026-09-03",
+      "missing_exchange_sessions": 0,
+      "missing_session_sample": [],
+      "rows": 3439,
+      "starts_after_panel": true
+    },
+    "ADBE": {
+      "by_split": {
+        "test": {
+          "first_session": "2025-01-02",
+          "last_session": "2026-09-03",
+          "rows": 419
+        },
+        "train": {
+          "first_session": "1987-03-12",
+          "last_session": "2023-12-29",
+          "rows": 9274
+        },
+        "val": {
+          "first_session": "2024-01-02",
+          "last_session": "2024-12-31",
+          "rows": 252
+        }
+      },
+      "ends_before_panel": false,
+      "first_session": "1987-03-12",
+      "last_session": "2026-09-03",
+      "missing_exchange_sessions": 1,
+      "missing_session_sample": [
+        "2006-06-08"
+      ],
+      "rows": 9945,
+      "starts_after_panel": true
+    },
+    "AMD": {
+      "by_split": {
+        "test": {
+          "first_session": "2025-01-02",
+          "last_session": "2026-09-03",
+          "rows": 419
+        },
+        "train": {
+          "first_session": "1982-10-05",
+          "last_session": "2023-12-29",
+          "rows": 10279
+        },
+        "val": {
+          "first_session": "2024-01-02",
+          "last_session": "2024-12-31",
+          "rows": 252
+        }
+      },
+      "ends_before_panel": false,
+      "first_session": "1982-10-05",
+      "last_session": "2026-09-03",
+      "missing_exchange_sessions": 117,
+      "missing_session_sample": [
+        "1982-10-06",
+        "1982-10-07",
+        "1982-10-08",
+        "1982-10-11",
+        "1982-10-12",
+        "1982-10-13",
+        "1982-10-14",
+        "1982-10-15",
+        "1982-10-18",
+        "1982-10-19",
+        "1982-10-20",
+        "1982-10-21",
+        "1982-10-22",
+        "1982-10-25",
+        "1982-10-26",
+        "1982-10-27",
+        "1982-10-28",
+        "1982-10-29",
+        "1982-11-01",
+        "1982-11-02"
+      ],
+      "rows": 10950,
+      "starts_after_panel": true
+    },
+    "AMZN": {
+      "by_split": {
+        "test": {
+          "first_session": "2025-01-02",
+          "last_session": "2026-09-03",
+          "rows": 419
+        },
+        "train": {
+          "first_session": "1997-05-15",
+          "last_session": "2023-12-29",
+          "rows": 6700
+        },
+        "val": {
+          "first_session": "2024-01-02",
+          "last_session": "2024-12-31",
+          "rows": 252
+        }
+      },
+      "ends_before_panel": false,
+      "first_session": "1997-05-15",
+      "last_session": "2026-09-03",
+      "missing_exchange_sessions": 1,
+      "missing_session_sample": [
+        "2006-06-08"
+      ],
+      "rows": 7371,
+      "starts_after_panel": true
+    },
+    "AVGO": {
+      "by_split": {
+        "test": {
+          "first_session": "2025-01-02",
+          "last_session": "2026-09-03",
+          "rows": 419
+        },
+        "train": {
+          "first_session": "2009-08-06",
+          "last_session": "2023-12-29",
+          "rows": 3625
+        },
+        "val": {
+          "first_session": "2024-01-02",
+          "last_session": "2024-12-31",
+          "rows": 252
+        }
+      },
+      "ends_before_panel": false,
+      "first_session": "2009-08-06",
+      "last_session": "2026-09-03",
+      "missing_exchange_sessions": 0,
+      "missing_session_sample": [],
+      "rows": 4296,
+      "starts_after_panel": true
+    },
+    "BA": {
+      "by_split": {
+        "test": {
+          "first_session": "2025-01-02",
+          "last_session": "2026-09-03",
+          "rows": 419
+        },
+        "train": {
+          "first_session": "1970-01-02",
+          "last_session": "2023-12-29",
+          "rows": 13617
+        },
+        "val": {
+          "first_session": "2024-01-02",
+          "last_session": "2024-12-31",
+          "rows": 252
+        }
+      },
+      "ends_before_panel": false,
+      "first_session": "1970-01-02",
+      "last_session": "2026-09-03",
+      "missing_exchange_sessions": 2,
+      "missing_session_sample": [
+        "1986-08-12",
+        "2006-06-08"
+      ],
+      "rows": 14288,
+      "starts_after_panel": false
+    },
+    "BAC": {
+      "by_split": {
+        "test": {
+          "first_session": "2025-01-02",
+          "last_session": "2026-09-03",
+          "rows": 419
+        },
+        "train": {
+          "first_session": "1973-02-21",
+          "last_session": "2023-12-29",
+          "rows": 9529
+        },
+        "val": {
+          "first_session": "2024-01-02",
+          "last_session": "2024-12-31",
+          "rows": 252
+        }
+      },
+      "ends_before_panel": false,
+      "first_session": "1973-02-21",
+      "last_session": "2026-09-03",
+      "missing_exchange_sessions": 3298,
+      "missing_session_sample": [
+        "1973-05-03",
+        "1973-05-04",
+        "1973-05-07",
+        "1973-05-08",
+        "1973-05-09",
+        "1973-05-10",
+        "1973-05-11",
+        "1973-05-14",
+        "1973-05-15",
+        "1973-05-16",
+        "1973-05-17",
+        "1973-05-18",
+        "1973-05-21",
+        "1973-05-22",
+        "1973-05-23",
+        "1973-05-24",
+        "1973-05-25",
+        "1973-05-29",
+        "1973-05-30",
+        "1973-05-31"
+      ],
+      "rows": 10200,
+      "starts_after_panel": true
+    },
+    "BLK": {
+      "by_split": {
+        "test": {
+          "first_session": "2025-01-02",
+          "last_session": "2026-09-03",
+          "rows": 419
+        },
+        "train": {
+          "first_session": "1999-10-01",
+          "last_session": "2023-12-29",
+          "rows": 6101
+        },
+        "val": {
+          "first_session": "2024-01-02",
+          "last_session": "2024-12-31",
+          "rows": 252
+        }
+      },
+      "ends_before_panel": false,
+      "first_session": "1999-10-01",
+      "last_session": "2026-09-03",
+      "missing_exchange_sessions": 0,
+      "missing_session_sample": [],
+      "rows": 6772,
+      "starts_after_panel": true
+    },
+    "BRK.B": {
+      "by_split": {
+        "test": {
+          "first_session": "2025-01-02",
+          "last_session": "2026-09-03",
+          "rows": 419
+        },
+        "train": {
+          "first_session": "1996-05-09",
+          "last_session": "2023-12-29",
+          "rows": 6957
+        },
+        "val": {
+          "first_session": "2024-01-02",
+          "last_session": "2024-12-31",
+          "rows": 252
+        }
+      },
+      "ends_before_panel": false,
+      "first_session": "1996-05-09",
+      "last_session": "2026-09-03",
+      "missing_exchange_sessions": 1,
+      "missing_session_sample": [
+        "2006-06-08"
+      ],
+      "rows": 7628,
+      "starts_after_panel": true
+    },
+    "CAT": {
+      "by_split": {
+        "test": {
+          "first_session": "2025-01-02",
+          "last_session": "2026-09-03",
+          "rows": 419
+        },
+        "train": {
+          "first_session": "1970-01-02",
+          "last_session": "2023-12-29",
+          "rows": 13617
+        },
+        "val": {
+          "first_session": "2024-01-02",
+          "last_session": "2024-12-31",
+          "rows": 252
+        }
+      },
+      "ends_before_panel": false,
+      "first_session": "1970-01-02",
+      "last_session": "2026-09-03",
+      "missing_exchange_sessions": 2,
+      "missing_session_sample": [
+        "1986-11-17",
+        "2006-09-14"
+      ],
+      "rows": 14288,
+      "starts_after_panel": false
+    },
+    "COP": {
+      "by_split": {
+        "test": {
+          "first_session": "2025-01-02",
+          "last_session": "2026-09-03",
+          "rows": 419
+        },
+        "train": {
+          "first_session": "1981-12-31",
+          "last_session": "2023-12-29",
+          "rows": 10586
+        },
+        "val": {
+          "first_session": "2024-01-02",
+          "last_session": "2024-12-31",
+          "rows": 252
+        }
+      },
+      "ends_before_panel": false,
+      "first_session": "1981-12-31",
+      "last_session": "2026-09-03",
+      "missing_exchange_sessions": 2,
+      "missing_session_sample": [
+        "1986-12-04",
+        "2006-10-02"
+      ],
+      "rows": 11257,
+      "starts_after_panel": true
+    },
+    "COST": {
+      "by_split": {
+        "test": {
+          "first_session": "2025-01-02",
+          "last_session": "2026-09-03",
+          "rows": 419
+        },
+        "train": {
+          "first_session": "1986-07-09",
+          "last_session": "2023-12-29",
+          "rows": 9444
+        },
+        "val": {
+          "first_session": "2024-01-02",
+          "last_session": "2024-12-31",
+          "rows": 252
+        }
+      },
+      "ends_before_panel": false,
+      "first_session": "1986-07-09",
+      "last_session": "2026-09-03",
+      "missing_exchange_sessions": 2,
+      "missing_session_sample": [
+        "1986-11-17",
+        "2006-09-14"
+      ],
+      "rows": 10115,
+      "starts_after_panel": true
+    },
+    "CRM": {
+      "by_split": {
+        "test": {
+          "first_session": "2025-01-02",
+          "last_session": "2026-09-03",
+          "rows": 419
+        },
+        "train": {
+          "first_session": "2004-06-23",
+          "last_session": "2023-12-29",
+          "rows": 4915
+        },
+        "val": {
+          "first_session": "2024-01-02",
+          "last_session": "2024-12-31",
+          "rows": 252
+        }
+      },
+      "ends_before_panel": false,
+      "first_session": "2004-06-23",
+      "last_session": "2026-09-03",
+      "missing_exchange_sessions": 0,
+      "missing_session_sample": [],
+      "rows": 5586,
+      "starts_after_panel": true
+    },
+    "CSCO": {
+      "by_split": {
+        "test": {
+          "first_session": "2025-01-02",
+          "last_session": "2026-09-03",
+          "rows": 419
+        },
+        "train": {
+          "first_session": "1990-03-26",
+          "last_session": "2023-12-29",
+          "rows": 8506
+        },
+        "val": {
+          "first_session": "2024-01-02",
+          "last_session": "2024-12-31",
+          "rows": 252
+        }
+      },
+      "ends_before_panel": false,
+      "first_session": "1990-03-26",
+      "last_session": "2026-09-03",
+      "missing_exchange_sessions": 1,
+      "missing_session_sample": [
+        "2006-09-14"
+      ],
+      "rows": 9177,
+      "starts_after_panel": true
+    },
+    "CVX": {
+      "by_split": {
+        "test": {
+          "first_session": "2025-01-02",
+          "last_session": "2026-09-03",
+          "rows": 419
+        },
+        "train": {
+          "first_session": "1970-01-02",
+          "last_session": "2023-12-29",
+          "rows": 13619
+        },
+        "val": {
+          "first_session": "2024-01-02",
+          "last_session": "2024-12-31",
+          "rows": 252
+        }
+      },
+      "ends_before_panel": false,
+      "first_session": "1970-01-02",
+      "last_session": "2026-09-03",
+      "missing_exchange_sessions": 1,
+      "missing_session_sample": [
+        "2006-10-03"
+      ],
+      "rows": 14290,
+      "starts_after_panel": false
+    },
+    "DIS": {
+      "by_split": {
+        "test": {
+          "first_session": "2025-01-02",
+          "last_session": "2026-09-03",
+          "rows": 419
+        },
+        "train": {
+          "first_session": "1970-01-02",
+          "last_session": "2023-12-29",
+          "rows": 13617
+        },
+        "val": {
+          "first_session": "2024-01-02",
+          "last_session": "2024-12-31",
+          "rows": 252
+        }
+      },
+      "ends_before_panel": false,
+      "first_session": "1970-01-02",
+      "last_session": "2026-09-03",
+      "missing_exchange_sessions": 2,
+      "missing_session_sample": [
+        "1986-11-17",
+        "2006-09-14"
+      ],
+      "rows": 14288,
+      "starts_after_panel": false
+    },
+    "GE": {
+      "by_split": {
+        "test": {
+          "first_session": "2025-01-02",
+          "last_session": "2026-09-03",
+          "rows": 419
+        },
+        "train": {
+          "first_session": "1970-01-02",
+          "last_session": "2023-12-29",
+          "rows": 13617
+        },
+        "val": {
+          "first_session": "2024-01-02",
+          "last_session": "2024-12-31",
+          "rows": 252
+        }
+      },
+      "ends_before_panel": false,
+      "first_session": "1970-01-02",
+      "last_session": "2026-09-03",
+      "missing_exchange_sessions": 2,
+      "missing_session_sample": [
+        "1986-11-17",
+        "2006-09-14"
+      ],
+      "rows": 14288,
+      "starts_after_panel": false
+    },
+    "GOOGL": {
+      "by_split": {
+        "test": {
+          "first_session": "2025-01-02",
+          "last_session": "2026-09-03",
+          "rows": 419
+        },
+        "train": {
+          "first_session": "2004-08-19",
+          "last_session": "2023-12-29",
+          "rows": 4874
+        },
+        "val": {
+          "first_session": "2024-01-02",
+          "last_session": "2024-12-31",
+          "rows": 252
+        }
+      },
+      "ends_before_panel": false,
+      "first_session": "2004-08-19",
+      "last_session": "2026-09-03",
+      "missing_exchange_sessions": 1,
+      "missing_session_sample": [
+        "2006-10-17"
+      ],
+      "rows": 5545,
+      "starts_after_panel": true
+    },
+    "GS": {
+      "by_split": {
+        "test": {
+          "first_session": "2025-01-02",
+          "last_session": "2026-09-03",
+          "rows": 419
+        },
+        "train": {
+          "first_session": "1999-05-04",
+          "last_session": "2023-12-29",
+          "rows": 6205
+        },
+        "val": {
+          "first_session": "2024-01-02",
+          "last_session": "2024-12-31",
+          "rows": 252
+        }
+      },
+      "ends_before_panel": false,
+      "first_session": "1999-05-04",
+      "last_session": "2026-09-03",
+      "missing_exchange_sessions": 1,
+      "missing_session_sample": [
+        "2006-10-16"
+      ],
+      "rows": 6876,
+      "starts_after_panel": true
+    },
+    "HD": {
+      "by_split": {
+        "test": {
+          "first_session": "2025-01-02",
+          "last_session": "2026-09-03",
+          "rows": 419
+        },
+        "train": {
+          "first_session": "1981-09-22",
+          "last_session": "2023-12-29",
+          "rows": 10657
+        },
+        "val": {
+          "first_session": "2024-01-02",
+          "last_session": "2024-12-31",
+          "rows": 252
+        }
+      },
+      "ends_before_panel": false,
+      "first_session": "1981-09-22",
+      "last_session": "2026-09-03",
+      "missing_exchange_sessions": 1,
+      "missing_session_sample": [
+        "1986-09-25"
+      ],
+      "rows": 11328,
+      "starts_after_panel": true
+    },
+    "JNJ": {
+      "by_split": {
+        "test": {
+          "first_session": "2025-01-02",
+          "last_session": "2026-09-03",
+          "rows": 419
+        },
+        "train": {
+          "first_session": "1970-01-02",
+          "last_session": "2023-12-29",
+          "rows": 13618
+        },
+        "val": {
+          "first_session": "2024-01-02",
+          "last_session": "2024-12-31",
+          "rows": 252
+        }
+      },
+      "ends_before_panel": false,
+      "first_session": "1970-01-02",
+      "last_session": "2026-09-03",
+      "missing_exchange_sessions": 1,
+      "missing_session_sample": [
+        "1986-12-11"
+      ],
+      "rows": 14289,
+      "starts_after_panel": false
+    },
+    "JPM": {
+      "by_split": {
+        "test": {
+          "first_session": "2025-01-02",
+          "last_session": "2026-09-03",
+          "rows": 419
+        },
+        "train": {
+          "first_session": "1983-12-30",
+          "last_session": "2023-12-29",
+          "rows": 10080
+        },
+        "val": {
+          "first_session": "2024-01-02",
+          "last_session": "2024-12-31",
+          "rows": 252
+        }
+      },
+      "ends_before_panel": false,
+      "first_session": "1983-12-30",
+      "last_session": "2026-09-03",
+      "missing_exchange_sessions": 2,
+      "missing_session_sample": [
+        "1986-11-17",
+        "2006-09-14"
+      ],
+      "rows": 10751,
+      "starts_after_panel": true
+    },
+    "KO": {
+      "by_split": {
+        "test": {
+          "first_session": "2025-01-02",
+          "last_session": "2026-09-03",
+          "rows": 419
+        },
+        "train": {
+          "first_session": "1970-01-02",
+          "last_session": "2023-12-29",
+          "rows": 13618
+        },
+        "val": {
+          "first_session": "2024-01-02",
+          "last_session": "2024-12-31",
+          "rows": 252
+        }
+      },
+      "ends_before_panel": false,
+      "first_session": "1970-01-02",
+      "last_session": "2026-09-03",
+      "missing_exchange_sessions": 1,
+      "missing_session_sample": [
+        "2006-08-01"
+      ],
+      "rows": 14289,
+      "starts_after_panel": false
+    },
+    "LIN": {
+      "by_split": {
+        "test": {
+          "first_session": "2025-01-02",
+          "last_session": "2026-09-03",
+          "rows": 419
+        },
+        "train": {
+          "first_session": "1992-06-17",
+          "last_session": "2023-12-29",
+          "rows": 7942
+        },
+        "val": {
+          "first_session": "2024-01-02",
+          "last_session": "2024-12-31",
+          "rows": 252
+        }
+      },
+      "ends_before_panel": false,
+      "first_session": "1992-06-17",
+      "last_session": "2026-09-03",
+      "missing_exchange_sessions": 1,
+      "missing_session_sample": [
+        "2006-10-17"
+      ],
+      "rows": 8613,
+      "starts_after_panel": true
+    },
+    "LLY": {
+      "by_split": {
+        "test": {
+          "first_session": "2025-01-02",
+          "last_session": "2026-09-03",
+          "rows": 419
+        },
+        "train": {
+          "first_session": "1972-06-02",
+          "last_session": "2023-12-29",
+          "rows": 13004
+        },
+        "val": {
+          "first_session": "2024-01-02",
+          "last_session": "2024-12-31",
+          "rows": 252
+        }
+      },
+      "ends_before_panel": false,
+      "first_session": "1972-06-02",
+      "last_session": "2026-09-03",
+      "missing_exchange_sessions": 2,
+      "missing_session_sample": [
+        "1986-12-02",
+        "2006-09-28"
+      ],
+      "rows": 13675,
+      "starts_after_panel": true
+    },
+    "MA": {
+      "by_split": {
+        "test": {
+          "first_session": "2025-01-02",
+          "last_session": "2026-09-03",
+          "rows": 419
+        },
+        "train": {
+          "first_session": "2006-05-25",
+          "last_session": "2023-12-29",
+          "rows": 4429
+        },
+        "val": {
+          "first_session": "2024-01-02",
+          "last_session": "2024-12-31",
+          "rows": 252
+        }
+      },
+      "ends_before_panel": false,
+      "first_session": "2006-05-25",
+      "last_session": "2026-09-03",
+      "missing_exchange_sessions": 1,
+      "missing_session_sample": [
+        "2006-09-14"
+      ],
+      "rows": 5100,
+      "starts_after_panel": true
+    },
+    "MCD": {
+      "by_split": {
+        "test": {
+          "first_session": "2025-01-02",
+          "last_session": "2026-09-03",
+          "rows": 419
+        },
+        "train": {
+          "first_session": "1970-01-02",
+          "last_session": "2023-12-29",
+          "rows": 13618
+        },
+        "val": {
+          "first_session": "2024-01-02",
+          "last_session": "2024-12-31",
+          "rows": 252
+        }
+      },
+      "ends_before_panel": false,
+      "first_session": "1970-01-02",
+      "last_session": "2026-09-03",
+      "missing_exchange_sessions": 1,
+      "missing_session_sample": [
+        "2006-10-17"
+      ],
+      "rows": 14289,
+      "starts_after_panel": false
+    },
+    "META": {
+      "by_split": {
+        "test": {
+          "first_session": "2025-01-02",
+          "last_session": "2026-09-03",
+          "rows": 419
+        },
+        "train": {
+          "first_session": "2012-05-18",
+          "last_session": "2023-12-29",
+          "rows": 2923
+        },
+        "val": {
+          "first_session": "2024-01-02",
+          "last_session": "2024-12-31",
+          "rows": 252
+        }
+      },
+      "ends_before_panel": false,
+      "first_session": "2012-05-18",
+      "last_session": "2026-09-03",
+      "missing_exchange_sessions": 0,
+      "missing_session_sample": [],
+      "rows": 3594,
+      "starts_after_panel": true
+    },
+    "MRK": {
+      "by_split": {
+        "test": {
+          "first_session": "2025-01-02",
+          "last_session": "2026-09-03",
+          "rows": 419
+        },
+        "train": {
+          "first_session": "1970-01-02",
+          "last_session": "2023-12-29",
+          "rows": 13618
+        },
+        "val": {
+          "first_session": "2024-01-02",
+          "last_session": "2024-12-31",
+          "rows": 252
+        }
+      },
+      "ends_before_panel": false,
+      "first_session": "1970-01-02",
+      "last_session": "2026-09-03",
+      "missing_exchange_sessions": 1,
+      "missing_session_sample": [
+        "2006-08-01"
+      ],
+      "rows": 14289,
+      "starts_after_panel": false
+    },
+    "MS": {
+      "by_split": {
+        "test": {
+          "first_session": "2025-01-02",
+          "last_session": "2026-09-03",
+          "rows": 419
+        },
+        "train": {
+          "first_session": "1993-02-23",
+          "last_session": "2023-12-29",
+          "rows": 7769
+        },
+        "val": {
+          "first_session": "2024-01-02",
+          "last_session": "2024-12-31",
+          "rows": 252
+        }
+      },
+      "ends_before_panel": false,
+      "first_session": "1993-02-23",
+      "last_session": "2026-09-03",
+      "missing_exchange_sessions": 1,
+      "missing_session_sample": [
+        "2006-09-14"
+      ],
+      "rows": 8440,
+      "starts_after_panel": true
+    },
+    "MSFT": {
+      "by_split": {
+        "test": {
+          "first_session": "2025-01-02",
+          "last_session": "2026-09-03",
+          "rows": 419
+        },
+        "train": {
+          "first_session": "1986-03-13",
+          "last_session": "2023-12-29",
+          "rows": 9525
+        },
+        "val": {
+          "first_session": "2024-01-02",
+          "last_session": "2024-12-31",
+          "rows": 252
+        }
+      },
+      "ends_before_panel": false,
+      "first_session": "1986-03-13",
+      "last_session": "2026-09-03",
+      "missing_exchange_sessions": 2,
+      "missing_session_sample": [
+        "1986-12-04",
+        "2006-10-02"
+      ],
+      "rows": 10196,
+      "starts_after_panel": true
+    },
+    "NFLX": {
+      "by_split": {
+        "test": {
+          "first_session": "2025-01-02",
+          "last_session": "2026-09-03",
+          "rows": 419
+        },
+        "train": {
+          "first_session": "2002-05-23",
+          "last_session": "2023-12-29",
+          "rows": 5438
+        },
+        "val": {
+          "first_session": "2024-01-02",
+          "last_session": "2024-12-31",
+          "rows": 252
+        }
+      },
+      "ends_before_panel": false,
+      "first_session": "2002-05-23",
+      "last_session": "2026-09-03",
+      "missing_exchange_sessions": 1,
+      "missing_session_sample": [
+        "2006-06-08"
+      ],
+      "rows": 6109,
+      "starts_after_panel": true
+    },
+    "NKE": {
+      "by_split": {
+        "test": {
+          "first_session": "2025-01-02",
+          "last_session": "2026-09-03",
+          "rows": 419
+        },
+        "train": {
+          "first_session": "1980-12-02",
+          "last_session": "2023-12-29",
+          "rows": 10860
+        },
+        "val": {
+          "first_session": "2024-01-02",
+          "last_session": "2024-12-31",
+          "rows": 252
+        }
+      },
+      "ends_before_panel": false,
+      "first_session": "1980-12-02",
+      "last_session": "2026-09-03",
+      "missing_exchange_sessions": 1,
+      "missing_session_sample": [
+        "2006-10-17"
+      ],
+      "rows": 11531,
+      "starts_after_panel": true
+    },
+    "NVDA": {
+      "by_split": {
+        "test": {
+          "first_session": "2025-01-02",
+          "last_session": "2026-09-03",
+          "rows": 419
+        },
+        "train": {
+          "first_session": "1999-01-22",
+          "last_session": "2023-12-29",
+          "rows": 6275
+        },
+        "val": {
+          "first_session": "2024-01-02",
+          "last_session": "2024-12-31",
+          "rows": 252
+        }
+      },
+      "ends_before_panel": false,
+      "first_session": "1999-01-22",
+      "last_session": "2026-09-03",
+      "missing_exchange_sessions": 1,
+      "missing_session_sample": [
+        "2006-07-18"
+      ],
+      "rows": 6946,
+      "starts_after_panel": true
+    },
+    "ORCL": {
+      "by_split": {
+        "test": {
+          "first_session": "2025-01-02",
+          "last_session": "2026-09-03",
+          "rows": 419
+        },
+        "train": {
+          "first_session": "1986-03-12",
+          "last_session": "2023-12-29",
+          "rows": 9526
+        },
+        "val": {
+          "first_session": "2024-01-02",
+          "last_session": "2024-12-31",
+          "rows": 252
+        }
+      },
+      "ends_before_panel": false,
+      "first_session": "1986-03-12",
+      "last_session": "2026-09-03",
+      "missing_exchange_sessions": 2,
+      "missing_session_sample": [
+        "1986-11-17",
+        "2006-09-14"
+      ],
+      "rows": 10197,
+      "starts_after_panel": true
+    },
+    "PEP": {
+      "by_split": {
+        "test": {
+          "first_session": "2025-01-02",
+          "last_session": "2026-09-03",
+          "rows": 419
+        },
+        "train": {
+          "first_session": "1972-06-01",
+          "last_session": "2023-12-29",
+          "rows": 13006
+        },
+        "val": {
+          "first_session": "2024-01-02",
+          "last_session": "2024-12-31",
+          "rows": 252
+        }
+      },
+      "ends_before_panel": false,
+      "first_session": "1972-06-01",
+      "last_session": "2026-09-03",
+      "missing_exchange_sessions": 1,
+      "missing_session_sample": [
+        "2006-10-17"
+      ],
+      "rows": 13677,
+      "starts_after_panel": true
+    },
+    "PFE": {
+      "by_split": {
+        "test": {
+          "first_session": "2025-01-02",
+          "last_session": "2026-09-03",
+          "rows": 419
+        },
+        "train": {
+          "first_session": "1972-06-02",
+          "last_session": "2023-12-29",
+          "rows": 13004
+        },
+        "val": {
+          "first_session": "2024-01-02",
+          "last_session": "2024-12-31",
+          "rows": 252
+        }
+      },
+      "ends_before_panel": false,
+      "first_session": "1972-06-02",
+      "last_session": "2026-09-03",
+      "missing_exchange_sessions": 2,
+      "missing_session_sample": [
+        "1986-11-17",
+        "2006-09-14"
+      ],
+      "rows": 13675,
+      "starts_after_panel": true
+    },
+    "PG": {
+      "by_split": {
+        "test": {
+          "first_session": "2025-01-02",
+          "last_session": "2026-09-03",
+          "rows": 419
+        },
+        "train": {
+          "first_session": "1970-01-02",
+          "last_session": "2023-12-29",
+          "rows": 13617
+        },
+        "val": {
+          "first_session": "2024-01-02",
+          "last_session": "2024-12-31",
+          "rows": 252
+        }
+      },
+      "ends_before_panel": false,
+      "first_session": "1970-01-02",
+      "last_session": "2026-09-03",
+      "missing_exchange_sessions": 2,
+      "missing_session_sample": [
+        "1986-11-17",
+        "2006-09-14"
+      ],
+      "rows": 14288,
+      "starts_after_panel": false
+    },
+    "RTX": {
+      "by_split": {
+        "test": {
+          "first_session": "2025-01-02",
+          "last_session": "2026-09-03",
+          "rows": 419
+        },
+        "train": {
+          "first_session": "1970-01-02",
+          "last_session": "2023-12-29",
+          "rows": 13617
+        },
+        "val": {
+          "first_session": "2024-01-02",
+          "last_session": "2024-12-31",
+          "rows": 252
+        }
+      },
+      "ends_before_panel": false,
+      "first_session": "1970-01-02",
+      "last_session": "2026-09-03",
+      "missing_exchange_sessions": 2,
+      "missing_session_sample": [
+        "1986-12-01",
+        "2006-09-27"
+      ],
+      "rows": 14288,
+      "starts_after_panel": false
+    },
+    "SBUX": {
+      "by_split": {
+        "test": {
+          "first_session": "2025-01-02",
+          "last_session": "2026-09-03",
+          "rows": 419
+        },
+        "train": {
+          "first_session": "1992-06-26",
+          "last_session": "2023-12-29",
+          "rows": 7935
+        },
+        "val": {
+          "first_session": "2024-01-02",
+          "last_session": "2024-12-31",
+          "rows": 252
+        }
+      },
+      "ends_before_panel": false,
+      "first_session": "1992-06-26",
+      "last_session": "2026-09-03",
+      "missing_exchange_sessions": 1,
+      "missing_session_sample": [
+        "2006-09-26"
+      ],
+      "rows": 8606,
+      "starts_after_panel": true
+    },
+    "T": {
+      "by_split": {
+        "test": {
+          "first_session": "2025-01-02",
+          "last_session": "2026-09-03",
+          "rows": 419
+        },
+        "train": {
+          "first_session": "1984-07-19",
+          "last_session": "2023-12-29",
+          "rows": 9941
+        },
+        "val": {
+          "first_session": "2024-01-02",
+          "last_session": "2024-12-31",
+          "rows": 252
+        }
+      },
+      "ends_before_panel": false,
+      "first_session": "1984-07-19",
+      "last_session": "2026-09-03",
+      "missing_exchange_sessions": 2,
+      "missing_session_sample": [
+        "1986-11-17",
+        "2006-09-14"
+      ],
+      "rows": 10612,
+      "starts_after_panel": true
+    },
+    "TMO": {
+      "by_split": {
+        "test": {
+          "first_session": "2025-01-02",
+          "last_session": "2026-09-03",
+          "rows": 419
+        },
+        "train": {
+          "first_session": "1984-03-08",
+          "last_session": "2023-12-29",
+          "rows": 9155
+        },
+        "val": {
+          "first_session": "2024-01-02",
+          "last_session": "2024-12-31",
+          "rows": 252
+        }
+      },
+      "ends_before_panel": false,
+      "first_session": "1984-03-08",
+      "last_session": "2026-09-03",
+      "missing_exchange_sessions": 880,
+      "missing_session_sample": [
+        "1984-03-09",
+        "1984-03-12",
+        "1984-03-13",
+        "1984-03-14",
+        "1984-03-15",
+        "1984-03-16",
+        "1984-03-19",
+        "1984-03-20",
+        "1984-03-21",
+        "1984-03-22",
+        "1984-03-23",
+        "1984-03-26",
+        "1984-03-27",
+        "1984-03-28",
+        "1984-03-29",
+        "1984-03-30",
+        "1984-04-02",
+        "1984-04-03",
+        "1984-04-04",
+        "1984-04-05"
+      ],
+      "rows": 9826,
+      "starts_after_panel": true
+    },
+    "TMUS": {
+      "by_split": {
+        "test": {
+          "first_session": "2025-01-02",
+          "last_session": "2026-09-03",
+          "rows": 419
+        },
+        "train": {
+          "first_session": "2007-04-19",
+          "last_session": "2023-12-29",
+          "rows": 4205
+        },
+        "val": {
+          "first_session": "2024-01-02",
+          "last_session": "2024-12-31",
+          "rows": 252
+        }
+      },
+      "ends_before_panel": false,
+      "first_session": "2007-04-19",
+      "last_session": "2026-09-03",
+      "missing_exchange_sessions": 0,
+      "missing_session_sample": [],
+      "rows": 4876,
+      "starts_after_panel": true
+    },
+    "TSLA": {
+      "by_split": {
+        "test": {
+          "first_session": "2025-01-02",
+          "last_session": "2026-09-03",
+          "rows": 419
+        },
+        "train": {
+          "first_session": "2010-06-29",
+          "last_session": "2023-12-29",
+          "rows": 3400
+        },
+        "val": {
+          "first_session": "2024-01-02",
+          "last_session": "2024-12-31",
+          "rows": 252
+        }
+      },
+      "ends_before_panel": false,
+      "first_session": "2010-06-29",
+      "last_session": "2026-09-03",
+      "missing_exchange_sessions": 0,
+      "missing_session_sample": [],
+      "rows": 4071,
+      "starts_after_panel": true
+    },
+    "UNH": {
+      "by_split": {
+        "test": {
+          "first_session": "2025-01-02",
+          "last_session": "2026-09-03",
+          "rows": 419
+        },
+        "train": {
+          "first_session": "1985-04-08",
+          "last_session": "2023-12-29",
+          "rows": 8507
+        },
+        "val": {
+          "first_session": "2024-01-02",
+          "last_session": "2024-12-31",
+          "rows": 252
+        }
+      },
+      "ends_before_panel": false,
+      "first_session": "1985-04-08",
+      "last_session": "2026-09-03",
+      "missing_exchange_sessions": 1255,
+      "missing_session_sample": [
+        "1985-04-09",
+        "1985-04-10",
+        "1985-04-11",
+        "1985-04-12",
+        "1985-04-15",
+        "1985-04-16",
+        "1985-04-17",
+        "1985-04-18",
+        "1985-04-19",
+        "1985-04-22",
+        "1985-04-23",
+        "1985-04-24",
+        "1985-04-25",
+        "1985-04-26",
+        "1985-04-29",
+        "1985-04-30",
+        "1985-05-01",
+        "1985-05-02",
+        "1985-05-03",
+        "1985-05-06"
+      ],
+      "rows": 9178,
+      "starts_after_panel": true
+    },
+    "V": {
+      "by_split": {
+        "test": {
+          "first_session": "2025-01-02",
+          "last_session": "2026-09-03",
+          "rows": 419
+        },
+        "train": {
+          "first_session": "2008-03-19",
+          "last_session": "2023-12-29",
+          "rows": 3974
+        },
+        "val": {
+          "first_session": "2024-01-02",
+          "last_session": "2024-12-31",
+          "rows": 252
+        }
+      },
+      "ends_before_panel": false,
+      "first_session": "2008-03-19",
+      "last_session": "2026-09-03",
+      "missing_exchange_sessions": 0,
+      "missing_session_sample": [],
+      "rows": 4645,
+      "starts_after_panel": true
+    },
+    "VZ": {
+      "by_split": {
+        "test": {
+          "first_session": "2025-01-02",
+          "last_session": "2026-09-03",
+          "rows": 419
+        },
+        "train": {
+          "first_session": "1983-11-21",
+          "last_session": "2023-12-29",
+          "rows": 10107
+        },
+        "val": {
+          "first_session": "2024-01-02",
+          "last_session": "2024-12-31",
+          "rows": 252
+        }
+      },
+      "ends_before_panel": false,
+      "first_session": "1983-11-21",
+      "last_session": "2026-09-03",
+      "missing_exchange_sessions": 2,
+      "missing_session_sample": [
+        "1986-11-17",
+        "2006-09-14"
+      ],
+      "rows": 10778,
+      "starts_after_panel": true
+    },
+    "WFC": {
+      "by_split": {
+        "test": {
+          "first_session": "2025-01-02",
+          "last_session": "2026-09-03",
+          "rows": 419
+        },
+        "train": {
+          "first_session": "1972-06-02",
+          "last_session": "2023-12-29",
+          "rows": 13004
+        },
+        "val": {
+          "first_session": "2024-01-02",
+          "last_session": "2024-12-31",
+          "rows": 252
+        }
+      },
+      "ends_before_panel": false,
+      "first_session": "1972-06-02",
+      "last_session": "2026-09-03",
+      "missing_exchange_sessions": 2,
+      "missing_session_sample": [
+        "1986-11-24",
+        "2006-09-21"
+      ],
+      "rows": 13675,
+      "starts_after_panel": true
+    },
+    "WMT": {
+      "by_split": {
+        "test": {
+          "first_session": "2025-01-02",
+          "last_session": "2026-09-03",
+          "rows": 419
+        },
+        "train": {
+          "first_session": "1972-08-25",
+          "last_session": "2023-12-29",
+          "rows": 12946
+        },
+        "val": {
+          "first_session": "2024-01-02",
+          "last_session": "2024-12-31",
+          "rows": 252
+        }
+      },
+      "ends_before_panel": false,
+      "first_session": "1972-08-25",
+      "last_session": "2026-09-03",
+      "missing_exchange_sessions": 1,
+      "missing_session_sample": [
+        "2006-10-03"
+      ],
+      "rows": 13617,
+      "starts_after_panel": true
+    },
+    "XOM": {
+      "by_split": {
+        "test": {
+          "first_session": "2025-01-02",
+          "last_session": "2026-09-03",
+          "rows": 419
+        },
+        "train": {
+          "first_session": "1970-01-02",
+          "last_session": "2023-12-29",
+          "rows": 13617
+        },
+        "val": {
+          "first_session": "2024-01-02",
+          "last_session": "2024-12-31",
+          "rows": 252
+        }
+      },
+      "ends_before_panel": false,
+      "first_session": "1970-01-02",
+      "last_session": "2026-09-03",
+      "missing_exchange_sessions": 2,
+      "missing_session_sample": [
+        "1986-12-04",
+        "2006-10-02"
+      ],
+      "rows": 14288,
+      "starts_after_panel": false
+    }
+  },
+  "created_at_utc": "2026-09-04T23:53:51.198288+00:00",
+  "findings": [
+    {
+      "code": "zero_volume",
+      "count": 77,
+      "detail": "zero-volume daily bars require exclusion/review",
+      "severity": "error"
+    },
+    {
+      "code": "non_exchange_sessions",
+      "count": 1,
+      "detail": "sample=['1985-09-27']",
+      "severity": "error"
+    },
+    {
+      "code": "ticker_missing_sessions",
+      "count": 2,
+      "detail": "AAPL: missing within observed lifetime; no fill will be applied",
+      "severity": "warning"
+    },
+    {
+      "code": "ticker_missing_sessions",
+      "count": 1,
+      "detail": "ADBE: missing within observed lifetime; no fill will be applied",
+      "severity": "warning"
+    },
+    {
+      "code": "ticker_missing_sessions",
+      "count": 117,
+      "detail": "AMD: missing within observed lifetime; no fill will be applied",
+      "severity": "warning"
+    },
+    {
+      "code": "ticker_missing_sessions",
+      "count": 1,
+      "detail": "AMZN: missing within observed lifetime; no fill will be applied",
+      "severity": "warning"
+    },
+    {
+      "code": "ticker_missing_sessions",
+      "count": 2,
+      "detail": "BA: missing within observed lifetime; no fill will be applied",
+      "severity": "warning"
+    },
+    {
+      "code": "ticker_missing_sessions",
+      "count": 3298,
+      "detail": "BAC: missing within observed lifetime; no fill will be applied",
+      "severity": "warning"
+    },
+    {
+      "code": "ticker_missing_sessions",
+      "count": 1,
+      "detail": "BRK.B: missing within observed lifetime; no fill will be applied",
+      "severity": "warning"
+    },
+    {
+      "code": "ticker_missing_sessions",
+      "count": 2,
+      "detail": "CAT: missing within observed lifetime; no fill will be applied",
+      "severity": "warning"
+    },
+    {
+      "code": "ticker_missing_sessions",
+      "count": 2,
+      "detail": "COP: missing within observed lifetime; no fill will be applied",
+      "severity": "warning"
+    },
+    {
+      "code": "ticker_missing_sessions",
+      "count": 2,
+      "detail": "COST: missing within observed lifetime; no fill will be applied",
+      "severity": "warning"
+    },
+    {
+      "code": "ticker_missing_sessions",
+      "count": 1,
+      "detail": "CSCO: missing within observed lifetime; no fill will be applied",
+      "severity": "warning"
+    },
+    {
+      "code": "ticker_missing_sessions",
+      "count": 1,
+      "detail": "CVX: missing within observed lifetime; no fill will be applied",
+      "severity": "warning"
+    },
+    {
+      "code": "ticker_missing_sessions",
+      "count": 2,
+      "detail": "DIS: missing within observed lifetime; no fill will be applied",
+      "severity": "warning"
+    },
+    {
+      "code": "ticker_missing_sessions",
+      "count": 2,
+      "detail": "GE: missing within observed lifetime; no fill will be applied",
+      "severity": "warning"
+    },
+    {
+      "code": "ticker_missing_sessions",
+      "count": 1,
+      "detail": "GOOGL: missing within observed lifetime; no fill will be applied",
+      "severity": "warning"
+    },
+    {
+      "code": "ticker_missing_sessions",
+      "count": 1,
+      "detail": "GS: missing within observed lifetime; no fill will be applied",
+      "severity": "warning"
+    },
+    {
+      "code": "ticker_missing_sessions",
+      "count": 1,
+      "detail": "HD: missing within observed lifetime; no fill will be applied",
+      "severity": "warning"
+    },
+    {
+      "code": "ticker_missing_sessions",
+      "count": 1,
+      "detail": "JNJ: missing within observed lifetime; no fill will be applied",
+      "severity": "warning"
+    },
+    {
+      "code": "ticker_missing_sessions",
+      "count": 2,
+      "detail": "JPM: missing within observed lifetime; no fill will be applied",
+      "severity": "warning"
+    },
+    {
+      "code": "ticker_missing_sessions",
+      "count": 1,
+      "detail": "KO: missing within observed lifetime; no fill will be applied",
+      "severity": "warning"
+    },
+    {
+      "code": "ticker_missing_sessions",
+      "count": 1,
+      "detail": "LIN: missing within observed lifetime; no fill will be applied",
+      "severity": "warning"
+    },
+    {
+      "code": "ticker_missing_sessions",
+      "count": 2,
+      "detail": "LLY: missing within observed lifetime; no fill will be applied",
+      "severity": "warning"
+    },
+    {
+      "code": "ticker_missing_sessions",
+      "count": 1,
+      "detail": "MA: missing within observed lifetime; no fill will be applied",
+      "severity": "warning"
+    },
+    {
+      "code": "ticker_missing_sessions",
+      "count": 1,
+      "detail": "MCD: missing within observed lifetime; no fill will be applied",
+      "severity": "warning"
+    },
+    {
+      "code": "ticker_missing_sessions",
+      "count": 1,
+      "detail": "MRK: missing within observed lifetime; no fill will be applied",
+      "severity": "warning"
+    },
+    {
+      "code": "ticker_missing_sessions",
+      "count": 1,
+      "detail": "MS: missing within observed lifetime; no fill will be applied",
+      "severity": "warning"
+    },
+    {
+      "code": "ticker_missing_sessions",
+      "count": 2,
+      "detail": "MSFT: missing within observed lifetime; no fill will be applied",
+      "severity": "warning"
+    },
+    {
+      "code": "ticker_missing_sessions",
+      "count": 1,
+      "detail": "NFLX: missing within observed lifetime; no fill will be applied",
+      "severity": "warning"
+    },
+    {
+      "code": "ticker_missing_sessions",
+      "count": 1,
+      "detail": "NKE: missing within observed lifetime; no fill will be applied",
+      "severity": "warning"
+    },
+    {
+      "code": "ticker_missing_sessions",
+      "count": 1,
+      "detail": "NVDA: missing within observed lifetime; no fill will be applied",
+      "severity": "warning"
+    },
+    {
+      "code": "ticker_missing_sessions",
+      "count": 2,
+      "detail": "ORCL: missing within observed lifetime; no fill will be applied",
+      "severity": "warning"
+    },
+    {
+      "code": "ticker_missing_sessions",
+      "count": 1,
+      "detail": "PEP: missing within observed lifetime; no fill will be applied",
+      "severity": "warning"
+    },
+    {
+      "code": "ticker_missing_sessions",
+      "count": 2,
+      "detail": "PFE: missing within observed lifetime; no fill will be applied",
+      "severity": "warning"
+    },
+    {
+      "code": "ticker_missing_sessions",
+      "count": 2,
+      "detail": "PG: missing within observed lifetime; no fill will be applied",
+      "severity": "warning"
+    },
+    {
+      "code": "ticker_missing_sessions",
+      "count": 2,
+      "detail": "RTX: missing within observed lifetime; no fill will be applied",
+      "severity": "warning"
+    },
+    {
+      "code": "ticker_missing_sessions",
+      "count": 1,
+      "detail": "SBUX: missing within observed lifetime; no fill will be applied",
+      "severity": "warning"
+    },
+    {
+      "code": "ticker_missing_sessions",
+      "count": 2,
+      "detail": "T: missing within observed lifetime; no fill will be applied",
+      "severity": "warning"
+    },
+    {
+      "code": "ticker_missing_sessions",
+      "count": 880,
+      "detail": "TMO: missing within observed lifetime; no fill will be applied",
+      "severity": "warning"
+    },
+    {
+      "code": "ticker_missing_sessions",
+      "count": 1255,
+      "detail": "UNH: missing within observed lifetime; no fill will be applied",
+      "severity": "warning"
+    },
+    {
+      "code": "ticker_missing_sessions",
+      "count": 2,
+      "detail": "VZ: missing within observed lifetime; no fill will be applied",
+      "severity": "warning"
+    },
+    {
+      "code": "ticker_missing_sessions",
+      "count": 2,
+      "detail": "WFC: missing within observed lifetime; no fill will be applied",
+      "severity": "warning"
+    },
+    {
+      "code": "ticker_missing_sessions",
+      "count": 1,
+      "detail": "WMT: missing within observed lifetime; no fill will be applied",
+      "severity": "warning"
+    },
+    {
+      "code": "ticker_missing_sessions",
+      "count": 2,
+      "detail": "XOM: missing within observed lifetime; no fill will be applied",
+      "severity": "warning"
+    },
+    {
+      "code": "close_adj_is_close_alias",
+      "count": 515857,
+      "detail": "the collection fallback sets close_adj=close when the API omits it; the card's dividend-adjusted claim is unsupported by a distinct series",
+      "severity": "warning"
+    }
+  ],
+  "origin_eligibility": {
+    "test/AAPL": {
+      "complete_10_session_labels": 409,
+      "origins": 419,
+      "usable_90_session_contexts": 419,
+      "usable_context_and_label": 409
+    },
+    "test/ABBV": {
+      "complete_10_session_labels": 409,
+      "origins": 419,
+      "usable_90_session_contexts": 419,
+      "usable_context_and_label": 409
+    },
+    "test/ADBE": {
+      "complete_10_session_labels": 409,
+      "origins": 419,
+      "usable_90_session_contexts": 419,
+      "usable_context_and_label": 409
+    },
+    "test/AMD": {
+      "complete_10_session_labels": 409,
+      "origins": 419,
+      "usable_90_session_contexts": 419,
+      "usable_context_and_label": 409
+    },
+    "test/AMZN": {
+      "complete_10_session_labels": 409,
+      "origins": 419,
+      "usable_90_session_contexts": 419,
+      "usable_context_and_label": 409
+    },
+    "test/AVGO": {
+      "complete_10_session_labels": 409,
+      "origins": 419,
+      "usable_90_session_contexts": 419,
+      "usable_context_and_label": 409
+    },
+    "test/BA": {
+      "complete_10_session_labels": 409,
+      "origins": 419,
+      "usable_90_session_contexts": 419,
+      "usable_context_and_label": 409
+    },
+    "test/BAC": {
+      "complete_10_session_labels": 409,
+      "origins": 419,
+      "usable_90_session_contexts": 419,
+      "usable_context_and_label": 409
+    },
+    "test/BLK": {
+      "complete_10_session_labels": 409,
+      "origins": 419,
+      "usable_90_session_contexts": 419,
+      "usable_context_and_label": 409
+    },
+    "test/BRK.B": {
+      "complete_10_session_labels": 409,
+      "origins": 419,
+      "usable_90_session_contexts": 419,
+      "usable_context_and_label": 409
+    },
+    "test/CAT": {
+      "complete_10_session_labels": 409,
+      "origins": 419,
+      "usable_90_session_contexts": 419,
+      "usable_context_and_label": 409
+    },
+    "test/COP": {
+      "complete_10_session_labels": 409,
+      "origins": 419,
+      "usable_90_session_contexts": 419,
+      "usable_context_and_label": 409
+    },
+    "test/COST": {
+      "complete_10_session_labels": 409,
+      "origins": 419,
+      "usable_90_session_contexts": 419,
+      "usable_context_and_label": 409
+    },
+    "test/CRM": {
+      "complete_10_session_labels": 409,
+      "origins": 419,
+      "usable_90_session_contexts": 419,
+      "usable_context_and_label": 409
+    },
+    "test/CSCO": {
+      "complete_10_session_labels": 409,
+      "origins": 419,
+      "usable_90_session_contexts": 419,
+      "usable_context_and_label": 409
+    },
+    "test/CVX": {
+      "complete_10_session_labels": 409,
+      "origins": 419,
+      "usable_90_session_contexts": 419,
+      "usable_context_and_label": 409
+    },
+    "test/DIS": {
+      "complete_10_session_labels": 409,
+      "origins": 419,
+      "usable_90_session_contexts": 419,
+      "usable_context_and_label": 409
+    },
+    "test/GE": {
+      "complete_10_session_labels": 409,
+      "origins": 419,
+      "usable_90_session_contexts": 419,
+      "usable_context_and_label": 409
+    },
+    "test/GOOGL": {
+      "complete_10_session_labels": 409,
+      "origins": 419,
+      "usable_90_session_contexts": 419,
+      "usable_context_and_label": 409
+    },
+    "test/GS": {
+      "complete_10_session_labels": 409,
+      "origins": 419,
+      "usable_90_session_contexts": 419,
+      "usable_context_and_label": 409
+    },
+    "test/HD": {
+      "complete_10_session_labels": 409,
+      "origins": 419,
+      "usable_90_session_contexts": 419,
+      "usable_context_and_label": 409
+    },
+    "test/JNJ": {
+      "complete_10_session_labels": 409,
+      "origins": 419,
+      "usable_90_session_contexts": 419,
+      "usable_context_and_label": 409
+    },
+    "test/JPM": {
+      "complete_10_session_labels": 409,
+      "origins": 419,
+      "usable_90_session_contexts": 419,
+      "usable_context_and_label": 409
+    },
+    "test/KO": {
+      "complete_10_session_labels": 409,
+      "origins": 419,
+      "usable_90_session_contexts": 419,
+      "usable_context_and_label": 409
+    },
+    "test/LIN": {
+      "complete_10_session_labels": 409,
+      "origins": 419,
+      "usable_90_session_contexts": 419,
+      "usable_context_and_label": 409
+    },
+    "test/LLY": {
+      "complete_10_session_labels": 409,
+      "origins": 419,
+      "usable_90_session_contexts": 419,
+      "usable_context_and_label": 409
+    },
+    "test/MA": {
+      "complete_10_session_labels": 409,
+      "origins": 419,
+      "usable_90_session_contexts": 419,
+      "usable_context_and_label": 409
+    },
+    "test/MCD": {
+      "complete_10_session_labels": 409,
+      "origins": 419,
+      "usable_90_session_contexts": 419,
+      "usable_context_and_label": 409
+    },
+    "test/META": {
+      "complete_10_session_labels": 409,
+      "origins": 419,
+      "usable_90_session_contexts": 419,
+      "usable_context_and_label": 409
+    },
+    "test/MRK": {
+      "complete_10_session_labels": 409,
+      "origins": 419,
+      "usable_90_session_contexts": 419,
+      "usable_context_and_label": 409
+    },
+    "test/MS": {
+      "complete_10_session_labels": 409,
+      "origins": 419,
+      "usable_90_session_contexts": 419,
+      "usable_context_and_label": 409
+    },
+    "test/MSFT": {
+      "complete_10_session_labels": 409,
+      "origins": 419,
+      "usable_90_session_contexts": 419,
+      "usable_context_and_label": 409
+    },
+    "test/NFLX": {
+      "complete_10_session_labels": 409,
+      "origins": 419,
+      "usable_90_session_contexts": 419,
+      "usable_context_and_label": 409
+    },
+    "test/NKE": {
+      "complete_10_session_labels": 409,
+      "origins": 419,
+      "usable_90_session_contexts": 419,
+      "usable_context_and_label": 409
+    },
+    "test/NVDA": {
+      "complete_10_session_labels": 409,
+      "origins": 419,
+      "usable_90_session_contexts": 419,
+      "usable_context_and_label": 409
+    },
+    "test/ORCL": {
+      "complete_10_session_labels": 409,
+      "origins": 419,
+      "usable_90_session_contexts": 419,
+      "usable_context_and_label": 409
+    },
+    "test/PEP": {
+      "complete_10_session_labels": 409,
+      "origins": 419,
+      "usable_90_session_contexts": 419,
+      "usable_context_and_label": 409
+    },
+    "test/PFE": {
+      "complete_10_session_labels": 409,
+      "origins": 419,
+      "usable_90_session_contexts": 419,
+      "usable_context_and_label": 409
+    },
+    "test/PG": {
+      "complete_10_session_labels": 409,
+      "origins": 419,
+      "usable_90_session_contexts": 419,
+      "usable_context_and_label": 409
+    },
+    "test/RTX": {
+      "complete_10_session_labels": 409,
+      "origins": 419,
+      "usable_90_session_contexts": 419,
+      "usable_context_and_label": 409
+    },
+    "test/SBUX": {
+      "complete_10_session_labels": 409,
+      "origins": 419,
+      "usable_90_session_contexts": 419,
+      "usable_context_and_label": 409
+    },
+    "test/T": {
+      "complete_10_session_labels": 409,
+      "origins": 419,
+      "usable_90_session_contexts": 419,
+      "usable_context_and_label": 409
+    },
+    "test/TMO": {
+      "complete_10_session_labels": 409,
+      "origins": 419,
+      "usable_90_session_contexts": 419,
+      "usable_context_and_label": 409
+    },
+    "test/TMUS": {
+      "complete_10_session_labels": 409,
+      "origins": 419,
+      "usable_90_session_contexts": 419,
+      "usable_context_and_label": 409
+    },
+    "test/TSLA": {
+      "complete_10_session_labels": 409,
+      "origins": 419,
+      "usable_90_session_contexts": 419,
+      "usable_context_and_label": 409
+    },
+    "test/UNH": {
+      "complete_10_session_labels": 409,
+      "origins": 419,
+      "usable_90_session_contexts": 419,
+      "usable_context_and_label": 409
+    },
+    "test/V": {
+      "complete_10_session_labels": 409,
+      "origins": 419,
+      "usable_90_session_contexts": 419,
+      "usable_context_and_label": 409
+    },
+    "test/VZ": {
+      "complete_10_session_labels": 409,
+      "origins": 419,
+      "usable_90_session_contexts": 419,
+      "usable_context_and_label": 409
+    },
+    "test/WFC": {
+      "complete_10_session_labels": 409,
+      "origins": 419,
+      "usable_90_session_contexts": 419,
+      "usable_context_and_label": 409
+    },
+    "test/WMT": {
+      "complete_10_session_labels": 409,
+      "origins": 419,
+      "usable_90_session_contexts": 419,
+      "usable_context_and_label": 409
+    },
+    "test/XOM": {
+      "complete_10_session_labels": 409,
+      "origins": 419,
+      "usable_90_session_contexts": 419,
+      "usable_context_and_label": 409
+    },
+    "train/AAPL": {
+      "complete_10_session_labels": 10831,
+      "origins": 10851,
+      "usable_90_session_contexts": 10584,
+      "usable_context_and_label": 10564
+    },
+    "train/ABBV": {
+      "complete_10_session_labels": 2768,
+      "origins": 2768,
+      "usable_90_session_contexts": 2679,
+      "usable_context_and_label": 2679
+    },
+    "train/ADBE": {
+      "complete_10_session_labels": 9264,
+      "origins": 9274,
+      "usable_90_session_contexts": 9096,
+      "usable_context_and_label": 9086
+    },
+    "train/AMD": {
+      "complete_10_session_labels": 10258,
+      "origins": 10279,
+      "usable_90_session_contexts": 10011,
+      "usable_context_and_label": 9991
+    },
+    "train/AMZN": {
+      "complete_10_session_labels": 6690,
+      "origins": 6700,
+      "usable_90_session_contexts": 6522,
+      "usable_context_and_label": 6512
+    },
+    "train/AVGO": {
+      "complete_10_session_labels": 3625,
+      "origins": 3625,
+      "usable_90_session_contexts": 3536,
+      "usable_context_and_label": 3536
+    },
+    "train/BA": {
+      "complete_10_session_labels": 13597,
+      "origins": 13617,
+      "usable_90_session_contexts": 13350,
+      "usable_context_and_label": 13330
+    },
+    "train/BAC": {
+      "complete_10_session_labels": 9503,
+      "origins": 9529,
+      "usable_90_session_contexts": 9301,
+      "usable_context_and_label": 9301
+    },
+    "train/BLK": {
+      "complete_10_session_labels": 6101,
+      "origins": 6101,
+      "usable_90_session_contexts": 6012,
+      "usable_context_and_label": 6012
+    },
+    "train/BRK.B": {
+      "complete_10_session_labels": 6947,
+      "origins": 6957,
+      "usable_90_session_contexts": 6779,
+      "usable_context_and_label": 6769
+    },
+    "train/CAT": {
+      "complete_10_session_labels": 13597,
+      "origins": 13617,
+      "usable_90_session_contexts": 13350,
+      "usable_context_and_label": 13330
+    },
+    "train/COP": {
+      "complete_10_session_labels": 10566,
+      "origins": 10586,
+      "usable_90_session_contexts": 10319,
+      "usable_context_and_label": 10299
+    },
+    "train/COST": {
+      "complete_10_session_labels": 9424,
+      "origins": 9444,
+      "usable_90_session_contexts": 9177,
+      "usable_context_and_label": 9164
+    },
+    "train/CRM": {
+      "complete_10_session_labels": 4915,
+      "origins": 4915,
+      "usable_90_session_contexts": 4826,
+      "usable_context_and_label": 4826
+    },
+    "train/CSCO": {
+      "complete_10_session_labels": 8496,
+      "origins": 8506,
+      "usable_90_session_contexts": 8328,
+      "usable_context_and_label": 8318
+    },
+    "train/CVX": {
+      "complete_10_session_labels": 13608,
+      "origins": 13619,
+      "usable_90_session_contexts": 13440,
+      "usable_context_and_label": 13430
+    },
+    "train/DIS": {
+      "complete_10_session_labels": 13597,
+      "origins": 13617,
+      "usable_90_session_contexts": 13350,
+      "usable_context_and_label": 13330
+    },
+    "train/GE": {
+      "complete_10_session_labels": 13597,
+      "origins": 13617,
+      "usable_90_session_contexts": 13350,
+      "usable_context_and_label": 13330
+    },
+    "train/GOOGL": {
+      "complete_10_session_labels": 4864,
+      "origins": 4874,
+      "usable_90_session_contexts": 4696,
+      "usable_context_and_label": 4686
+    },
+    "train/GS": {
+      "complete_10_session_labels": 6195,
+      "origins": 6205,
+      "usable_90_session_contexts": 6027,
+      "usable_context_and_label": 6017
+    },
+    "train/HD": {
+      "complete_10_session_labels": 10647,
+      "origins": 10657,
+      "usable_90_session_contexts": 10479,
+      "usable_context_and_label": 10469
+    },
+    "train/JNJ": {
+      "complete_10_session_labels": 13608,
+      "origins": 13618,
+      "usable_90_session_contexts": 13440,
+      "usable_context_and_label": 13430
+    },
+    "train/JPM": {
+      "complete_10_session_labels": 10060,
+      "origins": 10080,
+      "usable_90_session_contexts": 9813,
+      "usable_context_and_label": 9793
+    },
+    "train/KO": {
+      "complete_10_session_labels": 13608,
+      "origins": 13618,
+      "usable_90_session_contexts": 13440,
+      "usable_context_and_label": 13430
+    },
+    "train/LIN": {
+      "complete_10_session_labels": 7932,
+      "origins": 7942,
+      "usable_90_session_contexts": 7764,
+      "usable_context_and_label": 7754
+    },
+    "train/LLY": {
+      "complete_10_session_labels": 12984,
+      "origins": 13004,
+      "usable_90_session_contexts": 12737,
+      "usable_context_and_label": 12717
+    },
+    "train/MA": {
+      "complete_10_session_labels": 4419,
+      "origins": 4429,
+      "usable_90_session_contexts": 4263,
+      "usable_context_and_label": 4263
+    },
+    "train/MCD": {
+      "complete_10_session_labels": 13608,
+      "origins": 13618,
+      "usable_90_session_contexts": 13440,
+      "usable_context_and_label": 13430
+    },
+    "train/META": {
+      "complete_10_session_labels": 2923,
+      "origins": 2923,
+      "usable_90_session_contexts": 2834,
+      "usable_context_and_label": 2834
+    },
+    "train/MRK": {
+      "complete_10_session_labels": 13608,
+      "origins": 13618,
+      "usable_90_session_contexts": 13440,
+      "usable_context_and_label": 13430
+    },
+    "train/MS": {
+      "complete_10_session_labels": 7759,
+      "origins": 7769,
+      "usable_90_session_contexts": 7591,
+      "usable_context_and_label": 7581
+    },
+    "train/MSFT": {
+      "complete_10_session_labels": 9505,
+      "origins": 9525,
+      "usable_90_session_contexts": 9258,
+      "usable_context_and_label": 9238
+    },
+    "train/NFLX": {
+      "complete_10_session_labels": 5428,
+      "origins": 5438,
+      "usable_90_session_contexts": 5260,
+      "usable_context_and_label": 5250
+    },
+    "train/NKE": {
+      "complete_10_session_labels": 10850,
+      "origins": 10860,
+      "usable_90_session_contexts": 10682,
+      "usable_context_and_label": 10672
+    },
+    "train/NVDA": {
+      "complete_10_session_labels": 6265,
+      "origins": 6275,
+      "usable_90_session_contexts": 6097,
+      "usable_context_and_label": 6087
+    },
+    "train/ORCL": {
+      "complete_10_session_labels": 9506,
+      "origins": 9526,
+      "usable_90_session_contexts": 9259,
+      "usable_context_and_label": 9239
+    },
+    "train/PEP": {
+      "complete_10_session_labels": 12996,
+      "origins": 13006,
+      "usable_90_session_contexts": 12828,
+      "usable_context_and_label": 12818
+    },
+    "train/PFE": {
+      "complete_10_session_labels": 12984,
+      "origins": 13004,
+      "usable_90_session_contexts": 12737,
+      "usable_context_and_label": 12717
+    },
+    "train/PG": {
+      "complete_10_session_labels": 13597,
+      "origins": 13617,
+      "usable_90_session_contexts": 13350,
+      "usable_context_and_label": 13330
+    },
+    "train/RTX": {
+      "complete_10_session_labels": 13597,
+      "origins": 13617,
+      "usable_90_session_contexts": 13350,
+      "usable_context_and_label": 13330
+    },
+    "train/SBUX": {
+      "complete_10_session_labels": 7925,
+      "origins": 7935,
+      "usable_90_session_contexts": 7757,
+      "usable_context_and_label": 7747
+    },
+    "train/T": {
+      "complete_10_session_labels": 9921,
+      "origins": 9941,
+      "usable_90_session_contexts": 9674,
+      "usable_context_and_label": 9654
+    },
+    "train/TMO": {
+      "complete_10_session_labels": 9144,
+      "origins": 9155,
+      "usable_90_session_contexts": 8976,
+      "usable_context_and_label": 8966
+    },
+    "train/TMUS": {
+      "complete_10_session_labels": 4205,
+      "origins": 4205,
+      "usable_90_session_contexts": 4116,
+      "usable_context_and_label": 4116
+    },
+    "train/TSLA": {
+      "complete_10_session_labels": 3400,
+      "origins": 3400,
+      "usable_90_session_contexts": 3311,
+      "usable_context_and_label": 3311
+    },
+    "train/UNH": {
+      "complete_10_session_labels": 8496,
+      "origins": 8507,
+      "usable_90_session_contexts": 8328,
+      "usable_context_and_label": 8318
+    },
+    "train/V": {
+      "complete_10_session_labels": 3974,
+      "origins": 3974,
+      "usable_90_session_contexts": 3885,
+      "usable_context_and_label": 3885
+    },
+    "train/VZ": {
+      "complete_10_session_labels": 10087,
+      "origins": 10107,
+      "usable_90_session_contexts": 9840,
+      "usable_context_and_label": 9820
+    },
+    "train/WFC": {
+      "complete_10_session_labels": 12984,
+      "origins": 13004,
+      "usable_90_session_contexts": 12737,
+      "usable_context_and_label": 12717
+    },
+    "train/WMT": {
+      "complete_10_session_labels": 12936,
+      "origins": 12946,
+      "usable_90_session_contexts": 12768,
+      "usable_context_and_label": 12758
+    },
+    "train/XOM": {
+      "complete_10_session_labels": 13597,
+      "origins": 13617,
+      "usable_90_session_contexts": 13350,
+      "usable_context_and_label": 13330
+    },
+    "val/AAPL": {
+      "complete_10_session_labels": 252,
+      "origins": 252,
+      "usable_90_session_contexts": 252,
+      "usable_context_and_label": 252
+    },
+    "val/ABBV": {
+      "complete_10_session_labels": 252,
+      "origins": 252,
+      "usable_90_session_contexts": 252,
+      "usable_context_and_label": 252
+    },
+    "val/ADBE": {
+      "complete_10_session_labels": 252,
+      "origins": 252,
+      "usable_90_session_contexts": 252,
+      "usable_context_and_label": 252
+    },
+    "val/AMD": {
+      "complete_10_session_labels": 252,
+      "origins": 252,
+      "usable_90_session_contexts": 252,
+      "usable_context_and_label": 252
+    },
+    "val/AMZN": {
+      "complete_10_session_labels": 252,
+      "origins": 252,
+      "usable_90_session_contexts": 252,
+      "usable_context_and_label": 252
+    },
+    "val/AVGO": {
+      "complete_10_session_labels": 252,
+      "origins": 252,
+      "usable_90_session_contexts": 252,
+      "usable_context_and_label": 252
+    },
+    "val/BA": {
+      "complete_10_session_labels": 252,
+      "origins": 252,
+      "usable_90_session_contexts": 252,
+      "usable_context_and_label": 252
+    },
+    "val/BAC": {
+      "complete_10_session_labels": 252,
+      "origins": 252,
+      "usable_90_session_contexts": 252,
+      "usable_context_and_label": 252
+    },
+    "val/BLK": {
+      "complete_10_session_labels": 252,
+      "origins": 252,
+      "usable_90_session_contexts": 252,
+      "usable_context_and_label": 252
+    },
+    "val/BRK.B": {
+      "complete_10_session_labels": 252,
+      "origins": 252,
+      "usable_90_session_contexts": 252,
+      "usable_context_and_label": 252
+    },
+    "val/CAT": {
+      "complete_10_session_labels": 252,
+      "origins": 252,
+      "usable_90_session_contexts": 252,
+      "usable_context_and_label": 252
+    },
+    "val/COP": {
+      "complete_10_session_labels": 252,
+      "origins": 252,
+      "usable_90_session_contexts": 252,
+      "usable_context_and_label": 252
+    },
+    "val/COST": {
+      "complete_10_session_labels": 252,
+      "origins": 252,
+      "usable_90_session_contexts": 252,
+      "usable_context_and_label": 252
+    },
+    "val/CRM": {
+      "complete_10_session_labels": 252,
+      "origins": 252,
+      "usable_90_session_contexts": 252,
+      "usable_context_and_label": 252
+    },
+    "val/CSCO": {
+      "complete_10_session_labels": 252,
+      "origins": 252,
+      "usable_90_session_contexts": 252,
+      "usable_context_and_label": 252
+    },
+    "val/CVX": {
+      "complete_10_session_labels": 252,
+      "origins": 252,
+      "usable_90_session_contexts": 252,
+      "usable_context_and_label": 252
+    },
+    "val/DIS": {
+      "complete_10_session_labels": 252,
+      "origins": 252,
+      "usable_90_session_contexts": 252,
+      "usable_context_and_label": 252
+    },
+    "val/GE": {
+      "complete_10_session_labels": 252,
+      "origins": 252,
+      "usable_90_session_contexts": 252,
+      "usable_context_and_label": 252
+    },
+    "val/GOOGL": {
+      "complete_10_session_labels": 252,
+      "origins": 252,
+      "usable_90_session_contexts": 252,
+      "usable_context_and_label": 252
+    },
+    "val/GS": {
+      "complete_10_session_labels": 252,
+      "origins": 252,
+      "usable_90_session_contexts": 252,
+      "usable_context_and_label": 252
+    },
+    "val/HD": {
+      "complete_10_session_labels": 252,
+      "origins": 252,
+      "usable_90_session_contexts": 252,
+      "usable_context_and_label": 252
+    },
+    "val/JNJ": {
+      "complete_10_session_labels": 252,
+      "origins": 252,
+      "usable_90_session_contexts": 252,
+      "usable_context_and_label": 252
+    },
+    "val/JPM": {
+      "complete_10_session_labels": 252,
+      "origins": 252,
+      "usable_90_session_contexts": 252,
+      "usable_context_and_label": 252
+    },
+    "val/KO": {
+      "complete_10_session_labels": 252,
+      "origins": 252,
+      "usable_90_session_contexts": 252,
+      "usable_context_and_label": 252
+    },
+    "val/LIN": {
+      "complete_10_session_labels": 252,
+      "origins": 252,
+      "usable_90_session_contexts": 252,
+      "usable_context_and_label": 252
+    },
+    "val/LLY": {
+      "complete_10_session_labels": 252,
+      "origins": 252,
+      "usable_90_session_contexts": 252,
+      "usable_context_and_label": 252
+    },
+    "val/MA": {
+      "complete_10_session_labels": 252,
+      "origins": 252,
+      "usable_90_session_contexts": 252,
+      "usable_context_and_label": 252
+    },
+    "val/MCD": {
+      "complete_10_session_labels": 252,
+      "origins": 252,
+      "usable_90_session_contexts": 252,
+      "usable_context_and_label": 252
+    },
+    "val/META": {
+      "complete_10_session_labels": 252,
+      "origins": 252,
+      "usable_90_session_contexts": 252,
+      "usable_context_and_label": 252
+    },
+    "val/MRK": {
+      "complete_10_session_labels": 252,
+      "origins": 252,
+      "usable_90_session_contexts": 252,
+      "usable_context_and_label": 252
+    },
+    "val/MS": {
+      "complete_10_session_labels": 252,
+      "origins": 252,
+      "usable_90_session_contexts": 252,
+      "usable_context_and_label": 252
+    },
+    "val/MSFT": {
+      "complete_10_session_labels": 252,
+      "origins": 252,
+      "usable_90_session_contexts": 252,
+      "usable_context_and_label": 252
+    },
+    "val/NFLX": {
+      "complete_10_session_labels": 252,
+      "origins": 252,
+      "usable_90_session_contexts": 252,
+      "usable_context_and_label": 252
+    },
+    "val/NKE": {
+      "complete_10_session_labels": 252,
+      "origins": 252,
+      "usable_90_session_contexts": 252,
+      "usable_context_and_label": 252
+    },
+    "val/NVDA": {
+      "complete_10_session_labels": 252,
+      "origins": 252,
+      "usable_90_session_contexts": 252,
+      "usable_context_and_label": 252
+    },
+    "val/ORCL": {
+      "complete_10_session_labels": 252,
+      "origins": 252,
+      "usable_90_session_contexts": 252,
+      "usable_context_and_label": 252
+    },
+    "val/PEP": {
+      "complete_10_session_labels": 252,
+      "origins": 252,
+      "usable_90_session_contexts": 252,
+      "usable_context_and_label": 252
+    },
+    "val/PFE": {
+      "complete_10_session_labels": 252,
+      "origins": 252,
+      "usable_90_session_contexts": 252,
+      "usable_context_and_label": 252
+    },
+    "val/PG": {
+      "complete_10_session_labels": 252,
+      "origins": 252,
+      "usable_90_session_contexts": 252,
+      "usable_context_and_label": 252
+    },
+    "val/RTX": {
+      "complete_10_session_labels": 252,
+      "origins": 252,
+      "usable_90_session_contexts": 252,
+      "usable_context_and_label": 252
+    },
+    "val/SBUX": {
+      "complete_10_session_labels": 252,
+      "origins": 252,
+      "usable_90_session_contexts": 252,
+      "usable_context_and_label": 252
+    },
+    "val/T": {
+      "complete_10_session_labels": 252,
+      "origins": 252,
+      "usable_90_session_contexts": 252,
+      "usable_context_and_label": 252
+    },
+    "val/TMO": {
+      "complete_10_session_labels": 252,
+      "origins": 252,
+      "usable_90_session_contexts": 252,
+      "usable_context_and_label": 252
+    },
+    "val/TMUS": {
+      "complete_10_session_labels": 252,
+      "origins": 252,
+      "usable_90_session_contexts": 252,
+      "usable_context_and_label": 252
+    },
+    "val/TSLA": {
+      "complete_10_session_labels": 252,
+      "origins": 252,
+      "usable_90_session_contexts": 252,
+      "usable_context_and_label": 252
+    },
+    "val/UNH": {
+      "complete_10_session_labels": 252,
+      "origins": 252,
+      "usable_90_session_contexts": 252,
+      "usable_context_and_label": 252
+    },
+    "val/V": {
+      "complete_10_session_labels": 252,
+      "origins": 252,
+      "usable_90_session_contexts": 252,
+      "usable_context_and_label": 252
+    },
+    "val/VZ": {
+      "complete_10_session_labels": 252,
+      "origins": 252,
+      "usable_90_session_contexts": 252,
+      "usable_context_and_label": 252
+    },
+    "val/WFC": {
+      "complete_10_session_labels": 252,
+      "origins": 252,
+      "usable_90_session_contexts": 252,
+      "usable_context_and_label": 252
+    },
+    "val/WMT": {
+      "complete_10_session_labels": 252,
+      "origins": 252,
+      "usable_90_session_contexts": 252,
+      "usable_context_and_label": 252
+    },
+    "val/XOM": {
+      "complete_10_session_labels": 252,
+      "origins": 252,
+      "usable_90_session_contexts": 252,
+      "usable_context_and_label": 252
+    }
+  },
+  "quality_counts": {
+    "candle_inconsistent_rows": 0,
+    "conflicting_duplicate_keys": 0,
+    "duplicate_keys": 0,
+    "identical_duplicate_keys": 0,
+    "nonfinite_by_column": {
+      "close": 0,
+      "close_adj": 0,
+      "high": 0,
+      "low": 0,
+      "open": 0,
+      "volume": 0
+    },
+    "nonpositive_by_price_column": {
+      "close": 0,
+      "close_adj": 0,
+      "high": 0,
+      "low": 0,
+      "open": 0
+    },
+    "zero_volume_rows": 77
+  },
+  "schema_version": "leonos.data_audit.v1",
+  "summary": {
+    "date_max": "2026-09-03",
+    "date_min": "1970-01-02",
+    "required_columns_missing": [],
+    "rows": 515857,
+    "ticker_count": 51
+  },
+  "timestamps": {
+    "distinct_local_times": [
+      "00:00:00"
+    ],
+    "information_available": "daily OHLCV is treated as known only after that session closes",
+    "observed_timezone": "America/New_York",
+    "session_date_rule": "calendar date in America/New_York",
+    "source_bar_timestamp_semantics": "interval start",
+    "timezone_expected": "America/New_York"
+  }
+}

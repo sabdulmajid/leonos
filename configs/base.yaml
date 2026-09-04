@@ -50,10 +50,14 @@ forecast:
 splits:
   development_label_end_max: 2023-12-31
   validation_origin_min: 2024-07-01
-  validation_origin_max: 2024-12-31
+  # Last XNYS origin whose complete ten-session label ends in 2024.
+  validation_origin_max: 2024-12-16
   validation_label_end_max: 2024-12-31
   final_refit_label_end_max: 2024-12-31
-  test_origin_min: 2025-01-01
+  # Exact complete-label bounds resolved from the pinned snapshot/calendar.
+  test_origin_min: 2025-01-02
+  test_origin_max: 2026-08-20
+  test_label_end_max: 2026-09-03
 
 lightgbm:
   objective: regression

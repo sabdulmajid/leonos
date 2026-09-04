@@ -678,7 +678,11 @@ def validate_prediction_frame(frame: pd.DataFrame) -> None:
 
 
 def write_prediction_shard(frame: pd.DataFrame, path: Path) -> Path:
-    """Validate then atomically replace a Parquet shard on the same filesystem."""
+    """Validate and atomically publish a new immutable Parquet shard.
+
+    The hard-link publish is same-filesystem atomic and, unlike ``os.replace``,
+    fails with ``FileExistsError`` if this worker loses a concurrent race.
+    """
 
     validate_prediction_frame(frame)
     path = Path(path)
@@ -694,7 +698,8 @@ def write_prediction_shard(frame: pd.DataFrame, path: Path) -> Path:
         frame.loc[:, PREDICTION_COLUMNS].to_parquet(temporary_path, index=False)
         with temporary_path.open("rb") as handle:
             os.fsync(handle.fileno())
-        os.replace(temporary_path, path)
+        os.link(temporary_path, path)
+        temporary_path.unlink()
         try:
             directory_fd = os.open(path.parent, os.O_RDONLY)
             try:

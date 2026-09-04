@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import os
 from pathlib import Path
 
 import numpy as np
@@ -242,6 +243,26 @@ def test_prediction_writer_rejects_labels_and_preserves_old_file_on_failure(
     with pytest.raises(RuntimeError, match="interrupted"):
         write_prediction_shard(output, path)
     assert path.read_bytes() == original_bytes
+    assert not list(tmp_path.glob(".*.tmp.parquet"))
+
+
+def test_prediction_writer_losing_publish_race_never_clobbers_winner(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    output, _, _ = run_fake([make_request()])
+    destination = tmp_path / "predictions.parquet"
+    winner = b"concurrent immutable winner"
+    real_link = os.link
+
+    def lose_race(source: str | Path, target: str | Path) -> None:
+        Path(target).write_bytes(winner)
+        real_link(source, target)
+
+    monkeypatch.setattr(os, "link", lose_race)
+    with pytest.raises(FileExistsError):
+        write_prediction_shard(output, destination)
+
+    assert destination.read_bytes() == winner
     assert not list(tmp_path.glob(".*.tmp.parquet"))
 
 

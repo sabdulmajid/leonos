@@ -1,0 +1,542 @@
+{
+  "artifacts": {
+    "final_model_root": "artifacts/models/lightgbm/seed=42/final",
+    "latest": "artifacts/models/lightgbm/seed=42/latest.json",
+    "run_metadata": "artifacts/models/lightgbm/seed=42/run.json",
+    "run_root": "artifacts/models/lightgbm/seed=42",
+    "summary": "results/summary/lightgbm_seed_42.json",
+    "summary_candidates": "results/summary/lightgbm_candidates_seed_42.parquet",
+    "test_predictions": "artifacts/predictions/lightgbm/test/seed=42/predictions.parquet",
+    "tuning_root": "artifacts/models/lightgbm/seed=42/tuning",
+    "validation_predictions": "artifacts/predictions/lightgbm/validation/seed=42/predictions.parquet"
+  },
+  "config_hash": "62192b59c7f3916659cae2445e98b9137a41422ed34e40dc3a7962b4038bafc5",
+  "environment": {
+    "captured_at": "2026-09-04T23:54:42.319956+00:00",
+    "hostname": "Latte",
+    "pid": 709517,
+    "platform": "Linux-6.8.0-117-generic-x86_64-with-glibc2.39",
+    "python": "3.12.3"
+  },
+  "feature_set": {
+    "definitions": [
+      {
+        "expression": "close/open - 1",
+        "family": "candlestick",
+        "lookback_sessions": 1,
+        "name": "KMID"
+      },
+      {
+        "expression": "(high-low)/close",
+        "family": "candlestick",
+        "lookback_sessions": 1,
+        "name": "KLEN"
+      },
+      {
+        "expression": "(close-open)/(high-low), zero if flat",
+        "family": "candlestick",
+        "lookback_sessions": 1,
+        "name": "KMID2"
+      },
+      {
+        "expression": "(high-max(open,close))/close",
+        "family": "candlestick",
+        "lookback_sessions": 1,
+        "name": "KUP"
+      },
+      {
+        "expression": "(min(open,close)-low)/close",
+        "family": "candlestick",
+        "lookback_sessions": 1,
+        "name": "KLOW"
+      },
+      {
+        "expression": "(2*close-high-low)/close",
+        "family": "candlestick",
+        "lookback_sessions": 1,
+        "name": "KSFT"
+      },
+      {
+        "expression": "volume/lag(volume,1) - 1",
+        "family": "volume",
+        "lookback_sessions": 2,
+        "name": "VROC1"
+      },
+      {
+        "expression": "sin(2*pi*weekday/7)",
+        "family": "calendar",
+        "lookback_sessions": 1,
+        "name": "DOW_SIN"
+      },
+      {
+        "expression": "cos(2*pi*weekday/7)",
+        "family": "calendar",
+        "lookback_sessions": 1,
+        "name": "DOW_COS"
+      },
+      {
+        "expression": "sin(2*pi*(month-1)/12)",
+        "family": "calendar",
+        "lookback_sessions": 1,
+        "name": "MONTH_SIN"
+      },
+      {
+        "expression": "cos(2*pi*(month-1)/12)",
+        "family": "calendar",
+        "lookback_sessions": 1,
+        "name": "MONTH_COS"
+      },
+      {
+        "expression": "close/lag(close,5) - 1",
+        "family": "price",
+        "lookback_sessions": 6,
+        "name": "ROC5"
+      },
+      {
+        "expression": "close/mean(close,5) - 1",
+        "family": "price",
+        "lookback_sessions": 5,
+        "name": "MA5"
+      },
+      {
+        "expression": "std(close/lag(close,1)-1,5)",
+        "family": "price",
+        "lookback_sessions": 6,
+        "name": "STD5"
+      },
+      {
+        "expression": "close/max(close,5) - 1",
+        "family": "price",
+        "lookback_sessions": 5,
+        "name": "MAX5"
+      },
+      {
+        "expression": "close/min(close,5) - 1",
+        "family": "price",
+        "lookback_sessions": 5,
+        "name": "MIN5"
+      },
+      {
+        "expression": "(close-min(low,5))/(max(high,5)-min(low,5))",
+        "family": "price",
+        "lookback_sessions": 5,
+        "name": "RSV5"
+      },
+      {
+        "expression": "percentile rank of close in trailing 5 sessions",
+        "family": "price",
+        "lookback_sessions": 5,
+        "name": "RANK5"
+      },
+      {
+        "expression": "volume/mean(volume,5) - 1",
+        "family": "volume",
+        "lookback_sessions": 5,
+        "name": "VMA5"
+      },
+      {
+        "expression": "std(volume,5)/mean(volume,5)",
+        "family": "volume",
+        "lookback_sessions": 5,
+        "name": "VSTD5"
+      },
+      {
+        "expression": "corr(return_1,volume_change_1,5)",
+        "family": "price_volume",
+        "lookback_sessions": 6,
+        "name": "PV_CORR5"
+      },
+      {
+        "expression": "close/lag(close,10) - 1",
+        "family": "price",
+        "lookback_sessions": 11,
+        "name": "ROC10"
+      },
+      {
+        "expression": "close/mean(close,10) - 1",
+        "family": "price",
+        "lookback_sessions": 10,
+        "name": "MA10"
+      },
+      {
+        "expression": "std(close/lag(close,1)-1,10)",
+        "family": "price",
+        "lookback_sessions": 11,
+        "name": "STD10"
+      },
+      {
+        "expression": "close/max(close,10) - 1",
+        "family": "price",
+        "lookback_sessions": 10,
+        "name": "MAX10"
+      },
+      {
+        "expression": "close/min(close,10) - 1",
+        "family": "price",
+        "lookback_sessions": 10,
+        "name": "MIN10"
+      },
+      {
+        "expression": "(close-min(low,10))/(max(high,10)-min(low,10))",
+        "family": "price",
+        "lookback_sessions": 10,
+        "name": "RSV10"
+      },
+      {
+        "expression": "percentile rank of close in trailing 10 sessions",
+        "family": "price",
+        "lookback_sessions": 10,
+        "name": "RANK10"
+      },
+      {
+        "expression": "volume/mean(volume,10) - 1",
+        "family": "volume",
+        "lookback_sessions": 10,
+        "name": "VMA10"
+      },
+      {
+        "expression": "std(volume,10)/mean(volume,10)",
+        "family": "volume",
+        "lookback_sessions": 10,
+        "name": "VSTD10"
+      },
+      {
+        "expression": "corr(return_1,volume_change_1,10)",
+        "family": "price_volume",
+        "lookback_sessions": 11,
+        "name": "PV_CORR10"
+      },
+      {
+        "expression": "close/lag(close,20) - 1",
+        "family": "price",
+        "lookback_sessions": 21,
+        "name": "ROC20"
+      },
+      {
+        "expression": "close/mean(close,20) - 1",
+        "family": "price",
+        "lookback_sessions": 20,
+        "name": "MA20"
+      },
+      {
+        "expression": "std(close/lag(close,1)-1,20)",
+        "family": "price",
+        "lookback_sessions": 21,
+        "name": "STD20"
+      },
+      {
+        "expression": "close/max(close,20) - 1",
+        "family": "price",
+        "lookback_sessions": 20,
+        "name": "MAX20"
+      },
+      {
+        "expression": "close/min(close,20) - 1",
+        "family": "price",
+        "lookback_sessions": 20,
+        "name": "MIN20"
+      },
+      {
+        "expression": "(close-min(low,20))/(max(high,20)-min(low,20))",
+        "family": "price",
+        "lookback_sessions": 20,
+        "name": "RSV20"
+      },
+      {
+        "expression": "percentile rank of close in trailing 20 sessions",
+        "family": "price",
+        "lookback_sessions": 20,
+        "name": "RANK20"
+      },
+      {
+        "expression": "volume/mean(volume,20) - 1",
+        "family": "volume",
+        "lookback_sessions": 20,
+        "name": "VMA20"
+      },
+      {
+        "expression": "std(volume,20)/mean(volume,20)",
+        "family": "volume",
+        "lookback_sessions": 20,
+        "name": "VSTD20"
+      },
+      {
+        "expression": "corr(return_1,volume_change_1,20)",
+        "family": "price_volume",
+        "lookback_sessions": 21,
+        "name": "PV_CORR20"
+      },
+      {
+        "expression": "close/lag(close,30) - 1",
+        "family": "price",
+        "lookback_sessions": 31,
+        "name": "ROC30"
+      },
+      {
+        "expression": "close/mean(close,30) - 1",
+        "family": "price",
+        "lookback_sessions": 30,
+        "name": "MA30"
+      },
+      {
+        "expression": "std(close/lag(close,1)-1,30)",
+        "family": "price",
+        "lookback_sessions": 31,
+        "name": "STD30"
+      },
+      {
+        "expression": "close/max(close,30) - 1",
+        "family": "price",
+        "lookback_sessions": 30,
+        "name": "MAX30"
+      },
+      {
+        "expression": "close/min(close,30) - 1",
+        "family": "price",
+        "lookback_sessions": 30,
+        "name": "MIN30"
+      },
+      {
+        "expression": "(close-min(low,30))/(max(high,30)-min(low,30))",
+        "family": "price",
+        "lookback_sessions": 30,
+        "name": "RSV30"
+      },
+      {
+        "expression": "percentile rank of close in trailing 30 sessions",
+        "family": "price",
+        "lookback_sessions": 30,
+        "name": "RANK30"
+      },
+      {
+        "expression": "volume/mean(volume,30) - 1",
+        "family": "volume",
+        "lookback_sessions": 30,
+        "name": "VMA30"
+      },
+      {
+        "expression": "std(volume,30)/mean(volume,30)",
+        "family": "volume",
+        "lookback_sessions": 30,
+        "name": "VSTD30"
+      },
+      {
+        "expression": "corr(return_1,volume_change_1,30)",
+        "family": "price_volume",
+        "lookback_sessions": 31,
+        "name": "PV_CORR30"
+      },
+      {
+        "expression": "close/lag(close,60) - 1",
+        "family": "price",
+        "lookback_sessions": 61,
+        "name": "ROC60"
+      },
+      {
+        "expression": "close/mean(close,60) - 1",
+        "family": "price",
+        "lookback_sessions": 60,
+        "name": "MA60"
+      },
+      {
+        "expression": "std(close/lag(close,1)-1,60)",
+        "family": "price",
+        "lookback_sessions": 61,
+        "name": "STD60"
+      },
+      {
+        "expression": "close/max(close,60) - 1",
+        "family": "price",
+        "lookback_sessions": 60,
+        "name": "MAX60"
+      },
+      {
+        "expression": "close/min(close,60) - 1",
+        "family": "price",
+        "lookback_sessions": 60,
+        "name": "MIN60"
+      },
+      {
+        "expression": "(close-min(low,60))/(max(high,60)-min(low,60))",
+        "family": "price",
+        "lookback_sessions": 60,
+        "name": "RSV60"
+      },
+      {
+        "expression": "percentile rank of close in trailing 60 sessions",
+        "family": "price",
+        "lookback_sessions": 60,
+        "name": "RANK60"
+      },
+      {
+        "expression": "volume/mean(volume,60) - 1",
+        "family": "volume",
+        "lookback_sessions": 60,
+        "name": "VMA60"
+      },
+      {
+        "expression": "std(volume,60)/mean(volume,60)",
+        "family": "volume",
+        "lookback_sessions": 60,
+        "name": "VSTD60"
+      },
+      {
+        "expression": "corr(return_1,volume_change_1,60)",
+        "family": "price_volume",
+        "lookback_sessions": 61,
+        "name": "PV_CORR60"
+      }
+    ],
+    "feature_count": 61,
+    "max_lookback_sessions": 61,
+    "name": "ohlcv_alpha158_90_v1",
+    "uses_amount_or_vwap": false,
+    "uses_ticker_identity": false
+  },
+  "git": {
+    "commit": "9536d6c20d5c4dbbe035ed2df1e4717e0013fe37",
+    "dirty": true,
+    "status": [
+      "M configs/base.yaml",
+      " M src/leonos/models/kronos.py",
+      " M src/leonos/portfolio.py",
+      " M tests/test_kronos.py",
+      " M tests/test_portfolio.py",
+      "?? results/",
+      "?? src/leonos/cli.py",
+      "?? src/leonos/data.py",
+      "?? src/leonos/evaluation.py",
+      "?? src/leonos/features.py",
+      "?? src/leonos/kronos_runner.py",
+      "?? src/leonos/models/lightgbm.py",
+      "?? src/leonos/pipeline.py",
+      "?? src/leonos/qlib_adapter.py",
+      "?? src/leonos/targets.py",
+      "?? tests/test_cli.py",
+      "?? tests/test_data.py",
+      "?? tests/test_evaluation.py",
+      "?? tests/test_kronos_runner.py",
+      "?? tests/test_lightgbm_model.py",
+      "?? tests/test_pipeline.py",
+      "?? tests/test_qlib_adapter.py",
+      "?? tests/test_targets_features.py"
+    ]
+  },
+  "implementation_hash": "50777148d3a5a5726a1c220aadd173f69607b3632242e8a72eb88715a8cf9f32",
+  "prediction_coverage": {
+    "test_finite": 20859,
+    "validation_finite": 6018
+  },
+  "prepare_signature": "8109d144ba2eff7f5ce27bac6881dafdd58cc7de456084cde28d1506a0421b74",
+  "row_counts": {
+    "development": 468228,
+    "refit": 481080,
+    "test": 20859,
+    "test_predictions": 20859,
+    "validation": 6018,
+    "validation_predictions": 6018
+  },
+  "run_signature": "d5e984aefc7d5d9a87ba343c9c19546a98da9b7a52e57f0fa7246b447d7e0cb1",
+  "schema_version": "leonos.lightgbm_run.v1",
+  "search": {
+    "all_candidates_path": "artifacts/models/lightgbm/seed=42/tuning/candidates.parquet",
+    "candidate_count": 8,
+    "configuration": {
+      "early_stopping_rounds": 50,
+      "max_boost_rounds": 1000,
+      "minimum_daily_coverage": 3,
+      "num_threads": 8,
+      "seed": 42,
+      "tie_tolerance": 1e-06
+    },
+    "selected": {
+      "bagging_fraction": 1.0,
+      "best_iteration": 1,
+      "candidate_id": "l31_lr02",
+      "error": null,
+      "feature_fraction": 1.0,
+      "fit_seconds": 1.7757821679115295,
+      "lambda_l1": 0.0,
+      "lambda_l2": 1.0,
+      "learning_rate": 0.02,
+      "max_depth": -1,
+      "min_data_in_leaf": 20,
+      "num_leaves": 31,
+      "status": "ok",
+      "validation_mean_daily_mae": 0.026294878520330356,
+      "validation_mean_daily_rankic": 0.06500943324871715
+    }
+  },
+  "seed": 42,
+  "source_revisions": {
+    "dataset": {
+      "allow_patterns": [
+        "bars_1day/train.parquet",
+        "bars_1day/val.parquet",
+        "bars_1day/test.parquet",
+        "README.md",
+        "LICENSE*"
+      ],
+      "repo_id": "twelvedata/financial-world-model",
+      "revision": "88b972b547078237865255d9e15e4e16e1dd855f"
+    },
+    "dataset_code": {
+      "revision": "bbb4cbbfea92677e1a7cc0363be9a01c90e4fbc6",
+      "url": "https://github.com/twelvedata/twelvedata-world-model-dataset"
+    },
+    "kronos_code": {
+      "revision": "67b630e67f6a18c9e9be918d9b4337c960db1e9a",
+      "url": "https://github.com/shiyu-coder/Kronos"
+    },
+    "kronos_model": {
+      "repo_id": "NeoQuasar/Kronos-base",
+      "revision": "2b554741eca47781b64468546e77fef3e85130e6"
+    },
+    "kronos_tokenizer": {
+      "repo_id": "NeoQuasar/Kronos-Tokenizer-base",
+      "revision": "0e0117387f39004a9016484a186a908917e22426"
+    },
+    "qlib": {
+      "revision": "79633dd9506ea689e5400dea0197717b5b3d74b7",
+      "url": "https://github.com/microsoft/qlib"
+    }
+  },
+  "split_coverage": {
+    "development": {
+      "label_end_max": "2023-12-29",
+      "origin_max": "2023-12-14",
+      "origin_min": "1970-05-11",
+      "rows": 468228,
+      "ticker_count": 51
+    },
+    "refit": {
+      "label_end_max": "2024-12-31",
+      "origin_max": "2024-12-16",
+      "origin_min": "1970-05-11",
+      "rows": 481080,
+      "ticker_count": 51
+    },
+    "test": {
+      "label_end_max": "2026-09-03",
+      "origin_max": "2026-08-20",
+      "origin_min": "2025-01-02",
+      "rows": 20859,
+      "ticker_count": 51
+    },
+    "validation": {
+      "label_end_max": "2024-12-31",
+      "origin_max": "2024-12-16",
+      "origin_min": "2024-07-01",
+      "rows": 6018,
+      "ticker_count": 51
+    }
+  },
+  "status": "complete",
+  "timing_seconds": {
+    "final_refit": 0.6134228985756636,
+    "test_prediction": 0.029825227335095406,
+    "total": 19.56715054064989,
+    "tuning": 16.472219774499536,
+    "validation_prediction": 0.06254300475120544
+  }
+}

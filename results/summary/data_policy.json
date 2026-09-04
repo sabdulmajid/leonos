@@ -1,0 +1,25 @@
+{
+  "accepted_audit_accepted": true,
+  "accepted_rows": 515779,
+  "exclusion_rows": 78,
+  "exclusions_by_reason": {
+    "non_exchange_session": 1,
+    "nonpositive_or_nonfinite_volume": 77
+  },
+  "normalization": {
+    "datetime_source_timezone": "America/New_York",
+    "identical_duplicate_keys": 0,
+    "identical_duplicate_policy": "reject",
+    "naive_datetimes_localized_to": null,
+    "no_market_values_filled": true,
+    "rows_removed": 0,
+    "sorting": [
+      "symbol",
+      "datetime"
+    ],
+    "symbol_normalization": "strip_then_uppercase",
+    "symbol_values_changed": 0
+  },
+  "raw_audit_accepted": false,
+  "raw_rows": 515857
+}

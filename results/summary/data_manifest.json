@@ -1,0 +1,557 @@
+{
+  "dataset": {
+    "config": "bars_1day",
+    "repo_id": "twelvedata/financial-world-model",
+    "repo_type": "dataset",
+    "revision": "88b972b547078237865255d9e15e4e16e1dd855f"
+  },
+  "expected_parquets": {
+    "test": "bars_1day/test.parquet",
+    "train": "bars_1day/train.parquet",
+    "val": "bars_1day/val.parquet"
+  },
+  "files": [
+    {
+      "date_max": "2023-12-29T00:00:00-05:00",
+      "date_min": "1970-01-02T00:00:00-05:00",
+      "kind": "parquet",
+      "path": "bars_1day/train.parquet",
+      "row_count": 481636,
+      "row_groups": 51,
+      "schema": [
+        {
+          "name": "datetime",
+          "nullable": true,
+          "type": "timestamp[us, tz=America/New_York]"
+        },
+        {
+          "name": "open",
+          "nullable": true,
+          "type": "double"
+        },
+        {
+          "name": "high",
+          "nullable": true,
+          "type": "double"
+        },
+        {
+          "name": "low",
+          "nullable": true,
+          "type": "double"
+        },
+        {
+          "name": "close",
+          "nullable": true,
+          "type": "double"
+        },
+        {
+          "name": "volume",
+          "nullable": true,
+          "type": "int64"
+        },
+        {
+          "name": "symbol",
+          "nullable": true,
+          "type": "large_string"
+        },
+        {
+          "name": "timeframe",
+          "nullable": true,
+          "type": "large_string"
+        },
+        {
+          "name": "close_adj",
+          "nullable": true,
+          "type": "double"
+        },
+        {
+          "name": "spy_logret_1",
+          "nullable": true,
+          "type": "double"
+        },
+        {
+          "name": "vix_level",
+          "nullable": true,
+          "type": "double"
+        },
+        {
+          "name": "tlt_logret_1",
+          "nullable": true,
+          "type": "double"
+        },
+        {
+          "name": "dxy_logret_1",
+          "nullable": true,
+          "type": "double"
+        },
+        {
+          "name": "sector_logret_1",
+          "nullable": true,
+          "type": "double"
+        },
+        {
+          "name": "ret_1",
+          "nullable": true,
+          "type": "double"
+        },
+        {
+          "name": "logret_1",
+          "nullable": true,
+          "type": "double"
+        },
+        {
+          "name": "ret_5",
+          "nullable": true,
+          "type": "double"
+        },
+        {
+          "name": "logret_20",
+          "nullable": true,
+          "type": "double"
+        },
+        {
+          "name": "rv_5",
+          "nullable": true,
+          "type": "double"
+        },
+        {
+          "name": "rv_20",
+          "nullable": true,
+          "type": "double"
+        },
+        {
+          "name": "rv_60",
+          "nullable": true,
+          "type": "double"
+        },
+        {
+          "name": "atr_14",
+          "nullable": true,
+          "type": "double"
+        },
+        {
+          "name": "rsi_14",
+          "nullable": true,
+          "type": "double"
+        },
+        {
+          "name": "macd",
+          "nullable": true,
+          "type": "double"
+        },
+        {
+          "name": "macd_signal",
+          "nullable": true,
+          "type": "double"
+        },
+        {
+          "name": "macd_hist",
+          "nullable": true,
+          "type": "double"
+        },
+        {
+          "name": "mom_10",
+          "nullable": true,
+          "type": "double"
+        },
+        {
+          "name": "obv",
+          "nullable": true,
+          "type": "double"
+        },
+        {
+          "name": "vol_z_20",
+          "nullable": true,
+          "type": "double"
+        },
+        {
+          "name": "bb_mid",
+          "nullable": true,
+          "type": "double"
+        },
+        {
+          "name": "bb_up",
+          "nullable": true,
+          "type": "double"
+        },
+        {
+          "name": "bb_lo",
+          "nullable": true,
+          "type": "double"
+        },
+        {
+          "name": "bb_pctb",
+          "nullable": true,
+          "type": "double"
+        }
+      ],
+      "sha256": "7fa668ede120bfcffd395b9ec4b4136fe42ec5a50dde3550210a4c8b2f164254",
+      "size_bytes": 100125310,
+      "split": "train"
+    },
+    {
+      "date_max": "2024-12-31T00:00:00-05:00",
+      "date_min": "2024-01-02T00:00:00-05:00",
+      "kind": "parquet",
+      "path": "bars_1day/val.parquet",
+      "row_count": 12852,
+      "row_groups": 51,
+      "schema": [
+        {
+          "name": "datetime",
+          "nullable": true,
+          "type": "timestamp[us, tz=America/New_York]"
+        },
+        {
+          "name": "open",
+          "nullable": true,
+          "type": "double"
+        },
+        {
+          "name": "high",
+          "nullable": true,
+          "type": "double"
+        },
+        {
+          "name": "low",
+          "nullable": true,
+          "type": "double"
+        },
+        {
+          "name": "close",
+          "nullable": true,
+          "type": "double"
+        },
+        {
+          "name": "volume",
+          "nullable": true,
+          "type": "int64"
+        },
+        {
+          "name": "symbol",
+          "nullable": true,
+          "type": "large_string"
+        },
+        {
+          "name": "timeframe",
+          "nullable": true,
+          "type": "large_string"
+        },
+        {
+          "name": "close_adj",
+          "nullable": true,
+          "type": "double"
+        },
+        {
+          "name": "spy_logret_1",
+          "nullable": true,
+          "type": "double"
+        },
+        {
+          "name": "vix_level",
+          "nullable": true,
+          "type": "double"
+        },
+        {
+          "name": "tlt_logret_1",
+          "nullable": true,
+          "type": "double"
+        },
+        {
+          "name": "dxy_logret_1",
+          "nullable": true,
+          "type": "double"
+        },
+        {
+          "name": "sector_logret_1",
+          "nullable": true,
+          "type": "double"
+        },
+        {
+          "name": "ret_1",
+          "nullable": true,
+          "type": "double"
+        },
+        {
+          "name": "logret_1",
+          "nullable": true,
+          "type": "double"
+        },
+        {
+          "name": "ret_5",
+          "nullable": true,
+          "type": "double"
+        },
+        {
+          "name": "logret_20",
+          "nullable": true,
+          "type": "double"
+        },
+        {
+          "name": "rv_5",
+          "nullable": true,
+          "type": "double"
+        },
+        {
+          "name": "rv_20",
+          "nullable": true,
+          "type": "double"
+        },
+        {
+          "name": "rv_60",
+          "nullable": true,
+          "type": "double"
+        },
+        {
+          "name": "atr_14",
+          "nullable": true,
+          "type": "double"
+        },
+        {
+          "name": "rsi_14",
+          "nullable": true,
+          "type": "double"
+        },
+        {
+          "name": "macd",
+          "nullable": true,
+          "type": "double"
+        },
+        {
+          "name": "macd_signal",
+          "nullable": true,
+          "type": "double"
+        },
+        {
+          "name": "macd_hist",
+          "nullable": true,
+          "type": "double"
+        },
+        {
+          "name": "mom_10",
+          "nullable": true,
+          "type": "double"
+        },
+        {
+          "name": "obv",
+          "nullable": true,
+          "type": "double"
+        },
+        {
+          "name": "vol_z_20",
+          "nullable": true,
+          "type": "double"
+        },
+        {
+          "name": "bb_mid",
+          "nullable": true,
+          "type": "double"
+        },
+        {
+          "name": "bb_up",
+          "nullable": true,
+          "type": "double"
+        },
+        {
+          "name": "bb_lo",
+          "nullable": true,
+          "type": "double"
+        },
+        {
+          "name": "bb_pctb",
+          "nullable": true,
+          "type": "double"
+        }
+      ],
+      "sha256": "cf871accfb24755a1f0e1cacd1ceeb7c333b647fd6d29dd3b88ba8b46382dbf7",
+      "size_bytes": 3305618,
+      "split": "val"
+    },
+    {
+      "date_max": "2026-09-03T00:00:00-04:00",
+      "date_min": "2025-01-02T00:00:00-05:00",
+      "kind": "parquet",
+      "path": "bars_1day/test.parquet",
+      "row_count": 21369,
+      "row_groups": 51,
+      "schema": [
+        {
+          "name": "datetime",
+          "nullable": true,
+          "type": "timestamp[us, tz=America/New_York]"
+        },
+        {
+          "name": "open",
+          "nullable": true,
+          "type": "double"
+        },
+        {
+          "name": "high",
+          "nullable": true,
+          "type": "double"
+        },
+        {
+          "name": "low",
+          "nullable": true,
+          "type": "double"
+        },
+        {
+          "name": "close",
+          "nullable": true,
+          "type": "double"
+        },
+        {
+          "name": "volume",
+          "nullable": true,
+          "type": "int64"
+        },
+        {
+          "name": "symbol",
+          "nullable": true,
+          "type": "large_string"
+        },
+        {
+          "name": "timeframe",
+          "nullable": true,
+          "type": "large_string"
+        },
+        {
+          "name": "close_adj",
+          "nullable": true,
+          "type": "double"
+        },
+        {
+          "name": "spy_logret_1",
+          "nullable": true,
+          "type": "double"
+        },
+        {
+          "name": "vix_level",
+          "nullable": true,
+          "type": "double"
+        },
+        {
+          "name": "tlt_logret_1",
+          "nullable": true,
+          "type": "double"
+        },
+        {
+          "name": "dxy_logret_1",
+          "nullable": true,
+          "type": "double"
+        },
+        {
+          "name": "sector_logret_1",
+          "nullable": true,
+          "type": "double"
+        },
+        {
+          "name": "ret_1",
+          "nullable": true,
+          "type": "double"
+        },
+        {
+          "name": "logret_1",
+          "nullable": true,
+          "type": "double"
+        },
+        {
+          "name": "ret_5",
+          "nullable": true,
+          "type": "double"
+        },
+        {
+          "name": "logret_20",
+          "nullable": true,
+          "type": "double"
+        },
+        {
+          "name": "rv_5",
+          "nullable": true,
+          "type": "double"
+        },
+        {
+          "name": "rv_20",
+          "nullable": true,
+          "type": "double"
+        },
+        {
+          "name": "rv_60",
+          "nullable": true,
+          "type": "double"
+        },
+        {
+          "name": "atr_14",
+          "nullable": true,
+          "type": "double"
+        },
+        {
+          "name": "rsi_14",
+          "nullable": true,
+          "type": "double"
+        },
+        {
+          "name": "macd",
+          "nullable": true,
+          "type": "double"
+        },
+        {
+          "name": "macd_signal",
+          "nullable": true,
+          "type": "double"
+        },
+        {
+          "name": "macd_hist",
+          "nullable": true,
+          "type": "double"
+        },
+        {
+          "name": "mom_10",
+          "nullable": true,
+          "type": "double"
+        },
+        {
+          "name": "obv",
+          "nullable": true,
+          "type": "double"
+        },
+        {
+          "name": "vol_z_20",
+          "nullable": true,
+          "type": "double"
+        },
+        {
+          "name": "bb_mid",
+          "nullable": true,
+          "type": "double"
+        },
+        {
+          "name": "bb_up",
+          "nullable": true,
+          "type": "double"
+        },
+        {
+          "name": "bb_lo",
+          "nullable": true,
+          "type": "double"
+        },
+        {
+          "name": "bb_pctb",
+          "nullable": true,
+          "type": "double"
+        }
+      ],
+      "sha256": "e96b8318ed4962bf164f09adc144772d0aed838ce4727ba3c352502d27064018",
+      "size_bytes": 5253898,
+      "split": "test"
+    },
+    {
+      "kind": "metadata",
+      "path": "README.md",
+      "sha256": "ed683f5f0c58172219f9475e5e49e1e44fe1a221762456dfe183c87f9f5d6d5f",
+      "size_bytes": 10678
+    }
+  ],
+  "retrieved_at_utc": "2026-09-04T23:32:58.246574+00:00",
+  "schema_version": "leonos.daily_snapshot.v1"
+}

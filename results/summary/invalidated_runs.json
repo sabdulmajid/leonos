@@ -1,0 +1,15 @@
+{
+  "runs": [
+    {
+      "artifact_archive": "artifacts/invalidated/pre-m1-metadata",
+      "invalidated_at_utc": "2026-09-04T23:50:00Z",
+      "model": "lightgbm",
+      "prepare_signature": "cf9590198583cb1288d05b3706b30cac894fc1d7b757526a87382aa018362c8e",
+      "reason": "The preparation run metadata contract was strengthened before the M1 freeze; the otherwise successful pre-freeze baseline was archived and is not reportable.",
+      "run_signature": "444a25f7793dcc7dc84a3ce403ae8ea735f3ba3b4bb1b8a91b216d388f5863a0",
+      "seed": 42,
+      "status": "invalidated"
+    }
+  ],
+  "schema_version": "leonos.invalidated_runs.v1"
+}

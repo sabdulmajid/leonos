@@ -1,0 +1,162 @@
+{
+  "accepted_rows": 515779,
+  "accepted_tickers": 51,
+  "artifacts": {
+    "accepted_audit_json": "data/prepared/audit_accepted.json",
+    "accepted_audit_markdown": "data/prepared/audit_accepted.md",
+    "accepted_bars": "data/prepared/accepted_bars.parquet",
+    "calendar": "data/prepared/sessions.parquet",
+    "exclusions": "data/prepared/exclusions.parquet",
+    "feature_manifest": "data/prepared/feature_manifest.json",
+    "features": "data/prepared/features.parquet",
+    "labels_all": "data/prepared/labels/all.parquet",
+    "labels_development": "data/prepared/labels/development.parquet",
+    "labels_refit": "data/prepared/labels/refit.parquet",
+    "labels_test": "data/prepared/labels/test.parquet",
+    "labels_validation": "data/prepared/labels/validation.parquet",
+    "normalization": "data/prepared/normalization.json",
+    "raw_audit_json": "data/prepared/audit_raw.json",
+    "raw_audit_markdown": "data/prepared/audit_raw.md",
+    "run_metadata": "data/prepared/prepare_run.json",
+    "summary": "results/summary/preparation.json",
+    "summary_audit_json": "results/summary/data_acceptance.json",
+    "summary_audit_markdown": "results/summary/data_acceptance.md",
+    "summary_raw_audit_json": "results/summary/data_audit_raw.json"
+  },
+  "calendar_sessions": 14290,
+  "config_hash": "62192b59c7f3916659cae2445e98b9137a41422ed34e40dc3a7962b4038bafc5",
+  "dataset_revision": "88b972b547078237865255d9e15e4e16e1dd855f",
+  "elapsed_seconds": 31.901215381920338,
+  "environment": {
+    "captured_at": "2026-09-04T23:54:21.881482+00:00",
+    "hostname": "Latte",
+    "pid": 709518,
+    "platform": "Linux-6.8.0-117-generic-x86_64-with-glibc2.39",
+    "python": "3.12.3"
+  },
+  "excluded_unique_rows": 78,
+  "exclusion_ledger_rows": 78,
+  "exclusions_by_reason": {
+    "non_exchange_session": 1,
+    "nonpositive_or_nonfinite_volume": 77
+  },
+  "feature_count": 61,
+  "finished_at_utc": "2026-09-04T23:54:21.883049+00:00",
+  "git": {
+    "commit": "9536d6c20d5c4dbbe035ed2df1e4717e0013fe37",
+    "dirty": true,
+    "status": [
+      "M configs/base.yaml",
+      " M src/leonos/models/kronos.py",
+      " M src/leonos/portfolio.py",
+      " M tests/test_kronos.py",
+      " M tests/test_portfolio.py",
+      "?? results/",
+      "?? src/leonos/cli.py",
+      "?? src/leonos/data.py",
+      "?? src/leonos/evaluation.py",
+      "?? src/leonos/features.py",
+      "?? src/leonos/kronos_runner.py",
+      "?? src/leonos/models/lightgbm.py",
+      "?? src/leonos/pipeline.py",
+      "?? src/leonos/qlib_adapter.py",
+      "?? src/leonos/targets.py",
+      "?? tests/test_cli.py",
+      "?? tests/test_data.py",
+      "?? tests/test_evaluation.py",
+      "?? tests/test_kronos_runner.py",
+      "?? tests/test_lightgbm_model.py",
+      "?? tests/test_pipeline.py",
+      "?? tests/test_qlib_adapter.py",
+      "?? tests/test_targets_features.py"
+    ]
+  },
+  "implementation_hash": "23a166d004118f4b990dc78f8d36f7700d77d6bbcbedc360a8207fd9bee193fa",
+  "normalized_rows": 515857,
+  "raw_rows": 515857,
+  "row_counts": {
+    "accepted_bars": 515779,
+    "calendar": 14290,
+    "exclusions": 78,
+    "features": 502449,
+    "labels_all": 502449,
+    "labels_development": 468228,
+    "labels_refit": 481080,
+    "labels_test": 20859,
+    "labels_validation": 6018
+  },
+  "run_signature": "8109d144ba2eff7f5ce27bac6881dafdd58cc7de456084cde28d1506a0421b74",
+  "schema_version": "leonos.prepare.v1",
+  "source_revisions": {
+    "dataset": {
+      "allow_patterns": [
+        "bars_1day/train.parquet",
+        "bars_1day/val.parquet",
+        "bars_1day/test.parquet",
+        "README.md",
+        "LICENSE*"
+      ],
+      "repo_id": "twelvedata/financial-world-model",
+      "revision": "88b972b547078237865255d9e15e4e16e1dd855f"
+    },
+    "dataset_code": {
+      "revision": "bbb4cbbfea92677e1a7cc0363be9a01c90e4fbc6",
+      "url": "https://github.com/twelvedata/twelvedata-world-model-dataset"
+    },
+    "kronos_code": {
+      "revision": "67b630e67f6a18c9e9be918d9b4337c960db1e9a",
+      "url": "https://github.com/shiyu-coder/Kronos"
+    },
+    "kronos_model": {
+      "repo_id": "NeoQuasar/Kronos-base",
+      "revision": "2b554741eca47781b64468546e77fef3e85130e6"
+    },
+    "kronos_tokenizer": {
+      "repo_id": "NeoQuasar/Kronos-Tokenizer-base",
+      "revision": "0e0117387f39004a9016484a186a908917e22426"
+    },
+    "qlib": {
+      "revision": "79633dd9506ea689e5400dea0197717b5b3d74b7",
+      "url": "https://github.com/microsoft/qlib"
+    }
+  },
+  "split_coverage": {
+    "all": {
+      "label_end_max": "2026-09-03",
+      "origin_max": "2026-08-20",
+      "origin_min": "1970-05-11",
+      "rows": 502449,
+      "ticker_count": 51
+    },
+    "development": {
+      "label_end_max": "2023-12-29",
+      "origin_max": "2023-12-14",
+      "origin_min": "1970-05-11",
+      "rows": 468228,
+      "ticker_count": 51
+    },
+    "refit": {
+      "label_end_max": "2024-12-31",
+      "origin_max": "2024-12-16",
+      "origin_min": "1970-05-11",
+      "rows": 481080,
+      "ticker_count": 51
+    },
+    "test": {
+      "label_end_max": "2026-09-03",
+      "origin_max": "2026-08-20",
+      "origin_min": "2025-01-02",
+      "rows": 20859,
+      "ticker_count": 51
+    },
+    "validation": {
+      "label_end_max": "2024-12-31",
+      "origin_max": "2024-12-16",
+      "origin_min": "2024-07-01",
+      "rows": 6018,
+      "ticker_count": 51
+    }
+  },
+  "started_at_utc": "2026-09-04T23:53:50.025313+00:00",
+  "status": "complete"
+}
