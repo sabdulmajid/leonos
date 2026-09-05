@@ -1603,19 +1603,16 @@
   "run_provenance": {
     "config_hash": "7c6fdf5b112241292d463f4f3693562c85dac04478cfd56b529a9a90b70c63f4",
     "environment": {
-      "captured_at": "2026-09-05T01:20:45.521882+00:00",
+      "captured_at": "2026-09-05T01:23:01.078715+00:00",
       "hostname": "Latte",
-      "pid": 800703,
+      "pid": 804997,
       "platform": "Linux-6.8.0-117-generic-x86_64-with-glibc2.39",
       "python": "3.12.3"
     },
     "git": {
-      "commit": "8b6660d7f1e3c1229844d70f1cc38c2f8b74f715",
-      "dirty": true,
-      "status": [
-        "M results/summary/evaluation_seed_42.json",
-        " M results/summary/evaluation_seed_43.json"
-      ]
+      "commit": "7e6462670262757745a8700f0669fed899ace421",
+      "dirty": false,
+      "status": []
     },
     "implementation_hash": "241745afb2270f712ba99f54ad2f54332e5a1f3e7d98da7065150e7436f9dd5e",
     "source_revisions": {
