@@ -17,6 +17,9 @@ def test_required_command_surface_parses() -> None:
     assert prediction.seed == 42
     assert prediction.num_shards is None
     assert parser.parse_args(["evaluate"]).command == "evaluate"
+    scenario = parser.parse_args(["scenario", "--replicates", "10000"])
+    assert scenario.command == "scenario"
+    assert scenario.replicates == 10000
     assert parser.parse_args(["report"]).command == "report"
 
 

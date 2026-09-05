@@ -1,0 +1,10 @@
+# Post-v1 robustness settings. This file is separate so the frozen v1 config
+# and the provenance hashes of its completed evaluations remain unchanged.
+method: paired_circular_moving_block_bootstrap_of_saved_rankic_and_net_returns
+forecast_seeds: [42, 43, 44]
+cost_bps_per_side: [0, 5, 15]
+replicates: 100000
+block_length_sessions: 20
+seed: 20260905
+batch_size: 1024
+normalized_initial_value: 100.0

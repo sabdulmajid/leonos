@@ -126,6 +126,14 @@ def build_parser() -> argparse.ArgumentParser:
 
     evaluate = commands.add_parser("evaluate", help="evaluate saved predictions only")
     evaluate.add_argument("--seed", type=int, default=42)
+    scenario = commands.add_parser(
+        "scenario",
+        help="CPU-only paired block bootstrap of saved RankIC and portfolio returns",
+    )
+    scenario.add_argument("--replicates", type=int)
+    scenario.add_argument("--block-length", type=int)
+    scenario.add_argument("--seed", type=int)
+    scenario.add_argument("--scenario-config", default="configs/scenario.yaml")
     commands.add_parser("report", help="render the result report from saved metrics")
     return parser
 
@@ -194,6 +202,16 @@ def main(argv: list[str] | None = None) -> int:
         from .reporting import evaluate_saved_predictions
 
         result = evaluate_saved_predictions(config, seed=args.seed)
+    elif args.command == "scenario":
+        from .scenario import load_scenario_config, run_saved_scenario_analysis
+
+        result = run_saved_scenario_analysis(
+            config,
+            scenario_config=load_scenario_config(args.scenario_config),
+            replicates=args.replicates,
+            block_length=args.block_length,
+            seed=args.seed,
+        )
     elif args.command == "report":
         from .figures import render_result_figures
         from .reporting import render_results_report
