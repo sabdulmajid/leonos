@@ -5,15 +5,14 @@ Leonos asks one question: on a fixed basket of U.S. equities, does frozen
 than a pooled LightGBM model, and does any ranking advantage improve the same
 long-only portfolio after transaction costs?
 
-**Status (2026-09-04): seed-42 signal evaluation is complete; portfolio outputs
-are being corrected.** Across 409 test dates and 20,859 common observations, Kronos's
+**Status (2026-09-04): the primary seed-42 comparison is complete and
+inconclusive.** Across 409 test dates and 20,859 common observations, Kronos's
 mean daily RankIC was -0.0032 versus 0.0025 for LightGBM. The paired difference
-was -0.0056 (95% moving-block-bootstrap CI [-0.0746, 0.0496]). Independent review
-found nondeterministic Qlib selection at exact LightGBM score ties; the previously
-published seed-42 portfolio numbers are withdrawn while a deterministic
-portfolio-only tie-break is tested and rerun. Saved forecasts and signal metrics
-are unaffected. See [the results](reports/results.md); the two declared
-sensitivity seeds remain in progress.
+was -0.0056 (95% moving-block-bootstrap CI [-0.0746, 0.0496]). With deterministic
+portfolio-only tie handling and five basis points per side, LightGBM returned
+107.99% net versus 49.99% for Kronos, with higher Sharpe and shallower drawdown.
+See [the results](reports/results.md); the final declared sensitivity seed remains
+in progress.
 
 The pinned snapshot passed the post-policy audit with 515,779 daily bars and all
 51 equities. Both models covered every one of the 20,859 eligible test origins.

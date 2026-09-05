@@ -20,6 +20,38 @@
     }
   ],
   "comparison": {
+    "bootstrap_sensitivity": [
+      {
+        "block_length": 20,
+        "estimate": -0.0056409613061177135,
+        "lower": -0.07460805723240234,
+        "observations": 409,
+        "replicates": 2000,
+        "seed": 42,
+        "standard_error": 0.032194036465288345,
+        "upper": 0.04962472114651641
+      },
+      {
+        "block_length": 10,
+        "estimate": -0.0056409613061177135,
+        "lower": -0.06489584412517528,
+        "observations": 409,
+        "replicates": 2000,
+        "seed": 42,
+        "standard_error": 0.027382084352718564,
+        "upper": 0.044936628246671516
+      },
+      {
+        "block_length": 40,
+        "estimate": -0.0056409613061177135,
+        "lower": -0.08197009867490207,
+        "observations": 409,
+        "replicates": 2000,
+        "seed": 42,
+        "standard_error": 0.03406152498842022,
+        "upper": 0.053399787519907656
+      }
+    ],
     "common_coverage": 1.0,
     "common_observations": 20859,
     "dates_meeting_minimum_coverage": 409,
@@ -1571,20 +1603,18 @@
   "run_provenance": {
     "config_hash": "7c6fdf5b112241292d463f4f3693562c85dac04478cfd56b529a9a90b70c63f4",
     "environment": {
-      "captured_at": "2026-09-05T00:46:28.079562+00:00",
+      "captured_at": "2026-09-05T00:53:55.976427+00:00",
       "hostname": "Latte",
-      "pid": 767329,
+      "pid": 774675,
       "platform": "Linux-6.8.0-117-generic-x86_64-with-glibc2.39",
       "python": "3.12.3"
     },
     "git": {
-      "commit": "2e4ffcae9d5fd0f08e54bb2c37b7ce779c173469",
-      "dirty": true,
-      "status": [
-        "M results/summary/evaluation_seed_42.json"
-      ]
+      "commit": "69a1e275ee2616d827c2fa5922c424bebae59cf8",
+      "dirty": false,
+      "status": []
     },
-    "implementation_hash": "a8c52bd1de2c831e8082437412ea86a846185e0721af3e37d6f324bb2fb78ccb",
+    "implementation_hash": "851db39142ce564e5b4ddb770a577a98dbd2a4f0560d2985fee397439705eb63",
     "source_revisions": {
       "dataset": {
         "allow_patterns": [
