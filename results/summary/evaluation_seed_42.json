@@ -96,6 +96,14 @@
     }
   },
   "dataset_revision": "88b972b547078237865255d9e15e4e16e1dd855f",
+  "forecast_origin_end": "2026-08-20",
+  "forecast_origin_start": "2025-01-02",
+  "lightgbm_validation_selection": {
+    "best_iteration": 1,
+    "candidate_id": "l31_lr02",
+    "procedure": "full development fit and validation selection rerun for this seed; then declared final refit",
+    "validation_mean_daily_rankic": 0.06500943324871715
+  },
   "portfolio": {
     "accounting_convention": "split-adjusted price-return simulation; not literal historical share accounting; dividends excluded",
     "end_session": "2026-08-21",
@@ -154,6 +162,14 @@
           "max_drawdown": -0.3590285328460169,
           "net_cumulative_return": 0.5586051066284214,
           "net_sharpe_zero_cash": 0.9048541991273573,
+          "position_diagnostics": {
+            "max_gross_invested_exposure": 0.9999682028337499,
+            "max_largest_single_stock_weight": 0.9004208883136074,
+            "median_gross_invested_exposure": 0.9974177801139192,
+            "median_largest_single_stock_weight": 0.6736769726711284,
+            "minimum_cash_account_weight": 3.1797166250116776e-05,
+            "minimum_cash_dollars": 34.269752502441406
+          },
           "return_definition": "Qlib return - Qlib cost, compounded once",
           "sessions": 409,
           "transaction_costs_dollars": 0.0,
@@ -172,6 +188,14 @@
           "max_drawdown": -0.3879801113542215,
           "net_cumulative_return": 0.39027862953608583,
           "net_sharpe_zero_cash": 0.7148797197202651,
+          "position_diagnostics": {
+            "max_gross_invested_exposure": 0.9999601045142624,
+            "max_largest_single_stock_weight": 0.9031103562809576,
+            "median_gross_invested_exposure": 0.9975813540314944,
+            "median_largest_single_stock_weight": 0.6818543897046945,
+            "minimum_cash_account_weight": 3.9895485737641844e-05,
+            "minimum_cash_dollars": 43.41981814367978
+          },
           "return_definition": "Qlib return - Qlib cost, compounded once",
           "sessions": 409,
           "transaction_costs_dollars": 137620.51485974414,
@@ -190,6 +214,14 @@
           "max_drawdown": -0.36907829652384594,
           "net_cumulative_return": 0.4999021488055524,
           "net_sharpe_zero_cash": 0.8408327915835903,
+          "position_diagnostics": {
+            "max_gross_invested_exposure": 0.999963736449176,
+            "max_largest_single_stock_weight": 0.9014198691269858,
+            "median_gross_invested_exposure": 0.997428309113271,
+            "median_largest_single_stock_weight": 0.6772083292775508,
+            "minimum_cash_account_weight": 3.6263550823981406e-05,
+            "minimum_cash_dollars": 40.471308862759884
+          },
           "return_definition": "Qlib return - Qlib cost, compounded once",
           "sessions": 409,
           "transaction_costs_dollars": 47777.415700977326,
@@ -210,6 +242,14 @@
           "max_drawdown": -0.2846961099483386,
           "net_cumulative_return": 1.1489168415641777,
           "net_sharpe_zero_cash": 1.279935002609013,
+          "position_diagnostics": {
+            "max_gross_invested_exposure": 0.999934702612715,
+            "max_largest_single_stock_weight": 0.85244392462419,
+            "median_gross_invested_exposure": 0.99703518809378,
+            "median_largest_single_stock_weight": 0.5623728250870615,
+            "minimum_cash_account_weight": 6.52973872849527e-05,
+            "minimum_cash_dollars": 90.71077728271484
+          },
           "return_definition": "Qlib return - Qlib cost, compounded once",
           "sessions": 409,
           "transaction_costs_dollars": 0.0,
@@ -228,6 +268,14 @@
           "max_drawdown": -0.2885470552399877,
           "net_cumulative_return": 0.9507720063216041,
           "net_sharpe_zero_cash": 1.144202523763134,
+          "position_diagnostics": {
+            "max_gross_invested_exposure": 0.9999480691220831,
+            "max_largest_single_stock_weight": 0.8571286614358017,
+            "median_gross_invested_exposure": 0.9971685050752173,
+            "median_largest_single_stock_weight": 0.5677821918335567,
+            "minimum_cash_account_weight": 5.193087791683662e-05,
+            "minimum_cash_dollars": 49.07373300951542
+          },
           "return_definition": "Qlib return - Qlib cost, compounded once",
           "sessions": 409,
           "transaction_costs_dollars": 124563.01727611542,
@@ -246,6 +294,14 @@
           "max_drawdown": -0.2859411115803391,
           "net_cumulative_return": 1.0798949867584908,
           "net_sharpe_zero_cash": 1.2341264918656636,
+          "position_diagnostics": {
+            "max_gross_invested_exposure": 0.999903470210903,
+            "max_largest_single_stock_weight": 0.8544828743846007,
+            "median_gross_invested_exposure": 0.9969911335447789,
+            "median_largest_single_stock_weight": 0.5644306816092651,
+            "minimum_cash_account_weight": 9.652978909708562e-05,
+            "minimum_cash_dollars": 104.70805894879186
+          },
           "return_definition": "Qlib return - Qlib cost, compounded once",
           "sessions": 409,
           "transaction_costs_dollars": 43033.412247400316,
@@ -1603,18 +1659,18 @@
   "run_provenance": {
     "config_hash": "7c6fdf5b112241292d463f4f3693562c85dac04478cfd56b529a9a90b70c63f4",
     "environment": {
-      "captured_at": "2026-09-05T01:22:07.608936+00:00",
+      "captured_at": "2026-09-05T01:38:38.970185+00:00",
       "hostname": "Latte",
-      "pid": 803434,
+      "pid": 822826,
       "platform": "Linux-6.8.0-117-generic-x86_64-with-glibc2.39",
       "python": "3.12.3"
     },
     "git": {
-      "commit": "91f8a24d4e623b104e18abe7d10736089e9b14e2",
+      "commit": "91e140143625dd0fdc446bb709929a0390d35b63",
       "dirty": false,
       "status": []
     },
-    "implementation_hash": "241745afb2270f712ba99f54ad2f54332e5a1f3e7d98da7065150e7436f9dd5e",
+    "implementation_hash": "6c42afb3b507f5b423deeab5b103b481a82cdaa20ea4fbade1de12b2a769c5f9",
     "source_revisions": {
       "dataset": {
         "allow_patterns": [
