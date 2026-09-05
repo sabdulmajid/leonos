@@ -12,9 +12,9 @@
   },
   "config_hash": "62192b59c7f3916659cae2445e98b9137a41422ed34e40dc3a7962b4038bafc5",
   "environment": {
-    "captured_at": "2026-09-04T23:54:42.319956+00:00",
+    "captured_at": "2026-09-05T00:07:57.039373+00:00",
     "hostname": "Latte",
-    "pid": 709517,
+    "pid": 727356,
     "platform": "Linux-6.8.0-117-generic-x86_64-with-glibc2.39",
     "python": "3.12.3"
   },
@@ -394,40 +394,35 @@
     "uses_ticker_identity": false
   },
   "git": {
-    "commit": "9536d6c20d5c4dbbe035ed2df1e4717e0013fe37",
+    "commit": "79da6dcfec958330c12e26545fc40a84a905e545",
     "dirty": true,
     "status": [
-      "M configs/base.yaml",
-      " M src/leonos/models/kronos.py",
+      "M pyproject.toml",
+      " M results/summary/data_acceptance.json",
+      " M results/summary/data_audit_raw.json",
+      " M results/summary/invalidated_runs.json",
+      " M results/summary/lightgbm_candidates_seed_42.parquet",
+      " D results/summary/lightgbm_seed_42.json",
+      " M results/summary/preparation.json",
+      " M src/leonos/cli.py",
+      " M src/leonos/kronos_runner.py",
+      " M src/leonos/pipeline.py",
       " M src/leonos/portfolio.py",
-      " M tests/test_kronos.py",
-      " M tests/test_portfolio.py",
-      "?? results/",
-      "?? src/leonos/cli.py",
-      "?? src/leonos/data.py",
-      "?? src/leonos/evaluation.py",
-      "?? src/leonos/features.py",
-      "?? src/leonos/kronos_runner.py",
-      "?? src/leonos/models/lightgbm.py",
-      "?? src/leonos/pipeline.py",
-      "?? src/leonos/qlib_adapter.py",
-      "?? src/leonos/targets.py",
-      "?? tests/test_cli.py",
-      "?? tests/test_data.py",
-      "?? tests/test_evaluation.py",
-      "?? tests/test_kronos_runner.py",
-      "?? tests/test_lightgbm_model.py",
-      "?? tests/test_pipeline.py",
-      "?? tests/test_qlib_adapter.py",
-      "?? tests/test_targets_features.py"
+      " M tests/test_cli.py",
+      " M tests/test_kronos_runner.py",
+      " M tests/test_pipeline.py",
+      " M uv.lock",
+      "?? results/summary/hardware.json",
+      "?? src/leonos/reporting.py",
+      "?? tests/test_reporting.py"
     ]
   },
-  "implementation_hash": "50777148d3a5a5726a1c220aadd173f69607b3632242e8a72eb88715a8cf9f32",
+  "implementation_hash": "dbb3d537ebd9070276681a25aa12ed071b86dac57643501e7a82379576a150b4",
   "prediction_coverage": {
     "test_finite": 20859,
     "validation_finite": 6018
   },
-  "prepare_signature": "8109d144ba2eff7f5ce27bac6881dafdd58cc7de456084cde28d1506a0421b74",
+  "prepare_signature": "a2cf3e566f4c30dff0903bd081a14fa5eb12365c9209cbe0de2b89ed7068e95d",
   "row_counts": {
     "development": 468228,
     "refit": 481080,
@@ -436,7 +431,7 @@
     "validation": 6018,
     "validation_predictions": 6018
   },
-  "run_signature": "d5e984aefc7d5d9a87ba343c9c19546a98da9b7a52e57f0fa7246b447d7e0cb1",
+  "run_signature": "53ea92407f7d6abd8fa5d16bece2248013461750958d1a0de81df85a6215628d",
   "schema_version": "leonos.lightgbm_run.v1",
   "search": {
     "all_candidates_path": "artifacts/models/lightgbm/seed=42/tuning/candidates.parquet",
@@ -455,7 +450,7 @@
       "candidate_id": "l31_lr02",
       "error": null,
       "feature_fraction": 1.0,
-      "fit_seconds": 1.7757821679115295,
+      "fit_seconds": 1.7741889618337154,
       "lambda_l1": 0.0,
       "lambda_l2": 1.0,
       "learning_rate": 0.02,
@@ -531,12 +526,13 @@
       "ticker_count": 51
     }
   },
+  "stage_config_hash": "f3508e9dc37154e603157de080deba60c391de3881524d33b335b3142a684c8c",
   "status": "complete",
   "timing_seconds": {
-    "final_refit": 0.6134228985756636,
-    "test_prediction": 0.029825227335095406,
-    "total": 19.56715054064989,
-    "tuning": 16.472219774499536,
-    "validation_prediction": 0.06254300475120544
+    "final_refit": 0.6056737769395113,
+    "test_prediction": 0.02773258276283741,
+    "total": 19.620924102142453,
+    "tuning": 16.616681411862373,
+    "validation_prediction": 0.0162540003657341
   }
 }

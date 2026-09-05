@@ -12,7 +12,12 @@ import pytest
 import leonos.kronos_runner as runner
 import leonos.pipeline as pipeline
 from leonos.data import EXPECTED_PARQUETS, MANIFEST_SCHEMA, DataIntegrityError
-from leonos.kronos_runner import chunked, iter_requests, run_kronos_predictions
+from leonos.kronos_runner import (
+    chunked,
+    iter_requests,
+    run_kronos_predictions,
+    select_safe_batch_size,
+)
 from leonos.models.kronos import KronosInferenceConfig
 
 
@@ -39,6 +44,8 @@ def _runner_config(root: Path) -> dict[str, object]:
                 "top_p": inference.top_p,
                 "top_k": None,
                 "sample_count": inference.sample_count,
+                "batch_size": 1,
+                "num_shards": 1,
             },
         },
     }
@@ -125,6 +132,22 @@ def test_chunking_is_deterministic() -> None:
     assert list(chunked(range(7), 3)) == [[0, 1, 2], [3, 4, 5], [6]]
 
 
+def test_canonical_execution_plan_must_be_frozen_and_overrides_must_match(
+    tmp_path: Path,
+) -> None:
+    config = _runner_config(tmp_path)
+    assert runner.frozen_kronos_execution_plan(config) == (1, 1)
+    assert runner.frozen_kronos_execution_plan(config, batch_size=1, num_shards=1) == (
+        1,
+        1,
+    )
+    with pytest.raises(ValueError, match="must equal frozen"):
+        runner.frozen_kronos_execution_plan(config, batch_size=2)
+    del config["forecast"]["kronos"]["num_shards"]
+    with pytest.raises(ValueError, match="must be frozen"):
+        runner.frozen_kronos_execution_plan(config)
+
+
 def test_runner_refuses_configuration_stale_preparation(tmp_path: Path) -> None:
     config = _runner_config(tmp_path)
     _write_prepare_marker(config)
@@ -208,6 +231,12 @@ def test_worker_state_records_preparation_timing_revisions_and_memory(
     )
 
     assert state["status"] == "complete"
+    assert state["attempt_count"] == 1
+    assert state["first_started_at_utc"] == state["started_at_utc"]
+    assert state["cumulative_elapsed_seconds"] == state["elapsed_seconds"]
+    assert state["resume_command"].startswith(
+        ".venv/bin/leonos --config configs/base.yaml predict"
+    )
     assert state["prepare_signature"] == marker["run_signature"]
     assert state["dataset_revision"] == marker["dataset_revision"]
     assert pd.Timestamp(state["finished_at_utc"]) >= pd.Timestamp(state["started_at_utc"])
@@ -223,6 +252,18 @@ def test_worker_state_records_preparation_timing_revisions_and_memory(
     assert plan["plan"]["selected_key_count"] == 0
     assert plan["plan"]["batch_size"] == 1
     assert plan["plan"]["num_shards"] == 1
+
+    monkeypatch.setattr(
+        runner,
+        "ensure_kronos_assets",
+        lambda supplied: pytest.fail("completed worker must not reload the model"),
+    )
+    assert (
+        run_kronos_predictions(
+            config, split="validation", seed=42, device="cpu", batch_size=1
+        )
+        == state
+    )
 
 
 @pytest.mark.parametrize(("batch_size", "num_shards"), [(2, 1), (1, 2)])
@@ -241,7 +282,13 @@ def test_existing_namespace_rejects_changed_worker_plan(
         ),
     )
     run_kronos_predictions(
-        config, split="validation", seed=42, device="cpu", batch_size=1
+        config,
+        split="validation",
+        seed=42,
+        device="cpu",
+        batch_size=1,
+        limit=1,
+        run_name="validation-smoke",
     )
 
     with pytest.raises(runner.RunPlanMismatchError, match="different immutable run plan"):
@@ -252,6 +299,8 @@ def test_existing_namespace_rejects_changed_worker_plan(
             device="cpu",
             batch_size=batch_size,
             num_shards=num_shards,
+            limit=1,
+            run_name="validation-smoke",
         )
 
 
@@ -290,6 +339,22 @@ def test_worker_failure_state_is_terminal(
     assert failed["finished_at_utc"]
     assert failed["elapsed_seconds"] >= 0.0
     assert failed["error"] == "RuntimeError: checkpoint unavailable"
+    first_started = failed["first_started_at_utc"]
+    first_elapsed = failed["cumulative_elapsed_seconds"]
+
+    monkeypatch.setattr(
+        runner,
+        "ensure_kronos_assets",
+        lambda supplied: SimpleNamespace(
+            source_root=tmp_path, model_snapshot=tmp_path, tokenizer_snapshot=tmp_path
+        ),
+    )
+    resumed = run_kronos_predictions(
+        config, split="validation", seed=42, device="cpu", batch_size=1
+    )
+    assert resumed["attempt_count"] == 2
+    assert resumed["first_started_at_utc"] == first_started
+    assert resumed["cumulative_elapsed_seconds"] >= first_elapsed
 
 
 def test_collapsed_scores_keep_evaluation_provenance(
@@ -322,3 +387,23 @@ def test_collapsed_scores_keep_evaluation_provenance(
             "status": "ok",
         }
     ]
+
+
+def test_safe_batch_selection_enforces_memory_ceiling() -> None:
+    records = [
+        {
+            "batch_size": 8,
+            "status": "ok",
+            "origins_per_second": 10.0,
+            "peak_reserved_bytes": 40,
+            "total_memory_bytes": 100,
+        },
+        {
+            "batch_size": 16,
+            "status": "ok",
+            "origins_per_second": 20.0,
+            "peak_reserved_bytes": 90,
+            "total_memory_bytes": 100,
+        },
+    ]
+    assert select_safe_batch_size(records, max_memory_fraction=0.85) == 8

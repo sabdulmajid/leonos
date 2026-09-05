@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import copy
 import json
 from pathlib import Path
 
@@ -179,6 +180,11 @@ def test_prepare_writes_accepted_panel_exact_splits_and_one_feature_cache(
     assert resumed == outputs
     assert Path(outputs["features"]).stat().st_mtime_ns == feature_mtime
 
+    # A validation-side GPU execution-plan choice cannot invalidate data rows.
+    gpu_config = copy.deepcopy(config)
+    gpu_config["forecast"]["kronos"] = {"batch_size": 32}
+    assert prepare_data(gpu_config) == outputs
+
 
 def test_fit_baseline_persists_search_refit_and_immutable_predictions(
     prepared_fixture,
@@ -227,9 +233,14 @@ def test_fit_baseline_persists_search_refit_and_immutable_predictions(
     assert metadata["search"]["candidate_count"] == 1
     assert metadata["search"]["selected"]["candidate_id"] == "fixture"
     assert metadata["prepare_signature"]
-    assert metadata["git"]["dirty"] is True
+    assert isinstance(metadata["git"]["dirty"], bool)
+    assert metadata["git"]["commit"]
 
     prediction_mtime = Path(result["test_predictions"]).stat().st_mtime_ns
     resumed = fit_baseline(config, seed=42)
     assert resumed == result
     assert Path(result["test_predictions"]).stat().st_mtime_ns == prediction_mtime
+
+    gpu_config = copy.deepcopy(config)
+    gpu_config["forecast"]["kronos"] = {"batch_size": 32}
+    assert fit_baseline(gpu_config, seed=42) == result

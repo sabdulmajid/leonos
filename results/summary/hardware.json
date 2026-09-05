@@ -1,0 +1,45 @@
+{
+  "captured_at_utc": "2026-09-05T00:04:00Z",
+  "cpu": {
+    "logical_cpus": 48,
+    "model": "AMD Ryzen Threadripper 3960X 24-Core Processor",
+    "physical_cores": 24,
+    "sockets": 1
+  },
+  "disk": {
+    "available": "3.0 TiB",
+    "filesystem": "/dev/sdd",
+    "mount": "/pub7",
+    "total": "19 TiB"
+  },
+  "gpus": [
+    {
+      "index": 0,
+      "memory_mib": 97887,
+      "name": "NVIDIA RTX PRO 6000 Blackwell Max-Q Workstation Edition",
+      "uuid": "GPU-dc2327f1-3679-b8d5-cd17-14d4b4f962a9"
+    },
+    {
+      "index": 1,
+      "memory_mib": 97887,
+      "name": "NVIDIA RTX PRO 6000 Blackwell Max-Q Workstation Edition",
+      "uuid": "GPU-c3b13b66-45af-03b9-114f-ceb0f824d9fc"
+    }
+  ],
+  "host": "Latte",
+  "memory": {
+    "ram_total": "251 GiB",
+    "swap_total": "2 GiB"
+  },
+  "nvidia_driver": "580.159.03",
+  "pytorch": {
+    "built_cuda": "12.8",
+    "cudnn": 91002,
+    "version": "2.9.0+cu128"
+  },
+  "scheduler": {
+    "allocation_environment_detected": false,
+    "commands_detected": [],
+    "note": "No Slurm/PBS/LSF command or allocation variables were exposed on this host; the two explicitly user-provided devices were idle at capture."
+  }
+}

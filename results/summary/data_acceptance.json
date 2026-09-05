@@ -1590,7 +1590,7 @@
       "starts_after_panel": false
     }
   },
-  "created_at_utc": "2026-09-04T23:53:54.035108+00:00",
+  "created_at_utc": "2026-09-05T00:07:08.662942+00:00",
   "findings": [
     {
       "code": "ticker_missing_sessions",

@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import hashlib
+import inspect
 import os
 import tempfile
 import time
@@ -79,30 +80,113 @@ def _config_hash(config: Mapping[str, Any]) -> str:
     return stable_hash(payload)
 
 
-def _implementation_hash(paths: Sequence[Path]) -> str:
+def _prepare_stage_config_hash(config: Mapping[str, Any]) -> str:
+    """Hash only settings capable of changing prepared rows or their locations."""
+
+    forecast = config.get("forecast", {})
+    paths = config.get("paths", {})
+    sources = config.get("sources", {})
+    return stable_hash(
+        {
+            "dataset": sources.get("dataset") if isinstance(sources, Mapping) else None,
+            "data": config.get("data", {}),
+            "forecast": {
+                "context_sessions": forecast.get("context_sessions"),
+                "horizon_sessions": forecast.get("horizon_sessions"),
+            }
+            if isinstance(forecast, Mapping)
+            else forecast,
+            "splits": config.get("splits", {}),
+            "paths": {
+                key: paths.get(key)
+                for key in ("raw_data", "prepared_data", "summaries")
+            }
+            if isinstance(paths, Mapping)
+            else paths,
+        }
+    )
+
+
+def baseline_stage_config_hash(config: Mapping[str, Any]) -> str:
+    """Hash baseline-only settings so a GPU batch choice cannot stale M1."""
+
+    evaluation = config.get("evaluation", {})
+    paths = config.get("paths", {})
+    return stable_hash(
+        {
+            "lightgbm": config.get("lightgbm", {}),
+            "minimum_daily_coverage": evaluation.get("minimum_daily_coverage")
+            if isinstance(evaluation, Mapping)
+            else None,
+            "paths": {key: paths.get(key) for key in ("artifacts", "summaries")}
+            if isinstance(paths, Mapping)
+            else paths,
+        }
+    )
+
+
+def _implementation_source_hash(
+    paths: Sequence[Path], functions: Sequence[object], *, contract: object
+) -> str:
+    """Hash stage-owned source without coupling independent pipeline stages."""
+
     digest = hashlib.sha256()
-    for path in sorted(paths, key=lambda item: item.name):
-        digest.update(path.name.encode("utf-8"))
+    digest.update(stable_hash(contract).encode("utf-8"))
+    for path in sorted(paths, key=lambda item: str(item)):
+        digest.update(str(path.name).encode("utf-8"))
         digest.update(path.read_bytes())
+    for function in functions:
+        digest.update(getattr(function, "__name__", repr(function)).encode("utf-8"))
+        digest.update(inspect.getsource(function).encode("utf-8"))
     return digest.hexdigest()
 
 
 def _prepare_implementation_hash() -> str:
     package = Path(__file__).resolve().parent
-    return _implementation_hash(
-        [package / name for name in ("pipeline.py", "data.py", "targets.py", "features.py")]
+    return _implementation_source_hash(
+        [package / name for name in ("data.py", "targets.py", "features.py")],
+        [
+            _path,
+            _prepare_stage_config_hash,
+            _atomic_write_parquet,
+            _prepared_paths,
+            _manifest_signature,
+            _parquet_row_count,
+            _prepared_run_is_complete,
+            _documented_split_settings,
+            _target_spec,
+            _split_specs,
+            _coverage,
+            prepare_data,
+        ],
+        contract={"schema": PREPARE_SCHEMA, "parquets": _PREPARED_PARQUETS},
     )
 
 
 def _baseline_implementation_hash() -> str:
     package = Path(__file__).resolve().parent
-    return _implementation_hash(
+    return _implementation_source_hash(
         [
-            package / "pipeline.py",
             package / "features.py",
             package / "evaluation.py",
             package / "models" / "lightgbm.py",
-        ]
+        ],
+        [
+            _path,
+            baseline_stage_config_hash,
+            _atomic_write_parquet,
+            _coverage,
+            load_complete_preparation,
+            _merge_supervised,
+            _candidate_configs,
+            _search_config,
+            _baseline_signature,
+            _baseline_paths,
+            _baseline_run_is_complete,
+            _write_immutable_predictions,
+            fit_baseline,
+        ],
+        contract={"schema": BASELINE_SCHEMA},
     )
 
 
@@ -164,7 +248,7 @@ def _manifest_signature(config: Mapping[str, Any], manifest: Mapping[str, Any]) 
     return stable_hash(
         {
             "schema": PREPARE_SCHEMA,
-            "config_hash": _config_hash(config),
+            "stage_config_hash": _prepare_stage_config_hash(config),
             "implementation_hash": _prepare_implementation_hash(),
             "dataset": manifest.get("dataset"),
             "source_files": source_files,
@@ -438,6 +522,7 @@ def prepare_data(config: Mapping[str, Any]) -> dict[str, str]:
         "status": "complete",
         "run_signature": signature,
         "config_hash": _config_hash(config),
+        "stage_config_hash": _prepare_stage_config_hash(config),
         "implementation_hash": _prepare_implementation_hash(),
         "dataset_revision": recorded_revision,
         "source_revisions": config.get("sources", {}),
@@ -542,7 +627,7 @@ def _baseline_signature(
     return stable_hash(
         {
             "schema": BASELINE_SCHEMA,
-            "config_hash": _config_hash(config),
+            "stage_config_hash": baseline_stage_config_hash(config),
             "prepare_signature": prepare_marker["run_signature"],
             "implementation_hash": _baseline_implementation_hash(),
             "seed": int(seed),
@@ -699,6 +784,7 @@ def fit_baseline(config: Mapping[str, Any], seed: int = 42) -> dict[str, str]:
         "status": "complete",
         "run_signature": signature,
         "config_hash": _config_hash(config),
+        "stage_config_hash": baseline_stage_config_hash(config),
         "prepare_signature": prepare_marker["run_signature"],
         "implementation_hash": _baseline_implementation_hash(),
         "seed": int(seed),
@@ -750,4 +836,9 @@ def fit_baseline(config: Mapping[str, Any], seed: int = 42) -> dict[str, str]:
     return _json_paths(paths)
 
 
-__all__ = ["fit_baseline", "load_complete_preparation", "prepare_data"]
+__all__ = [
+    "baseline_stage_config_hash",
+    "fit_baseline",
+    "load_complete_preparation",
+    "prepare_data",
+]

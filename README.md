@@ -32,9 +32,12 @@ GPU extras are intentionally separate from the CPU gate:
 ```bash
 .venv/bin/uv sync --extra dev --extra kronos --extra qlib
 .venv/bin/leonos smoke
+.venv/bin/leonos benchmark-kronos
 ```
 
 Building pinned Qlib from source requires Python development headers (`Python.h`).
+Freeze the measured batch recommendation in `configs/base.yaml` before canonical
+test prediction; the run plan then rejects batch/worker changes during resume.
 
 Large market rows, checkpoints, and forecast shards live under ignored `data/`,
 `checkpoints/`, and `artifacts/`. Small manifests, aggregate results, and reports

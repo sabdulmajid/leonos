@@ -25,7 +25,8 @@ dependencies = [
 kronos = [
   "einops==0.8.1",
   "safetensors==0.6.2",
-  "torch>=2.0",
+  # Matches the CUDA 12.8 build already validated on the Blackwell host.
+  "torch==2.9.0",
   "tqdm==4.67.1",
 ]
 qlib = [

@@ -9,6 +9,26 @@
       "run_signature": "444a25f7793dcc7dc84a3ce403ae8ea735f3ba3b4bb1b8a91b216d388f5863a0",
       "seed": 42,
       "status": "invalidated"
+    },
+    {
+      "artifact_archive": "artifacts/invalidated/pre-m1-decoupled-stage-hash",
+      "invalidated_at_utc": "2026-09-05T00:06:43Z",
+      "model": "lightgbm",
+      "prepare_signature": "2ea49b47a5adad6a57981161490fa230056d19664bceb1aa75064ba8820e199b",
+      "reason": "Preparation and baseline implementation hashes were decoupled before GPU execution so unrelated stage code cannot stale accepted market rows; this pre-freeze run is archived and not reportable.",
+      "run_signature": "3f80f7a1ac078de6023d6f585b84aedc801a8a5598488e31c21baac4c8800d8f",
+      "seed": 42,
+      "status": "invalidated"
+    },
+    {
+      "artifact_archive": "artifacts/invalidated/pre-m1-stage-hash",
+      "invalidated_at_utc": "2026-09-05T00:03:03Z",
+      "model": "lightgbm",
+      "prepare_signature": "8109d144ba2eff7f5ce27bac6881dafdd58cc7de456084cde28d1506a0421b74",
+      "reason": "Stage-scoped configuration hashes were added before the M1 freeze so a validation-side GPU batch choice cannot invalidate data or baseline artifacts; this pre-freeze run is archived and not reportable.",
+      "run_signature": "d5e984aefc7d5d9a87ba343c9c19546a98da9b7a52e57f0fa7246b447d7e0cb1",
+      "seed": 42,
+      "status": "invalidated"
     }
   ],
   "schema_version": "leonos.invalidated_runs.v1"

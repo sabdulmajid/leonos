@@ -26,11 +26,11 @@
   "calendar_sessions": 14290,
   "config_hash": "62192b59c7f3916659cae2445e98b9137a41422ed34e40dc3a7962b4038bafc5",
   "dataset_revision": "88b972b547078237865255d9e15e4e16e1dd855f",
-  "elapsed_seconds": 31.901215381920338,
+  "elapsed_seconds": 31.957087974995375,
   "environment": {
-    "captured_at": "2026-09-04T23:54:21.881482+00:00",
+    "captured_at": "2026-09-05T00:07:36.560672+00:00",
     "hostname": "Latte",
-    "pid": 709518,
+    "pid": 727360,
     "platform": "Linux-6.8.0-117-generic-x86_64-with-glibc2.39",
     "python": "3.12.3"
   },
@@ -41,37 +41,32 @@
     "nonpositive_or_nonfinite_volume": 77
   },
   "feature_count": 61,
-  "finished_at_utc": "2026-09-04T23:54:21.883049+00:00",
+  "finished_at_utc": "2026-09-05T00:07:36.562590+00:00",
   "git": {
-    "commit": "9536d6c20d5c4dbbe035ed2df1e4717e0013fe37",
+    "commit": "79da6dcfec958330c12e26545fc40a84a905e545",
     "dirty": true,
     "status": [
-      "M configs/base.yaml",
-      " M src/leonos/models/kronos.py",
+      "M pyproject.toml",
+      " M results/summary/data_acceptance.json",
+      " M results/summary/data_audit_raw.json",
+      " M results/summary/invalidated_runs.json",
+      " D results/summary/lightgbm_candidates_seed_42.parquet",
+      " D results/summary/lightgbm_seed_42.json",
+      " M results/summary/preparation.json",
+      " M src/leonos/cli.py",
+      " M src/leonos/kronos_runner.py",
+      " M src/leonos/pipeline.py",
       " M src/leonos/portfolio.py",
-      " M tests/test_kronos.py",
-      " M tests/test_portfolio.py",
-      "?? results/",
-      "?? src/leonos/cli.py",
-      "?? src/leonos/data.py",
-      "?? src/leonos/evaluation.py",
-      "?? src/leonos/features.py",
-      "?? src/leonos/kronos_runner.py",
-      "?? src/leonos/models/lightgbm.py",
-      "?? src/leonos/pipeline.py",
-      "?? src/leonos/qlib_adapter.py",
-      "?? src/leonos/targets.py",
-      "?? tests/test_cli.py",
-      "?? tests/test_data.py",
-      "?? tests/test_evaluation.py",
-      "?? tests/test_kronos_runner.py",
-      "?? tests/test_lightgbm_model.py",
-      "?? tests/test_pipeline.py",
-      "?? tests/test_qlib_adapter.py",
-      "?? tests/test_targets_features.py"
+      " M tests/test_cli.py",
+      " M tests/test_kronos_runner.py",
+      " M tests/test_pipeline.py",
+      " M uv.lock",
+      "?? results/summary/hardware.json",
+      "?? src/leonos/reporting.py",
+      "?? tests/test_reporting.py"
     ]
   },
-  "implementation_hash": "23a166d004118f4b990dc78f8d36f7700d77d6bbcbedc360a8207fd9bee193fa",
+  "implementation_hash": "e970409ed87b32477af571d60677ea192603dc2c02e360aa2c15fcc6db8ebc99",
   "normalized_rows": 515857,
   "raw_rows": 515857,
   "row_counts": {
@@ -85,7 +80,7 @@
     "labels_test": 20859,
     "labels_validation": 6018
   },
-  "run_signature": "8109d144ba2eff7f5ce27bac6881dafdd58cc7de456084cde28d1506a0421b74",
+  "run_signature": "a2cf3e566f4c30dff0903bd081a14fa5eb12365c9209cbe0de2b89ed7068e95d",
   "schema_version": "leonos.prepare.v1",
   "source_revisions": {
     "dataset": {
@@ -157,6 +152,7 @@
       "ticker_count": 51
     }
   },
-  "started_at_utc": "2026-09-04T23:53:50.025313+00:00",
+  "stage_config_hash": "8c8edfd0816e218047d32fe3997ebed81e6a910cb88f2655ae8843e3cd912a61",
+  "started_at_utc": "2026-09-05T00:07:04.657663+00:00",
   "status": "complete"
 }

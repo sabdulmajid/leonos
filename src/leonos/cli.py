@@ -108,6 +108,13 @@ def build_parser() -> argparse.ArgumentParser:
     smoke.add_argument("--limit", type=int, default=2)
     smoke.add_argument("--seed", type=int, default=42)
 
+    benchmark = commands.add_parser(
+        "benchmark-kronos", help="brief post-smoke validation batch sweep"
+    )
+    benchmark.add_argument("--device", default="cuda:0")
+    benchmark.add_argument("--seed", type=int, default=42)
+    benchmark.add_argument("--batch-sizes", type=int, nargs="+", default=[4, 8, 16, 32, 64])
+
     predict = commands.add_parser("predict", help="persist model predictions")
     predict.add_argument("--model", choices=("kronos", "lightgbm"), required=True)
     predict.add_argument("--split", choices=("validation", "test"), required=True)
@@ -115,7 +122,7 @@ def build_parser() -> argparse.ArgumentParser:
     predict.add_argument("--device", default="cuda:0")
     predict.add_argument("--batch-size", type=int)
     predict.add_argument("--shard-index", type=int, default=0)
-    predict.add_argument("--num-shards", type=int, default=1)
+    predict.add_argument("--num-shards", type=int)
 
     evaluate = commands.add_parser("evaluate", help="evaluate saved predictions only")
     evaluate.add_argument("--seed", type=int, default=42)
@@ -157,14 +164,23 @@ def main(argv: list[str] | None = None) -> int:
             limit=args.limit,
             run_name="validation-smoke",
         )
+    elif args.command == "benchmark-kronos":
+        from .kronos_runner import benchmark_kronos_batches
+
+        result = benchmark_kronos_batches(
+            config,
+            device=args.device,
+            seed=args.seed,
+            batch_sizes=args.batch_sizes,
+        )
     elif args.command == "predict" and args.model == "lightgbm":
         result = _predict_lightgbm(config, split=args.split, seed=args.seed)
     elif args.command == "predict" and args.model == "kronos":
-        from .kronos_runner import run_kronos_predictions
+        from .kronos_runner import frozen_kronos_execution_plan, run_kronos_predictions
 
-        batch_size = args.batch_size or config["forecast"]["kronos"].get("batch_size")
-        if not batch_size:
-            raise ValueError("Kronos batch size must be frozen in config or passed explicitly")
+        batch_size, num_shards = frozen_kronos_execution_plan(
+            config, batch_size=args.batch_size, num_shards=args.num_shards
+        )
         result = run_kronos_predictions(
             config,
             split=args.split,
@@ -172,7 +188,7 @@ def main(argv: list[str] | None = None) -> int:
             device=args.device,
             batch_size=int(batch_size),
             shard_index=args.shard_index,
-            num_shards=args.num_shards,
+            num_shards=num_shards,
         )
     elif args.command == "evaluate":
         from .reporting import evaluate_saved_predictions

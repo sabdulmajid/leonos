@@ -300,9 +300,8 @@ def simulate_equal_weight_buy_hold(
     fills: list[Fill] = []
     cash = float(initial_cash)
     for row in eligible.itertuples(index=False):
-        shares = float(
-            np.floor(per_name_budget / ((1.0 + fee_rate) * float(row.open)))
-        )
+        # Match Qlib: target 95% gross and pay fees from residual cash.
+        shares = float(np.floor(per_name_budget / float(row.open)))
         if shares <= 0:
             continue
         gross = shares * float(row.open)
@@ -380,11 +379,14 @@ def portfolio_metrics(account: pd.DataFrame, *, annualization: int = 252) -> dic
         raise ValueError("account series is empty or incomplete")
     wealth = account["account_value"].astype(float)
     returns = account["net_return"].astype(float)
-    peak = wealth.cummax()
-    drawdown = wealth / peak - 1.0
     std = returns.std(ddof=1)
     sharpe = np.sqrt(annualization) * returns.mean() / std if std > 0 else np.nan
     initial_value = wealth.iloc[0] / (1.0 + returns.iloc[0])
+    wealth_with_initial = pd.concat(
+        [pd.Series([initial_value], dtype=float), wealth.reset_index(drop=True)],
+        ignore_index=True,
+    )
+    drawdown = wealth_with_initial / wealth_with_initial.cummax() - 1.0
     return {
         "net_cumulative_return": float(wealth.iloc[-1] / initial_value - 1.0),
         "net_sharpe_zero_cash": float(sharpe),
