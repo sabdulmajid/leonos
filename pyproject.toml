@@ -13,6 +13,7 @@ dependencies = [
   "exchange-calendars>=4.7,<5",
   "huggingface-hub==0.33.1",
   "lightgbm==4.6.0",
+  "matplotlib>=3.8,<4",
   "numpy>=1.26,<3",
   "pandas>=2.2,<3",
   "pyarrow>=18,<24",

@@ -195,9 +195,11 @@ def main(argv: list[str] | None = None) -> int:
 
         result = evaluate_saved_predictions(config, seed=args.seed)
     elif args.command == "report":
+        from .figures import render_result_figures
         from .reporting import render_results_report
 
-        result = render_results_report(config)
+        report_path = render_results_report(config)
+        result = {"report": report_path, "figures": render_result_figures(config)}
     else:  # pragma: no cover - argparse makes this unreachable
         raise RuntimeError("unhandled command")
     if isinstance(result, Path):

@@ -818,34 +818,134 @@ def render_results_report(config: Mapping[str, Any]) -> Path:
 
     declared = declared_seeds
     available = declared.intersection(summaries)
-    if available == declared and len(declared) > 1:
-        deltas = [
-            float(summaries[seed]["comparison"]["mean_daily_rankic_difference"])
-            for seed in sorted(declared)
-        ]
-        stable = all(np.sign(value) == np.sign(deltas[0]) for value in deltas)
-        stability = (
-            f"All {len(deltas)} declared seeds have the same RankIC-difference sign."
-            if stable
-            else f"The RankIC-difference sign changes across the {len(deltas)} declared seeds."
-        )
-    else:
-        stability = (
+    completed_seeds = sorted(available)
+    seed_deltas = [
+        float(summaries[seed]["comparison"]["mean_daily_rankic_difference"])
+        for seed in completed_seeds
+    ]
+    seed_intervals = [
+        summaries[seed]["comparison"]["primary_confidence_interval"] for seed in completed_seeds
+    ]
+    count_words = {1: "one", 2: "two", 3: "three"}
+    completed_count = count_words.get(len(completed_seeds), str(len(completed_seeds)))
+    if available != declared:
+        seed_rank_stability = (
             f"Seed sensitivity is incomplete ({len(available)}/{len(declared)} declared seeds)."
         )
+    elif seed_deltas and all(value < 0 for value in seed_deltas):
+        uncertainty = (
+            "but each paired 95% CI contains zero"
+            if all(float(item["lower"]) <= 0 <= float(item["upper"]) for item in seed_intervals)
+            else "with mixed confidence-interval evidence"
+        )
+        seed_rank_stability = (
+            f"All {completed_count} declared-seed RankIC differences are negative, "
+            f"{uncertainty}; ranking evidence is not robust proof of a difference."
+        )
+    elif seed_deltas and all(np.sign(value) == np.sign(seed_deltas[0]) for value in seed_deltas):
+        seed_rank_stability = (
+            f"All {completed_count} declared seeds have the same RankIC-difference sign; "
+            "the per-seed intervals below determine its uncertainty."
+        )
+    else:
+        seed_rank_stability = "The RankIC-difference sign changes across declared seeds."
     period_deltas = [
         float(item["mean_rankic_difference"])
         for item in primary.get("calendar_year_metrics", [])
         if item.get("mean_rankic_difference") is not None
     ]
-    if len(period_deltas) > 1:
+    year_metrics = primary.get("calendar_year_metrics", [])
+    positive_years = [
+        int(item["calendar_year"])
+        for item in year_metrics
+        if float(item["mean_rankic_difference"]) > 0
+    ]
+    negative_years = [
+        int(item["calendar_year"])
+        for item in year_metrics
+        if float(item["mean_rankic_difference"]) < 0
+    ]
+    if positive_years and negative_years:
         period_stability = (
-            "The RankIC-difference sign is consistent across calendar-year segments."
-            if all(np.sign(value) == np.sign(period_deltas[0]) for value in period_deltas)
-            else "The RankIC-difference sign changes across calendar-year segments."
+            "The primary-seed calendar-year RankIC difference changes sign "
+            f"(positive in {', '.join(map(str, positive_years))}; negative in "
+            f"{', '.join(map(str, negative_years))})."
         )
+    elif len(period_deltas) > 1:
+        period_stability = "The RankIC-difference sign is consistent across calendar-year segments."
     else:
         period_stability = "Only one calendar-year segment is available."
+
+    seed_rows: list[str] = []
+    winner_by_seed: dict[int, tuple[str, float]] = {}
+    for seed in completed_seeds:
+        saved = summaries[seed]
+        saved_comparison = saved["comparison"]
+        saved_models = saved_comparison["models"]
+        saved_interval = saved_comparison["primary_confidence_interval"]
+        saved_portfolios = saved["portfolio"]["models"]
+        kronos_return = float(saved_portfolios["kronos"]["5"]["net_cumulative_return"])
+        lightgbm_return = float(saved_portfolios["lightgbm"]["5"]["net_cumulative_return"])
+        return_difference_pp = 100.0 * (kronos_return - lightgbm_return)
+        if return_difference_pp > 0:
+            winner = "Kronos"
+        elif return_difference_pp < 0:
+            winner = "LightGBM"
+        else:
+            winner = "Tie"
+        winner_by_seed[seed] = (winner, abs(return_difference_pp))
+        seed_rows.append(
+            "| "
+            + " | ".join(
+                [
+                    str(seed),
+                    _number(saved_models["kronos"]["mean_daily_rankic"]),
+                    _number(saved_models["lightgbm"]["mean_daily_rankic"]),
+                    _number(saved_comparison["mean_daily_rankic_difference"]),
+                    (f"[{_number(saved_interval['lower'])}, {_number(saved_interval['upper'])}]"),
+                    _percent(kronos_return),
+                    _percent(lightgbm_return),
+                    f"{winner} (+{abs(return_difference_pp):.2f} pp)"
+                    if winner != "Tie"
+                    else "Tie (0.00 pp)",
+                ]
+            )
+            + " |"
+        )
+
+    distinct_winners = {winner for winner, _ in winner_by_seed.values()}
+    if len(distinct_winners) > 1:
+        lightgbm_seeds = [
+            seed for seed, (winner, _) in winner_by_seed.items() if winner == "LightGBM"
+        ]
+        kronos_seeds = [seed for seed, (winner, _) in winner_by_seed.items() if winner == "Kronos"]
+        kronos_narrow = bool(kronos_seeds) and all(
+            winner_by_seed[seed][1] < 5.0 for seed in kronos_seeds
+        )
+        lightgbm_label = " and ".join(map(str, lightgbm_seeds))
+        kronos_label = " and ".join(map(str, kronos_seeds))
+        portfolio_stability = (
+            "The 5-bps portfolio winner is not seed-stable: "
+            f"LightGBM wins seeds {lightgbm_label}; Kronos "
+            f"{'narrowly ' if kronos_narrow else ''}wins seed {kronos_label}."
+        )
+    elif winner_by_seed:
+        only_winner = next(iter(distinct_winners))
+        portfolio_stability = (
+            f"The 5-bps portfolio winner is {only_winner} across all completed declared seeds."
+        )
+    else:  # pragma: no cover - primary seed is required above
+        portfolio_stability = "No completed declared-seed portfolio results are available."
+
+    year_rows = [
+        (
+            f"| {int(item['calendar_year'])} | {int(item['dates'])} | "
+            f"{_number(item['kronos_mean_rankic'])} | "
+            f"{_number(item['lightgbm_mean_rankic'])} | "
+            f"{_number(item['mean_rankic_difference'])} |"
+        )
+        for item in sorted(year_metrics, key=lambda value: int(value["calendar_year"]))
+    ]
 
     rows = []
     for model in MODEL_NAMES:
@@ -893,7 +993,7 @@ def render_results_report(config: Mapping[str, Any]) -> Path:
         f"{ranking_answer}: mean daily RankIC difference (Kronos − LightGBM) was "
         f"{_number(delta)} with paired moving-block 95% CI [{_number(lower)}, "
         f"{_number(upper)}] across {comparison['paired_rankic_dates']} dates. "
-        f"{portfolio_answer} {stability} {period_stability}"
+        f"{portfolio_answer}"
     )
     reference_text = (
         "The zero-score reference has RankIC `NA` and MAE "
@@ -967,6 +1067,34 @@ def render_results_report(config: Mapping[str, Any]) -> Path:
             *rows,
             "",
             reference_text,
+            "",
+            "## Figures",
+            "",
+            "![Paired daily RankIC difference](figures/rankic-difference.png)",
+            "",
+            "![Compounded net wealth at five bps per side](figures/net-wealth.png)",
+            "",
+            "## Seed and period stability",
+            "",
+            seed_rank_stability,
+            "",
+            portfolio_stability,
+            "",
+            period_stability,
+            "",
+            (
+                "| Seed | Kronos RankIC | LightGBM RankIC | Δ RankIC (K−L) | "
+                "Paired 95% CI | Kronos net, 5 bps | LightGBM net, 5 bps | "
+                "Portfolio winner (margin) |"
+            ),
+            "| ---: | ---: | ---: | ---: | ---: | ---: | ---: | --- |",
+            *seed_rows,
+            "",
+            "Primary-seed calendar-year RankIC:",
+            "",
+            "| Year | Dates | Kronos RankIC | LightGBM RankIC | Δ RankIC (K−L) |",
+            "| ---: | ---: | ---: | ---: | ---: |",
+            *year_rows,
             "",
             "## Sensitivities",
             "",

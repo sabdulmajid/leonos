@@ -11,13 +11,15 @@ mean daily RankIC was -0.0032 versus 0.0025 for LightGBM. The paired difference
 was -0.0056 (95% moving-block-bootstrap CI [-0.0746, 0.0496]). With deterministic
 portfolio-only tie handling and five basis points per side, LightGBM returned
 107.99% net versus 49.99% for Kronos, with higher Sharpe and shallower drawdown.
-See [the results](reports/results.md); the final declared sensitivity seed remains
-in progress.
+All three declared seeds produced a negative RankIC difference, but every
+confidence interval included zero. Portfolio winners were not seed-stable:
+LightGBM won seeds 42 and 43, while Kronos narrowly won seed 44. See
+[the results](reports/results.md).
 
 The pinned snapshot passed the post-policy audit with 515,779 daily bars and all
 51 equities. Both models covered every one of the 20,859 eligible test origins.
-The real-data Kronos smoke passed 2/2 origins, and the complete seed-42 inference
-finished on two GPUs in 14.4 minutes.
+The real-data Kronos smoke passed 2/2 origins, and each complete seed inference
+finished on two GPUs in about 14.4 minutes.
 The repository is an independent application of published components to a
 different equity panel, not an exact reproduction of the Kronos paper. A negative
 or inconclusive result is valid.

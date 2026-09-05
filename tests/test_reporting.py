@@ -272,18 +272,81 @@ def test_saved_evaluation_uses_complete_artifacts_and_renders_report(
         "fees_dollars": 1.05,
         "net_result_dollars": 98.95,
     }
+    saved["comparison"]["models"]["kronos"]["mean_daily_rankic"] = -0.003
+    saved["comparison"]["models"]["lightgbm"]["mean_daily_rankic"] = 0.002
+    saved["comparison"]["mean_daily_rankic_difference"] = -0.005
+    saved["comparison"]["primary_confidence_interval"].update({"lower": -0.07, "upper": 0.05})
+    saved["comparison"]["bootstrap_sensitivity"] = [
+        {"block_length": 10, "estimate": -0.005, "lower": -0.06, "upper": 0.04},
+        {"block_length": 20, "estimate": -0.005, "lower": -0.07, "upper": 0.05},
+        {"block_length": 40, "estimate": -0.005, "lower": -0.08, "upper": 0.06},
+    ]
+    saved["portfolio"]["models"]["kronos"]["5"]["net_cumulative_return"] = 0.006
+    saved["portfolio"]["models"]["lightgbm"]["5"]["net_cumulative_return"] = 0.007
+    saved["calendar_year_metrics"] = [
+        {
+            "calendar_year": 2025,
+            "dates": 250,
+            "kronos_mean_rankic": 0.001,
+            "lightgbm_mean_rankic": -0.004,
+            "mean_rankic_difference": 0.005,
+        },
+        {
+            "calendar_year": 2026,
+            "dates": 159,
+            "kronos_mean_rankic": -0.009,
+            "lightgbm_mean_rankic": 0.013,
+            "mean_rankic_difference": -0.022,
+        },
+    ]
     reporting.atomic_write_json(aggregate, saved)
+    seed_settings = {
+        43: (-0.004, 0.001, -0.005, -0.06, 0.04, 0.35, 1.26),
+        44: (-0.002, 0.007, -0.009, -0.08, 0.047, 0.54, 0.515),
+    }
+    for sensitivity_seed, values in seed_settings.items():
+        sensitivity = json.loads(json.dumps(saved))
+        k_rankic, l_rankic, rankic_delta, ci_lower, ci_upper, k_net, l_net = values
+        sensitivity["seed"] = sensitivity_seed
+        sensitivity["comparison"]["prediction_seed"] = sensitivity_seed
+        sensitivity["comparison"]["models"]["kronos"]["mean_daily_rankic"] = k_rankic
+        sensitivity["comparison"]["models"]["lightgbm"]["mean_daily_rankic"] = l_rankic
+        sensitivity["comparison"]["mean_daily_rankic_difference"] = rankic_delta
+        sensitivity["comparison"]["primary_confidence_interval"].update(
+            {"lower": ci_lower, "upper": ci_upper}
+        )
+        sensitivity["portfolio"]["models"]["kronos"]["5"]["net_cumulative_return"] = k_net
+        sensitivity["portfolio"]["models"]["lightgbm"]["5"]["net_cumulative_return"] = l_net
+        reporting.atomic_write_json(
+            tmp_path / f"summaries/evaluation_seed_{sensitivity_seed}.json",
+            sensitivity,
+        )
 
     report_path = reporting.render_results_report(config)
     text = report_path.read_text(encoding="utf-8")
     assert "RankIC difference" in text
     assert "95% CI" in text
     assert "split-adjusted price-return simulation" in text
-    assert "Seed sensitivity is incomplete (1/3" in text
-    assert "| kronos | 0.80% | 0.70% | 0.50% |" in text
+    assert (
+        "All three declared-seed RankIC differences are negative, but each paired 95% CI "
+        "contains zero" in text
+    )
+    assert "calendar-year RankIC difference changes sign" in text
+    assert (
+        "portfolio winner is not seed-stable: LightGBM wins seeds 42 and 43; Kronos "
+        "narrowly wins seed 44" in text
+    )
+    assert "| kronos | 0.80% | 0.60% | 0.50% |" in text
     assert "| lightgbm | 0.80% | 0.70% | 0.50% |" in text
-    assert "| 10 | 2.0000 | 2.0000 | 2.0000 |" in text
-    assert "| 40 | 2.0000 | 2.0000 | 2.0000 |" in text
+    assert "| 10 | -0.0050 | -0.0600 | 0.0400 |" in text
+    assert "| 40 | -0.0050 | -0.0800 | 0.0600 |" in text
+    assert (
+        "| 42 | -0.0030 | 0.0020 | -0.0050 | [-0.0700, 0.0500] | 0.60% | "
+        "0.70% | LightGBM (+0.10 pp) |" in text
+    )
+    assert "| 44 | -0.0020 | 0.0070 | -0.0090 | [-0.0800, 0.0470]" in text
+    assert "| 2025 | 250 | 0.0010 | -0.0040 | 0.0050 |" in text
+    assert "| 2026 | 159 | -0.0090 | 0.0130 | -0.0220 |" in text
     assert "CAGR" in text
     assert "Σ daily turnover rate" in text
     assert "0.028" in text
@@ -297,6 +360,8 @@ def test_saved_evaluation_uses_complete_artifacts_and_renders_report(
     assert "gross result $100.00, fees $1.05, and net result $98.95" in text
     assert "not evidence of model skill" in text
     assert "not a forced final liquidation" in text
+    assert "![Paired daily RankIC difference](figures/rankic-difference.png)" in text
+    assert "![Compounded net wealth at five bps per side](figures/net-wealth.png)" in text
 
 
 def test_complete_coverage_gate_rejects_a_failed_forecast() -> None:
