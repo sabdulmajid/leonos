@@ -12,9 +12,12 @@
   saved-score portfolio reruns reproduce exactly, with seed-42 five-bps returns
   of 49.99% for Kronos and 107.99% for LightGBM. Seed 43 also favors LightGBM
   (delta RankIC -0.0036; five-bps returns 35.02% versus 126.09%).
-- Active Leonos jobs: none.
+- Active Leonos jobs: seed-44 worker 0/2, exec session `32347`, PID `776864`,
+  `cuda:0`; worker 1/2, exec session `18404`, PID `776866`, `cuda:1`.
 - Kronos forecasts: seed 42 complete (20,859 / 20,859); seed 43 complete
   (20,859 / 20,859, with 208,590 finite horizon rows and no duplicate keys).
 - Blocker: GitHub accepted the integration-branch push, but draft-PR creation was
   rejected with HTTP 403 (`Resource not accessible by personal access token`).
-- Next command: launch the two frozen seed-44 Kronos workers from a clean commit.
+- Seed-44 Kronos forecasts: 432 / 20,859 at the initial health check.
+- Next command: wait directly on exec sessions `32347` and `18404`, then validate
+  both completion manifests once.
