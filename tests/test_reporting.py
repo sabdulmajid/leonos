@@ -51,6 +51,35 @@ def test_qlib_metrics_subtract_cost_once_and_use_final_cumulative_counters() -> 
     assert metrics["account_reconciliation_max_abs_dollars"] < 1e-10
 
 
+def test_position_diagnostics_measure_drift_and_reject_short_stock_value() -> None:
+    dates = pd.to_datetime(["2025-01-03", "2025-01-06"])
+    positions = pd.DataFrame(
+        [
+            {"datetime": dates[0], "ticker": "__CASH__", "amount": 50, "price": 1, "value": 50},
+            {"datetime": dates[0], "ticker": "AAA", "amount": 6, "price": 100, "value": 600},
+            {"datetime": dates[0], "ticker": "BBB", "amount": 7, "price": 50, "value": 350},
+            {"datetime": dates[1], "ticker": "__CASH__", "amount": -1, "price": 1, "value": -1},
+            {"datetime": dates[1], "ticker": "AAA", "amount": 7.01, "price": 100, "value": 701},
+            {"datetime": dates[1], "ticker": "BBB", "amount": 6, "price": 50, "value": 300},
+        ]
+    )
+    report = pd.DataFrame({"account": [1_000.0, 1_000.0]}, index=dates)
+
+    diagnostics = reporting._position_diagnostics(positions, report)
+
+    assert diagnostics["median_gross_invested_exposure"] == pytest.approx(0.9755)
+    assert diagnostics["max_gross_invested_exposure"] == pytest.approx(1.001)
+    assert diagnostics["median_largest_single_stock_weight"] == pytest.approx(0.6505)
+    assert diagnostics["max_largest_single_stock_weight"] == pytest.approx(0.701)
+    assert diagnostics["minimum_cash_dollars"] == -1.0
+    assert diagnostics["minimum_cash_account_weight"] == pytest.approx(-0.001)
+
+    invalid = positions.copy()
+    invalid.loc[invalid["ticker"].eq("AAA"), "value"] = -1.0
+    with pytest.raises(ValueError, match="long-only"):
+        reporting._position_diagnostics(invalid)
+
+
 def test_worked_example_pairs_a_completed_trade_and_includes_both_fees() -> None:
     orders = pd.DataFrame(
         {
@@ -194,7 +223,16 @@ def test_saved_evaluation_uses_complete_artifacts_and_renders_report(
         "_load_lightgbm_artifact",
         lambda *_args: (
             lightgbm,
-            {"timing_seconds": {"test_prediction": 0.0277, "total": 2.0}},
+            {
+                "timing_seconds": {"test_prediction": 0.0277, "total": 2.0},
+                "search": {
+                    "selected": {
+                        "candidate_id": "l31_lr02",
+                        "best_iteration": 1,
+                        "validation_mean_daily_rankic": 0.065,
+                    }
+                },
+            },
             tmp_path / "lightgbm.parquet",
         ),
     )
@@ -317,6 +355,25 @@ def test_saved_evaluation_uses_complete_artifacts_and_renders_report(
         )
         sensitivity["portfolio"]["models"]["kronos"]["5"]["net_cumulative_return"] = k_net
         sensitivity["portfolio"]["models"]["lightgbm"]["5"]["net_cumulative_return"] = l_net
+        sensitivity["lightgbm_validation_selection"].update(
+            {
+                "candidate_id": "l31_subsample" if sensitivity_seed == 43 else "l31_regularized",
+                "best_iteration": 1 if sensitivity_seed == 43 else 3,
+            }
+        )
+        if sensitivity_seed == 43:
+            sensitivity["portfolio"]["models"]["kronos"]["0"]["position_diagnostics"].update(
+                {
+                    "minimum_cash_dollars": -14.33,
+                    "minimum_cash_account_weight": -1.52e-5,
+                }
+            )
+            sensitivity["portfolio"]["models"]["kronos"]["5"]["position_diagnostics"].update(
+                {
+                    "minimum_cash_dollars": -13.03,
+                    "minimum_cash_account_weight": -1.42e-5,
+                }
+            )
         reporting.atomic_write_json(
             tmp_path / f"summaries/evaluation_seed_{sensitivity_seed}.json",
             sensitivity,
@@ -342,16 +399,31 @@ def test_saved_evaluation_uses_complete_artifacts_and_renders_report(
     assert "| 40 | -0.0050 | -0.0800 | 0.0600 |" in text
     assert (
         "| 42 | -0.0030 | 0.0020 | -0.0050 | [-0.0700, 0.0500] | 0.60% | "
-        "0.70% | LightGBM (+0.10 pp) |" in text
+        "0.70% | l31_lr02@1 | LightGBM (+0.10 pp) |" in text
     )
     assert "| 44 | -0.0020 | 0.0070 | -0.0090 | [-0.0800, 0.0470]" in text
     assert "| 2025 | 250 | 0.0010 | -0.0040 | 0.0050 |" in text
     assert "| 2026 | 159 | -0.0090 | 0.0130 | -0.0220 |" in text
+    assert "Forecast origins span 2025-01-02 through 2025-01-03" in text
+    assert "Portfolio execution/valuation spans 2025-01-03 through 2025-01-06" in text
+    assert "Primary-seed realized position drift at 5 bps" in text
+    assert "Median gross exposure" in text
+    assert "Maximum largest-stock weight" in text
+    assert "unmodified Qlib strategy's realized weights" in text
+    assert "seed 43 Kronos reached minimum cash -$13.03" in text
+    assert "cash/account -1.42e-05" in text
+    assert "worst declared-cost case was seed 43 Kronos at 0 bps: -$14.33" in text
+    assert "whole-share rounding overdrafts" in text
+    assert "strict no-leverage cannot be claimed" in text
+    assert "l31_lr02@1" in text
+    assert "l31_subsample@1" in text
+    assert "l31_regularized@3" in text
+    assert "reran the full development-fit, validation-selection" in text
     assert "CAGR" in text
     assert "Σ daily turnover rate" in text
     assert "0.028" in text
-    assert "Peak GPU allocated" in text
-    assert "Peak GPU reserved" in text
+    assert "Peak GPU allocated (per-worker maximum)" in text
+    assert "Peak GPU reserved (per-worker maximum)" in text
     assert "1.00 GiB" in text
     assert "2.00 GiB" in text
     assert "selected **AAA**" in text

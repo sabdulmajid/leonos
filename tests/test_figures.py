@@ -80,7 +80,11 @@ def test_wealth_frame_reconciles_saved_account_convention(tmp_path: Path) -> Non
         initial_cash=float(config["portfolio"]["initial_cash"]),  # type: ignore[index]
     )
 
-    assert list(frame) == ["Kronos-base", "LightGBM", "Equal-weight buy-and-hold"]
+    assert list(frame) == [
+        "Kronos-base",
+        "LightGBM",
+        "95%-invested equal-dollar reference",
+    ]
     assert len(frame) == 25
     assert frame.index.equals(pd.bdate_range("2025-01-02", periods=25))
 

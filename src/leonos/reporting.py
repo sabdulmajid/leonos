@@ -374,6 +374,71 @@ def _flatten_positions(positions: Mapping[Any, Any]) -> pd.DataFrame:
     return pd.DataFrame(rows, columns=["datetime", "ticker", "amount", "price", "value"])
 
 
+def _position_diagnostics(
+    positions: pd.DataFrame, report: pd.DataFrame | None = None
+) -> dict[str, float]:
+    """Summarize realized long-only concentration and Qlib sizing drift."""
+
+    required = {"datetime", "ticker", "amount", "price", "value"}
+    missing = required.difference(positions.columns)
+    if positions.empty or missing:
+        raise ValueError(f"flattened positions are empty or missing columns: {sorted(missing)}")
+    clean = positions.copy()
+    clean["datetime"] = (
+        pd.to_datetime(clean["datetime"], utc=True).dt.tz_convert(None).dt.normalize()
+    )
+    clean["ticker"] = clean["ticker"].astype(str)
+    if clean.duplicated(["datetime", "ticker"]).any():
+        raise ValueError("flattened positions contain duplicate date/ticker rows")
+    for column in ("amount", "price", "value"):
+        clean[column] = pd.to_numeric(clean[column], errors="coerce")
+    if not np.isfinite(clean[["amount", "price", "value"]].to_numpy(dtype=float)).all():
+        raise ValueError("flattened positions contain non-finite accounting values")
+
+    cash = clean.loc[clean["ticker"].eq("__CASH__")]
+    stocks = clean.loc[~clean["ticker"].eq("__CASH__")]
+    dates = pd.DatetimeIndex(clean["datetime"].unique()).sort_values()
+    if len(cash) != len(dates) or cash["datetime"].nunique() != len(dates):
+        raise ValueError("each position date must have exactly one cash row")
+    if (stocks["amount"] < 0).any() or (stocks["value"] < 0).any() or (stocks["price"] <= 0).any():
+        raise ValueError("stock positions must be finite, positive-priced, and long-only")
+
+    cash_by_date = cash.set_index("datetime")["value"].reindex(dates)
+    stock_by_date = (
+        stocks.groupby("datetime", observed=True)["value"].sum().reindex(dates, fill_value=0.0)
+    )
+    account = cash_by_date + stock_by_date
+    if not np.isfinite(account.to_numpy(dtype=float)).all() or (account <= 0).any():
+        raise ValueError("position-derived account values must be finite and positive")
+    if report is not None:
+        reported = pd.Series(
+            pd.to_numeric(report["account"], errors="coerce").to_numpy(dtype=float),
+            index=pd.to_datetime(report.index).tz_localize(None).normalize(),
+        ).reindex(dates)
+        if reported.isna().any() or not np.allclose(
+            account.to_numpy(dtype=float),
+            reported.to_numpy(dtype=float),
+            atol=max(1e-6, float(reported.max()) * 1e-8),
+            rtol=0,
+        ):
+            raise AssertionError("flattened positions do not reconcile to Qlib account")
+
+    gross_exposure = stock_by_date / account
+    largest_value = (
+        stocks.groupby("datetime", observed=True)["value"].max().reindex(dates, fill_value=0.0)
+    )
+    largest_weight = largest_value / account
+    cash_weight = cash_by_date / account
+    return {
+        "median_gross_invested_exposure": float(gross_exposure.median()),
+        "max_gross_invested_exposure": float(gross_exposure.max()),
+        "median_largest_single_stock_weight": float(largest_weight.median()),
+        "max_largest_single_stock_weight": float(largest_weight.max()),
+        "minimum_cash_dollars": float(cash_by_date.min()),
+        "minimum_cash_account_weight": float(cash_weight.min()),
+    }
+
+
 def _qlib_portfolio_metrics(
     report: pd.DataFrame, *, initial_cash: float, terminal_positions: int
 ) -> tuple[pd.DataFrame, dict[str, Any]]:
@@ -635,6 +700,7 @@ def evaluate_saved_predictions(config: Mapping[str, Any], seed: int = 42) -> dic
             raw_report, metrics = _qlib_portfolio_metrics(
                 outputs.report, initial_cash=initial_cash, terminal_positions=terminal_positions
             )
+            metrics["position_diagnostics"] = _position_diagnostics(positions, outputs.report)
             orders = _flatten_orders(outputs.order_history, calendar)
             prefix = evaluation_root / "portfolio" / model / f"cost_bps={cost_bps}"
             _atomic_write_parquet(raw_report, prefix / "qlib_report.parquet")
@@ -698,6 +764,8 @@ def evaluate_saved_predictions(config: Mapping[str, Any], seed: int = 42) -> dic
         "seed": int(seed),
         "prepare_signature": str(prepare_marker["run_signature"]),
         "dataset_revision": str(prepare_marker["dataset_revision"]),
+        "forecast_origin_start": pd.Timestamp(origins.min()).date().isoformat(),
+        "forecast_origin_end": pd.Timestamp(origins.max()).date().isoformat(),
         "comparison": {
             **comparison.summary,
             "bootstrap_sensitivity": _finite_json(comparison.bootstrap.to_dict("records")),
@@ -717,6 +785,17 @@ def evaluate_saved_predictions(config: Mapping[str, Any], seed: int = 42) -> dic
             "worked_trade": worked,
         },
         "runtime": runtime,
+        "lightgbm_validation_selection": {
+            "procedure": (
+                "full development fit and validation selection rerun for this seed; "
+                "then declared final refit"
+            ),
+            "candidate_id": lightgbm_metadata["search"]["selected"]["candidate_id"],
+            "best_iteration": int(lightgbm_metadata["search"]["selected"]["best_iteration"]),
+            "validation_mean_daily_rankic": lightgbm_metadata["search"]["selected"].get(
+                "validation_mean_daily_rankic"
+            ),
+        },
         "run_provenance": {
             "config_hash": config.get("_meta", {}).get("sha256"),
             "implementation_hash": _evaluation_implementation_hash(),
@@ -758,6 +837,13 @@ def _gibibytes(value: Any) -> str:
 
 def _date(value: Any) -> str:
     return "NA" if value is None else pd.Timestamp(value).date().isoformat()
+
+
+def _signed_dollars(value: Any) -> str:
+    if value is None:
+        return "NA"
+    amount = float(value)
+    return f"-${abs(amount):,.2f}" if amount < 0 else f"${amount:,.2f}"
 
 
 def render_results_report(config: Mapping[str, Any]) -> Path:
@@ -884,6 +970,10 @@ def render_results_report(config: Mapping[str, Any]) -> Path:
         saved_models = saved_comparison["models"]
         saved_interval = saved_comparison["primary_confidence_interval"]
         saved_portfolios = saved["portfolio"]["models"]
+        selection = saved.get("lightgbm_validation_selection")
+        if not isinstance(selection, Mapping):
+            raise ValueError(f"saved seed {seed} evaluation lacks LightGBM selection provenance")
+        selection_label = f"{selection['candidate_id']}@{int(selection['best_iteration'])}"
         kronos_return = float(saved_portfolios["kronos"]["5"]["net_cumulative_return"])
         lightgbm_return = float(saved_portfolios["lightgbm"]["5"]["net_cumulative_return"])
         return_difference_pp = 100.0 * (kronos_return - lightgbm_return)
@@ -905,6 +995,7 @@ def render_results_report(config: Mapping[str, Any]) -> Path:
                     (f"[{_number(saved_interval['lower'])}, {_number(saved_interval['upper'])}]"),
                     _percent(kronos_return),
                     _percent(lightgbm_return),
+                    selection_label,
                     f"{winner} (+{abs(return_difference_pp):.2f} pp)"
                     if winner != "Tie"
                     else "Tie (0.00 pp)",
@@ -947,6 +1038,72 @@ def render_results_report(config: Mapping[str, Any]) -> Path:
         for item in sorted(year_metrics, key=lambda value: int(value["calendar_year"]))
     ]
 
+    position_rows: list[str] = []
+    for model in MODEL_NAMES:
+        diagnostics = portfolios["models"][model]["5"].get("position_diagnostics")
+        if not isinstance(diagnostics, Mapping):
+            raise ValueError(f"primary seed {model} portfolio lacks saved position diagnostics")
+        position_rows.append(
+            "| "
+            + " | ".join(
+                [
+                    model,
+                    _percent(diagnostics["median_gross_invested_exposure"]),
+                    _percent(diagnostics["max_gross_invested_exposure"]),
+                    _percent(diagnostics["median_largest_single_stock_weight"]),
+                    _percent(diagnostics["max_largest_single_stock_weight"]),
+                    _signed_dollars(diagnostics["minimum_cash_dollars"]),
+                    f"{float(diagnostics['minimum_cash_account_weight']):.2e}",
+                ]
+            )
+            + " |"
+        )
+
+    overdrafts: list[dict[str, Any]] = []
+    for seed in completed_seeds:
+        for model in MODEL_NAMES:
+            for cost_label, metrics in summaries[seed]["portfolio"]["models"][model].items():
+                diagnostics = metrics.get("position_diagnostics")
+                if not isinstance(diagnostics, Mapping):
+                    raise ValueError(
+                        f"seed {seed} {model} cost {cost_label} lacks position diagnostics"
+                    )
+                minimum_cash = float(diagnostics["minimum_cash_dollars"])
+                if minimum_cash < 0:
+                    overdrafts.append(
+                        {
+                            "seed": seed,
+                            "model": model,
+                            "cost_bps": int(cost_label),
+                            "cash": minimum_cash,
+                            "weight": float(diagnostics["minimum_cash_account_weight"]),
+                        }
+                    )
+    five_bps_overdrafts = [item for item in overdrafts if item["cost_bps"] == 5]
+    if five_bps_overdrafts:
+        five = min(five_bps_overdrafts, key=lambda item: float(item["cash"]))
+        worst = min(overdrafts, key=lambda item: float(item["cash"]))
+        five_model = {"kronos": "Kronos", "lightgbm": "LightGBM"}.get(
+            str(five["model"]), str(five["model"])
+        )
+        worst_model = {"kronos": "Kronos", "lightgbm": "LightGBM"}.get(
+            str(worst["model"]), str(worst["model"])
+        )
+        overdraft_note = (
+            f"At 5 bps, seed {five['seed']} {five_model} reached minimum cash "
+            f"{_signed_dollars(five['cash'])} (cash/account {float(five['weight']):.2e}). "
+            f"The worst declared-cost case was seed {worst['seed']} {worst_model} at "
+            f"{worst['cost_bps']} bps: {_signed_dollars(worst['cash'])} "
+            f"({float(worst['weight']):.2e}). These de-minimis whole-share rounding "
+            "overdrafts are not intentional economic leverage, but strict no-leverage "
+            "cannot be claimed."
+        )
+    else:
+        overdraft_note = (
+            "No negative cash balance appears in the completed declared-seed/cost runs; "
+            "whole-share sizing still makes realized exposure drift from its target."
+        )
+
     rows = []
     for model in MODEL_NAMES:
         signal = models[model]
@@ -985,9 +1142,11 @@ def render_results_report(config: Mapping[str, Any]) -> Path:
         )
     reference = portfolios["equal_weight_buy_hold"]["5"]
     intro = (
-        f"Primary seed: {primary_seed}. Test span: {portfolios['start_session']} through "
-        f"{portfolios['end_session']} (signals trade at the next session open). Costs are "
-        "5 bps per side; cash return is zero."
+        f"Primary seed: {primary_seed}. Forecast origins span "
+        f"{primary['forecast_origin_start']} through {primary['forecast_origin_end']}. "
+        f"Portfolio execution/valuation spans {portfolios['start_session']} through "
+        f"{portfolios['end_session']}; each post-close signal first trades at the next "
+        "session open. Costs are 5 bps per side; cash return is zero."
     )
     conclusion = (
         f"{ranking_answer}: mean daily RankIC difference (Kronos − LightGBM) was "
@@ -1007,7 +1166,8 @@ def render_results_report(config: Mapping[str, Any]) -> Path:
     table_header = (
         "| Model | Coverage | Mean RankIC | Paired Δ RankIC (95% CI) | MAE (bp) | "
         "Net return | CAGR | Net Sharpe | Max drawdown | Σ daily turnover rate | "
-        "Costs | Inference seconds | Peak GPU allocated | Peak GPU reserved |"
+        "Costs | Inference seconds | Peak GPU allocated (per-worker maximum) | "
+        "Peak GPU reserved (per-worker maximum) |"
     )
     cost_rows = [
         (
@@ -1068,6 +1228,24 @@ def render_results_report(config: Mapping[str, Any]) -> Path:
             "",
             reference_text,
             "",
+            "Primary-seed realized position drift at 5 bps:",
+            "",
+            (
+                "| Model | Median gross exposure | Maximum gross exposure | Median "
+                "largest-stock weight | Maximum largest-stock weight | Minimum cash | "
+                "Minimum cash/account |"
+            ),
+            "| --- | ---: | ---: | ---: | ---: | ---: | ---: |",
+            *position_rows,
+            "",
+            (
+                "These are the unmodified Qlib strategy's realized weights: sizing, "
+                "whole-share rounding, and market drift make them differ from a constant "
+                "95% exposure or exact equal weights."
+            ),
+            "",
+            overdraft_note,
+            "",
             "## Figures",
             "",
             "![Paired daily RankIC difference](figures/rankic-difference.png)",
@@ -1085,10 +1263,15 @@ def render_results_report(config: Mapping[str, Any]) -> Path:
             (
                 "| Seed | Kronos RankIC | LightGBM RankIC | Δ RankIC (K−L) | "
                 "Paired 95% CI | Kronos net, 5 bps | LightGBM net, 5 bps | "
-                "Portfolio winner (margin) |"
+                "LightGBM selection | Portfolio winner (margin) |"
             ),
-            "| ---: | ---: | ---: | ---: | ---: | ---: | ---: | --- |",
+            "| ---: | ---: | ---: | ---: | ---: | ---: | ---: | --- | --- |",
             *seed_rows,
+            "",
+            (
+                "Each sensitivity seed reran the full development-fit, validation-selection, "
+                "and declared final-refit pipeline; selections are candidate@iteration."
+            ),
             "",
             "Primary-seed calendar-year RankIC:",
             "",

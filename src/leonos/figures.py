@@ -85,7 +85,7 @@ def _wealth_frame(
             "compounded_wealth",
             "account",
         ),
-        "Equal-weight buy-and-hold": (
+        "95%-invested equal-dollar reference": (
             root / "equal_weight_buy_hold" / f"cost_bps={cost_bps}" / "account.parquet",
             "session",
             "account_value",
@@ -230,9 +230,9 @@ def plot_net_wealth(
     colors = {
         "Kronos-base": "#1f5a94",
         "LightGBM": "#d66a1f",
-        "Equal-weight buy-and-hold": "#606a73",
+        "95%-invested equal-dollar reference": "#606a73",
     }
-    styles = {"Equal-weight buy-and-hold": "--"}
+    styles = {"95%-invested equal-dollar reference": "--"}
     with plt.rc_context(
         {
             "font.family": "DejaVu Sans",
@@ -251,8 +251,8 @@ def plot_net_wealth(
                 linewidth=1.8,
             )
         axis.set_title(f"Compounded net wealth at {cost_bps} bps per side — seed {seed}")
-        axis.set_xlabel("Execution session")
-        axis.set_ylabel("Net wealth (USD millions)")
+        axis.set_xlabel("Execution session (first point follows initial fills)")
+        axis.set_ylabel("End-of-session net wealth (USD millions)")
         locator = mdates.AutoDateLocator(minticks=4, maxticks=8)
         axis.xaxis.set_major_locator(locator)
         axis.xaxis.set_major_formatter(mdates.ConciseDateFormatter(locator))

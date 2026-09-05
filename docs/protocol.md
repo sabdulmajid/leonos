@@ -92,19 +92,23 @@ The primary statistic is mean daily `RankIC(Kronos) - RankIC(LightGBM)` with a
 paired moving-block 95% bootstrap interval over complete date rows: block 20,
 2,000 replicates, seed 42. Blocks 10 and 40 are declared sensitivities. Secondary
 signal results are mean daily raw-score MAE (also basis points), zero-score MAE,
-each mean RankIC, coverage, and runtime. Seed 42 is headline; seeds 43/44 show model
-sampling/training sensitivity separately from market-date uncertainty.
+each mean RankIC, coverage, and runtime. Seed 42 is headline; seeds 43/44 repeat
+the full declared pipeline—Kronos sampling plus LightGBM training and
+validation-only configuration selection—separately from market-date uncertainty.
 
 ## Portfolio
 
 Both saved score series feed the same Qlib `TopkDropoutStrategy`: `topk=5`,
-`n_drop=1`, `hold_thresh=5`, long-only, no leverage, 95% target exposure, USD 1m
-illustrative capital, zero cash return. A signal formed after close `t` is indexed
-by `t`; inspected Qlib code looks back one trading step and therefore trades it at
-open `t+1` with no second shift. U.S. settings disable China-specific limits, lots,
-taxes, benchmarks, and close fills. Primary proportional cost is 5 bps per side;
-0 and 15 bps are sensitivities. Unfilled orders, valuation-only carries, fees, cash,
-positions, and remaining unrealized holdings are retained. No forced final sale.
+`n_drop=1`, `hold_thresh=5`, long-only, 95% target exposure, no intentional
+leverage, USD 1m illustrative capital, and zero cash return. A signal formed after
+close `t` is indexed by `t`; inspected Qlib code looks back one trading step and
+therefore trades it at open `t+1` with no second shift. U.S. settings disable
+China-specific limits, lots, taxes, benchmarks, and close fills. Primary
+proportional cost is 5 bps per side; 0 and 15 bps are sensitivities. Unfilled
+orders, valuation-only carries, fees, cash, positions, and remaining unrealized
+holdings are retained. No forced final sale. The unmodified strategy's realized
+exposure and weight drift are measured rather than described as equal weighting;
+any de-minimis negative cash from whole-share arithmetic is disclosed explicitly.
 
 Net compounded wealth is reconciled to account value; Qlib `return` and `cost`
 semantics are checked before use. Report net return, zero-cash Sharpe, maximum
