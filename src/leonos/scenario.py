@@ -414,7 +414,7 @@ def paired_block_bootstrap_paths(
         ),
         "replicates_per_scenario": int(replicates),
         "scenario_count": int(scenario_count),
-        "unique_resampled_date_paths": int(replicates),
+        "resampled_date_paths": int(replicates),
         "scenario_path_evaluations": int(replicates * scenario_count),
         "block_length_sessions": int(block_length),
         "effective_block_length_sessions": int(effective_block),
@@ -714,7 +714,7 @@ def run_saved_scenario_analysis(
                 "distribution": str(destination),
                 "replicates_per_scenario": selected_replicates,
                 "scenario_count": len(scenario_returns),
-                "unique_resampled_date_paths": selected_replicates,
+                "resampled_date_paths": selected_replicates,
                 "scenario_path_evaluations": selected_replicates
                 * len(scenario_returns),
                 "cached": True,
@@ -749,7 +749,7 @@ def run_saved_scenario_analysis(
         "distribution": str(destination),
         "replicates_per_scenario": selected_replicates,
         "scenario_count": len(scenario_returns),
-        "unique_resampled_date_paths": selected_replicates,
+        "resampled_date_paths": selected_replicates,
         "scenario_path_evaluations": len(distribution),
         "cached": False,
     }

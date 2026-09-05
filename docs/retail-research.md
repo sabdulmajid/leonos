@@ -55,9 +55,10 @@ example comes from one of the same 51 tickers, but ticker identity is not a
 feature. Each prediction row has 61 causal OHLCV/calendar features: candlestick
 shape, recent returns, price versus moving averages, volatility, rolling
 high/low/rank, volume change, price-volume correlation, and calendar cycles. The
-longest feature window is 60 sessions, and eligibility still requires the full
-90-session context. It receives no news, fundamentals, macro data, sector, ticker
-ID, genuine VWAP, or cross-stock inputs.
+largest rolling horizon is 60 sessions, the maximum effective lookback is 61
+bars, and eligibility still requires the full 90-session context. It receives no
+news, fundamentals, macro data, sector, ticker ID, genuine VWAP, or cross-stock
+inputs.
 
 Eight declared tree configurations were compared on July–December 2024 only,
 using mean daily cross-sectional RankIC for early stopping and selection. The
@@ -68,12 +69,14 @@ sophistication.
 
 Kronos is the generic zero-shot competitor. Leonos never trains or fine-tunes it.
 The pinned released model and tokenizer ingest exactly 90 same-stock OHLCV
-sessions, autoregressively sample ten possible ten-session candle paths, and
-average them into one predicted path. Its score is the predicted ten-close
-average divided by the current close, minus one. The ten samples are inference
-randomness, not ten possible economic futures with calibrated probabilities.
-Kronos's reported pretraining cutoff and market corpus are author claims; exact
-checkpoint membership is not independently auditable.
+sessions plus past and future calendar timestamps. Because observed amount is
+absent, the upstream predictor derives an amount proxy as volume multiplied by
+mean OHLC; this adds no independent data. Kronos autoregressively samples ten
+ten-session candle paths and averages them into one predicted path. Its score is
+the predicted ten-close average divided by the current close, minus one. The ten
+samples are inference randomness, not ten possible economic futures with
+calibrated probabilities. Kronos's reported pretraining cutoff and market corpus
+are author claims; exact checkpoint membership is not independently auditable.
 
 The comparison is therefore practical, not causal. LightGBM was supervised on
 this panel and target; Kronos brings generic pretrained representations. A
@@ -81,19 +84,21 @@ difference cannot be attributed to pretraining alone.
 
 ## Universe and data reality
 
-All 51 publisher-curated equities are evaluated; there is no ten-stock
-restriction. The exact symbols are AAPL, ABBV, ADBE, AMD, AMZN, AVGO, BA, BAC,
+All 51 equities in the fixed publisher-supplied panel are evaluated; there is no
+ten-stock restriction. The exact symbols are AAPL, ABBV, ADBE, AMD, AMZN, AVGO,
+BA, BAC,
 BLK, BRK.B, CAT, COP, COST, CRM, CSCO, CVX, DIS, GE, GOOGL, GS, HD, JNJ, JPM,
 KO, LIN, LLY, MA, MCD, META, MRK, MS, MSFT, NFLX, NKE, NVDA, ORCL, PEP, PFE,
 PG, RTX, SBUX, T, TMO, TMUS, TSLA, UNH, V, VZ, WFC, WMT, and XOM.
 
-This is a familiar, roughly large-cap U.S. basket, not a random sample, the
-contemporaneous top 51 by market capitalization, or a daily top-movers screen.
-Because it is a fixed present-day surviving basket, it has survivorship and
-selection limitations.
+The publisher describes this as a large-cap, cross-sector U.S. basket, but its
+inclusion rule is undocumented here. It is not a dynamically reconstructed top
+51 by market capitalization or a daily top-movers screen. Because it is a fixed
+present-day surviving basket, it has survivorship and selection limitations.
 
-The immutable snapshot contains vendor-derived Twelve Data daily bars. Leonos
-records exact file hashes and schema, removes 77 nonpositive-volume rows and one
+The publisher describes the immutable snapshot as Twelve Data-derived daily
+bars. Leonos records exact file hashes and schema, removes 77 nonpositive-volume
+rows and one
 non-exchange-calendar row under a deterministic rule, and accepts 515,779 rows.
 It finds no duplicate keys, non-finite prices, or inconsistent candle envelopes;
 missing sessions are never filled, and incomplete contexts/labels are excluded.
@@ -113,7 +118,7 @@ of future profit.
 
 The leonos scenario command instead performs a paired, circular moving-block
 bootstrap of completed daily RankIC rows and net-return ledgers. The configured
-run makes 100,000 unique date-block draws and evaluates each draw under three
+run makes 100,000 date-block draws and evaluates each draw under three
 forecast seeds and
 three cost cases, producing 900,000 scenario-path evaluations. Those are not
 900,000 independent markets. Twenty-session blocks preserve some local serial
@@ -141,7 +146,8 @@ A defensible retail v2 should be declared before its next untouched evaluation:
 
 - rebalance on the last completed exchange session of each month;
 - trade no earlier than the next regular-session open;
-- rank the same point-in-time eligible universe and hold at most ten names;
+- rank the same fixed eligible universe and hold at most ten names, retaining
+  its survivor-basket limitation unless point-in-time membership is newly sourced;
 - equal-weight selected names, cap each name at 10% of invested capital, and keep
   5% cash;
 - optionally require both close above SMA200 and SMA50 above SMA200 as a causal

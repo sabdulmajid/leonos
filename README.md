@@ -35,7 +35,6 @@ python -m venv .venv
 .venv/bin/leonos data audit
 .venv/bin/leonos prepare
 .venv/bin/leonos baseline fit
-.venv/bin/leonos scenario
 ```
 
 GPU extras are intentionally separate from the CPU gate:
@@ -59,7 +58,10 @@ The post-v1 scenario command is CPU-only. It generates 100,000 shared paired
 date-block draws, then evaluates those same draws for every declared forecast
 seed and transaction-cost case. These are conditional historical stress
 paths—not fresh market forecasts or calibrated probabilities. See
-[the retail interpretation](docs/retail-research.md).
+[the retail interpretation](docs/retail-research.md) and the measured
+[100,000-path scenario analysis](reports/scenario-analysis.md).
+It requires the completed ignored evaluation artifacts for all three seeds, then
+runs as `.venv/bin/leonos scenario`; it is not part of the clean-clone CPU path.
 
 ## Research integrity
 

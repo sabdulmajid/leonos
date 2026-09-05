@@ -78,6 +78,8 @@ def test_shared_draws_make_ordered_model_comparison_exact() -> None:
         seed=11,
     )
     assert len(distribution) == 100
+    assert summary["resampled_date_paths"] == 50
+    assert "unique_resampled_date_paths" not in summary
     assert (distribution["kronos_ending_value"] > distribution["lightgbm_ending_value"]).all()
     assert (distribution["reference_ending_value"] == 100.0).all()
     for result in summary["scenarios"].values():
