@@ -46,6 +46,9 @@ forecast:
     top_k: null
     sample_count: 10
     max_context: 512
+    # Frozen from the validation-only throughput sweep on the recorded host.
+    batch_size: 16
+    num_shards: 2
 
 splits:
   development_label_end_max: 2023-12-31

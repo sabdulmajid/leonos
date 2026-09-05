@@ -1,0 +1,107 @@
+{
+  "config_hash": "62192b59c7f3916659cae2445e98b9137a41422ed34e40dc3a7962b4038bafc5",
+  "dataset_revision": "88b972b547078237865255d9e15e4e16e1dd855f",
+  "device": "cuda:0",
+  "elapsed_seconds": 12.74265949986875,
+  "environment": {
+    "captured_at": "2026-09-05T00:16:09.386587+00:00",
+    "hostname": "Latte",
+    "pid": 737231,
+    "platform": "Linux-6.8.0-117-generic-x86_64-with-glibc2.39",
+    "python": "3.12.3"
+  },
+  "finished_at_utc": "2026-09-05T00:16:09.380597+00:00",
+  "git": {
+    "commit": "ae549af710256210095c35490935b966e81ee3f6",
+    "dirty": false,
+    "status": []
+  },
+  "max_memory_fraction": 0.85,
+  "note": "validation-side throughput only; benchmark predictions were discarded",
+  "prepare_signature": "a2cf3e566f4c30dff0903bd081a14fa5eb12365c9209cbe0de2b89ed7068e95d",
+  "recommended_batch_size": 16,
+  "records": [
+    {
+      "batch_size": 4,
+      "elapsed_seconds": 0.28593816980719566,
+      "origins_per_second": 13.98903826899762,
+      "peak_allocated_bytes": 649697280,
+      "peak_reserved_bytes": 918552576,
+      "status": "ok",
+      "total_memory_bytes": 101971591168
+    },
+    {
+      "batch_size": 8,
+      "elapsed_seconds": 0.5508738942444324,
+      "origins_per_second": 14.52237995589288,
+      "peak_allocated_bytes": 859199488,
+      "peak_reserved_bytes": 1533018112,
+      "status": "ok",
+      "total_memory_bytes": 101971591168
+    },
+    {
+      "batch_size": 16,
+      "elapsed_seconds": 1.0978699307888746,
+      "origins_per_second": 14.573675397506513,
+      "peak_allocated_bytes": 1279379968,
+      "peak_reserved_bytes": 3995074560,
+      "status": "ok",
+      "total_memory_bytes": 101971591168
+    },
+    {
+      "batch_size": 32,
+      "elapsed_seconds": 2.2461582832038403,
+      "origins_per_second": 14.24654719985109,
+      "peak_allocated_bytes": 2116008448,
+      "peak_reserved_bytes": 11643387904,
+      "status": "ok",
+      "total_memory_bytes": 101971591168
+    },
+    {
+      "batch_size": 64,
+      "elapsed_seconds": 4.519685992971063,
+      "origins_per_second": 14.160275757991084,
+      "peak_allocated_bytes": 3794081792,
+      "peak_reserved_bytes": 26906460160,
+      "status": "ok",
+      "total_memory_bytes": 101971591168
+    }
+  ],
+  "schema_version": "leonos.kronos_batch_benchmark.v1",
+  "seed": 42,
+  "source_revisions": {
+    "dataset": {
+      "allow_patterns": [
+        "bars_1day/train.parquet",
+        "bars_1day/val.parquet",
+        "bars_1day/test.parquet",
+        "README.md",
+        "LICENSE*"
+      ],
+      "repo_id": "twelvedata/financial-world-model",
+      "revision": "88b972b547078237865255d9e15e4e16e1dd855f"
+    },
+    "dataset_code": {
+      "revision": "bbb4cbbfea92677e1a7cc0363be9a01c90e4fbc6",
+      "url": "https://github.com/twelvedata/twelvedata-world-model-dataset"
+    },
+    "kronos_code": {
+      "revision": "67b630e67f6a18c9e9be918d9b4337c960db1e9a",
+      "url": "https://github.com/shiyu-coder/Kronos"
+    },
+    "kronos_model": {
+      "repo_id": "NeoQuasar/Kronos-base",
+      "revision": "2b554741eca47781b64468546e77fef3e85130e6"
+    },
+    "kronos_tokenizer": {
+      "repo_id": "NeoQuasar/Kronos-Tokenizer-base",
+      "revision": "0e0117387f39004a9016484a186a908917e22426"
+    },
+    "qlib": {
+      "revision": "79633dd9506ea689e5400dea0197717b5b3d74b7",
+      "url": "https://github.com/microsoft/qlib"
+    }
+  },
+  "started_at_utc": "2026-09-05T00:15:56.637935+00:00",
+  "status": "complete"
+}

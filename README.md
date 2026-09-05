@@ -5,11 +5,14 @@ Leonos asks one question: on a fixed basket of U.S. equities, does frozen
 than a pooled LightGBM model, and does any ranking advantage improve the same
 long-only portfolio after transaction costs?
 
-**Status (2026-09-04): M1 CPU gate complete; no comparative result exists yet.**
+**Status (2026-09-04): M2 model integration complete; no comparative result exists yet.**
 The pinned snapshot passed the post-policy audit with 515,779 daily bars and all
 51 equities. The validation-only LightGBM search achieved mean daily RankIC
 0.0650 over 118 dates; its 20,859 frozen test forecasts are saved but will not be
 evaluated until matching Kronos forecasts exist.
+The real-data Kronos smoke passed 2/2 origins. A validation-only sweep selected
+batch size 16 at 14.57 origins/second on one GPU; the two-worker test plan is now
+frozen.
 The repository is an independent application of published components to a
 different equity panel, not an exact reproduction of the Kronos paper. A negative
 or inconclusive result is valid.
