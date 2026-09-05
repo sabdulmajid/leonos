@@ -7,10 +7,10 @@
   88 CPU/Qlib tests pass; Kronos validation smoke produced 2/2 aligned finite
   forecasts; validation-only throughput selected batch 16 (14.57 origins/s,
   3.72 GiB peak reserved).
-- Active Leonos jobs: none. The pre-existing TimesFM jobs ended; both user-provided
-  GPUs were idle at the latest inventory and have not yet been touched by Leonos.
-- Kronos forecasts: 0 / 20,859 test origins.
+- Active Leonos jobs: seed-42 worker 0/2, exec session `20928`, PID `739344`,
+  `cuda:0`; worker 1/2, exec session `73828`, PID `739342`, `cuda:1`.
+- Kronos forecasts: 192 / 20,859 test origins at the initial health check.
 - Blocker: GitHub accepted the integration-branch push, but draft-PR creation was
   rejected with HTTP 403 (`Resource not accessible by personal access token`).
-- Next command: launch canonical seed-42 test workers 0/2 on `cuda:0` and 1/2 on
-  `cuda:1`; each manifest contains its exact resume command.
+- Next command: after a meaningful interval, read the two worker manifests once;
+  each manifest also contains its exact resume command.
