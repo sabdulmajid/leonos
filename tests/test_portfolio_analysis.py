@@ -15,6 +15,7 @@ from leonos.portfolio_analysis import (
     rolling_origin_return_paths,
     sample_joint_return_paths,
     shrunk_covariance,
+    simulate_policy_path_endpoints,
     simulate_policy_paths,
     summarize_policy_paths,
 )
@@ -42,9 +43,7 @@ def test_currency_translation_and_cash_are_jointly_aligned() -> None:
     assert reporting["fund_cad"].equals(native["fund_cad"])
     with_cash = add_non_interest_cash_returns(reporting, usd_cad_returns=fx)
     assert (with_cash["cash_cad"] == 0.0).all()
-    pd.testing.assert_series_equal(
-        with_cash["cash_usd"], fx, check_names=False
-    )
+    pd.testing.assert_series_equal(with_cash["cash_usd"], fx, check_names=False)
 
 
 def test_joint_block_sampling_is_deterministic_and_preserves_asset_rows() -> None:
@@ -110,8 +109,7 @@ def test_hold_policy_does_not_trade_and_matches_manual_compounding() -> None:
         policy=Policy("hold", weights, None, initial_rebalance=False),
     )
     manual = 100.0 * sum(
-        weights[column] * np.prod(1.0 + base[column].to_numpy())
-        for column in base
+        weights[column] * np.prod(1.0 + base[column].to_numpy()) for column in base
     )
     assert result.ending_value[0] == pytest.approx(manual)
     assert result.traded_notional[0] == 0.0
@@ -214,9 +212,7 @@ def test_pairing_fingerprint_includes_asset_order_and_large_values_reconcile() -
 
 def test_rolling_origins_covariance_and_joint_stress() -> None:
     returns = _returns()
-    origins, paths = rolling_origin_return_paths(
-        returns, horizon_sessions=3, step_sessions=2
-    )
+    origins, paths = rolling_origin_return_paths(returns, horizon_sessions=3, step_sessions=2)
     assert len(origins) == 2
     assert paths.shape == (2, 3, 2)
     covariance = shrunk_covariance(returns)
@@ -228,3 +224,76 @@ def test_rolling_origins_covariance_and_joint_stress() -> None:
         asset_returns={"fund_usd": -0.20, "fund_cad": -0.10},
     )
     assert stressed == pytest.approx(82.5)
+
+
+def test_multi_endpoint_replay_matches_standalone_accounting() -> None:
+    assets = ("fund", "cash")
+    rng = np.random.default_rng(23)
+    paths = rng.normal(0.0002, 0.01, size=(12, 9, 2))
+    policy = Policy(
+        "fictional-quarterly",
+        {"fund": 0.8, "cash": 0.2},
+        rebalance_every_sessions=3,
+    )
+    friction = Friction(
+        default_trade_bps=7.0,
+        cash_assets=frozenset({"cash"}),
+    )
+    endpoints = simulate_policy_path_endpoints(
+        paths,
+        horizons=(2, 3, 5, 9),
+        assets=assets,
+        initial_weights={"fund": 0.3, "cash": 0.7},
+        policy=policy,
+        friction=friction,
+    )
+    for horizon, combined in endpoints.items():
+        standalone = simulate_policy_paths(
+            paths[:, :horizon],
+            assets=assets,
+            initial_weights={"fund": 0.3, "cash": 0.7},
+            policy=policy,
+            friction=friction,
+        )
+        np.testing.assert_allclose(combined.ending_value, standalone.ending_value)
+        np.testing.assert_allclose(combined.maximum_drawdown, standalone.maximum_drawdown)
+        np.testing.assert_allclose(combined.traded_notional, standalone.traded_notional)
+        np.testing.assert_allclose(combined.trading_cost, standalone.trading_cost)
+
+
+def test_quarterly_review_with_drift_band_does_not_force_a_trade() -> None:
+    assets = ("fund", "cash")
+    paths = np.zeros((2, 8, 2))
+    paths[:, :, 0] = 0.001
+    always = Policy("always", {"fund": 0.8, "cash": 0.2}, 2)
+    banded = Policy(
+        "banded",
+        {"fund": 0.8, "cash": 0.2},
+        2,
+        rebalance_absolute_drift=0.05,
+        rebalance_relative_drift=0.25,
+    )
+    friction = Friction(default_trade_bps=5.0, cash_assets=frozenset({"cash"}))
+    always_result = simulate_policy_paths(
+        paths,
+        assets=assets,
+        initial_weights={"fund": 0.8, "cash": 0.2},
+        policy=always,
+        friction=friction,
+    )
+    banded_result = simulate_policy_paths(
+        paths,
+        assets=assets,
+        initial_weights={"fund": 0.8, "cash": 0.2},
+        policy=banded,
+        friction=friction,
+    )
+    assert np.all(banded_result.traded_notional == 0.0)
+    assert np.all(always_result.traded_notional > 0.0)
+    with pytest.raises(ValueError, match="review cadence"):
+        Policy(
+            "invalid",
+            {"fund": 0.8, "cash": 0.2},
+            None,
+            rebalance_absolute_drift=0.05,
+        )

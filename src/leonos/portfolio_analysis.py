@@ -26,12 +26,24 @@ class Policy:
     target_weights: Mapping[str, float]
     rebalance_every_sessions: int | None
     initial_rebalance: bool = True
+    rebalance_absolute_drift: float | None = None
+    rebalance_relative_drift: float | None = None
 
     def __post_init__(self) -> None:
         if not self.name.strip():
             raise ValueError("policy name must be non-empty")
         if self.rebalance_every_sessions is not None and self.rebalance_every_sessions < 1:
             raise ValueError("rebalance cadence must be positive or None")
+        for value, role in (
+            (self.rebalance_absolute_drift, "absolute drift"),
+            (self.rebalance_relative_drift, "relative drift"),
+        ):
+            if value is not None and (not np.isfinite(value) or value < 0.0):
+                raise ValueError(f"{role} must be finite and nonnegative")
+        if self.rebalance_every_sessions is None and (
+            self.rebalance_absolute_drift is not None or self.rebalance_relative_drift is not None
+        ):
+            raise ValueError("drift thresholds require a review cadence")
 
 
 @dataclass(frozen=True)
@@ -202,6 +214,30 @@ def _weights(values: Mapping[str, float], assets: Sequence[str], role: str) -> n
     return result
 
 
+def _drift_rebalance_mask(
+    values: np.ndarray,
+    *,
+    target_weights: np.ndarray,
+    policy: Policy,
+) -> np.ndarray:
+    """Return paths whose weights breach a declared review threshold."""
+
+    count = values.shape[0]
+    if policy.rebalance_absolute_drift is None and policy.rebalance_relative_drift is None:
+        return np.ones(count, dtype=bool)
+    current = values / values.sum(axis=1)[:, None]
+    deviation = np.abs(current - target_weights[None, :])
+    breached = np.zeros(count, dtype=bool)
+    if policy.rebalance_absolute_drift is not None:
+        breached |= np.any(deviation > policy.rebalance_absolute_drift, axis=1)
+    if policy.rebalance_relative_drift is not None:
+        positive_target = target_weights > 0.0
+        if positive_target.any():
+            relative = deviation[:, positive_target] / target_weights[positive_target]
+            breached |= np.any(relative > policy.rebalance_relative_drift, axis=1)
+    return breached
+
+
 def _rebalance(
     values: np.ndarray,
     *,
@@ -233,10 +269,9 @@ def _rebalance(
     desired = total_after[:, None] * target_weights
     for _ in range(12):
         traded = np.abs(desired - values)[:, tradable].sum(axis=1)
-        trading_cost = (
-            np.abs(desired - values)[:, tradable]
-            * asset_rates[None, tradable]
-        ).sum(axis=1)
+        trading_cost = (np.abs(desired - values)[:, tradable] * asset_rates[None, tradable]).sum(
+            axis=1
+        )
         next_total = total_before - trading_cost - fx_cost
         if (next_total <= 0.0).any():
             raise ValueError("friction exhausted portfolio value")
@@ -250,9 +285,7 @@ def _rebalance(
     else:  # pragma: no cover - contraction should converge for realistic rates
         raise RuntimeError("rebalance friction calculation did not converge")
     traded = np.abs(desired - values)[:, tradable].sum(axis=1)
-    trading_cost = (
-        np.abs(desired - values)[:, tradable] * asset_rates[None, tradable]
-    ).sum(axis=1)
+    trading_cost = (np.abs(desired - values)[:, tradable] * asset_rates[None, tradable]).sum(axis=1)
     if not np.allclose(
         desired.sum(axis=1) + trading_cost + fx_cost,
         total_before,
@@ -311,18 +344,22 @@ def simulate_policy_paths(
     running_peak = np.full(count, float(initial_value))
     maximum_drawdown = np.zeros(count)
 
-    def rebalance() -> None:
+    def rebalance(mask: np.ndarray | None = None) -> None:
         nonlocal values
-        values, traded, trade_cost, fx_notional, fx_cost = _rebalance(
-            values,
+        selected = np.ones(count, dtype=bool) if mask is None else mask
+        if not selected.any():
+            return
+        updated, traded, trade_cost, fx_notional, fx_cost = _rebalance(
+            values[selected],
             target_weights=target,
             assets=assets,
             friction=friction,
         )
-        traded_total[:] += traded
-        trading_cost_total[:] += trade_cost
-        fx_notional_total[:] += fx_notional
-        fx_cost_total[:] += fx_cost
+        values[selected] = updated
+        traded_total[selected] += traded
+        trading_cost_total[selected] += trade_cost
+        fx_notional_total[selected] += fx_notional
+        fx_cost_total[selected] += fx_cost
 
     if policy.initial_rebalance:
         rebalance()
@@ -336,17 +373,12 @@ def simulate_policy_paths(
         maximum_drawdown = np.maximum(maximum_drawdown, 1.0 - total / running_peak)
         cadence = policy.rebalance_every_sessions
         if cadence is not None and (session + 1) % cadence == 0 and session + 1 < horizon:
-            rebalance()
+            rebalance(_drift_rebalance_mask(values, target_weights=target, policy=policy))
             total = values.sum(axis=1)
-            maximum_drawdown = np.maximum(
-                maximum_drawdown, 1.0 - total / running_peak
-            )
+            maximum_drawdown = np.maximum(maximum_drawdown, 1.0 - total / running_peak)
 
     ending = values.sum(axis=1)
-    if (
-        not np.isfinite(ending).all()
-        or (values < -1e-10).any()
-    ):
+    if not np.isfinite(ending).all() or (values < -1e-10).any():
         raise AssertionError("portfolio paths failed reconciliation")
     contiguous_paths = np.ascontiguousarray(paths)
     fingerprint = hashlib.sha256()
@@ -372,6 +404,127 @@ def simulate_policy_paths(
     )
 
 
+def simulate_policy_path_endpoints(
+    sampled_returns: np.ndarray,
+    *,
+    horizons: Sequence[int],
+    assets: Sequence[str],
+    initial_weights: Mapping[str, float],
+    policy: Policy,
+    friction: Friction | None = None,
+    initial_value: float = 100.0,
+) -> dict[int, PolicyPathResult]:
+    """Replay one policy once and snapshot multiple nested horizon endpoints.
+
+    This is exactly the same accounting convention as :func:`simulate_policy_paths`.
+    A cadence-boundary endpoint is captured before the rebalance needed only for
+    subsequent sessions, so its costs and value match a standalone run ending there.
+    """
+
+    requested = tuple(sorted({int(value) for value in horizons}))
+    paths = np.asarray(sampled_returns, dtype=np.float64)
+    if not requested or requested[0] < 1:
+        raise ValueError("horizons must contain positive session counts")
+    if paths.ndim != 3 or paths.shape[2] != len(assets):
+        raise ValueError("sampled returns must have shape paths x sessions x assets")
+    if requested[-1] > paths.shape[1]:
+        raise ValueError("largest endpoint exceeds the sampled path length")
+    if not np.isfinite(paths).all() or (paths <= -1.0).any():
+        raise ValueError("sampled returns must be finite and greater than -1")
+    if not np.isfinite(initial_value) or initial_value <= 0.0:
+        raise ValueError("initial value must be finite and positive")
+    if not assets or len(set(assets)) != len(assets):
+        raise ValueError("assets must be non-empty and unique")
+
+    initial = _weights(initial_weights, assets, "initial")
+    target = _weights(policy.target_weights, assets, "target")
+    friction = friction or Friction()
+    known_assets = set(assets)
+    for name, configured in (
+        ("USD assets", friction.usd_assets),
+        ("cash assets", friction.cash_assets),
+        ("per-asset friction", (friction.trade_bps_by_asset or {}).keys()),
+    ):
+        unknown = set(configured).difference(known_assets)
+        if unknown:
+            raise ValueError(f"{name} contain unknown assets: {sorted(unknown)}")
+
+    count = paths.shape[0]
+    if count < 1:
+        raise ValueError("sampled returns must contain at least one path")
+    values = np.broadcast_to(initial_value * initial, (count, len(assets))).copy()
+    traded_total = np.zeros(count)
+    trading_cost_total = np.zeros(count)
+    fx_notional_total = np.zeros(count)
+    fx_cost_total = np.zeros(count)
+    running_peak = np.full(count, float(initial_value))
+    maximum_drawdown = np.zeros(count)
+
+    def rebalance(mask: np.ndarray | None = None) -> None:
+        nonlocal values
+        selected = np.ones(count, dtype=bool) if mask is None else mask
+        if not selected.any():
+            return
+        updated, traded, trade_cost, fx_notional, fx_cost = _rebalance(
+            values[selected],
+            target_weights=target,
+            assets=assets,
+            friction=friction,
+        )
+        values[selected] = updated
+        traded_total[selected] += traded
+        trading_cost_total[selected] += trade_cost
+        fx_notional_total[selected] += fx_notional
+        fx_cost_total[selected] += fx_cost
+
+    if policy.initial_rebalance:
+        rebalance()
+        total = values.sum(axis=1)
+        maximum_drawdown = np.maximum(maximum_drawdown, 1.0 - total / running_peak)
+
+    contiguous = np.ascontiguousarray(paths[:, : requested[-1], :])
+    fingerprint = hashlib.sha256()
+    fingerprint.update(
+        json.dumps(
+            {
+                "assets": list(assets),
+                "shape": list(contiguous.shape),
+                "dtype": str(contiguous.dtype),
+            },
+            separators=(",", ":"),
+        ).encode()
+    )
+    fingerprint.update(memoryview(contiguous).cast("B"))
+    common_fingerprint = fingerprint.hexdigest()
+    results: dict[int, PolicyPathResult] = {}
+    endpoint_set = set(requested)
+    for session in range(requested[-1]):
+        values *= 1.0 + paths[:, session, :]
+        total = values.sum(axis=1)
+        running_peak = np.maximum(running_peak, total)
+        maximum_drawdown = np.maximum(maximum_drawdown, 1.0 - total / running_peak)
+        completed = session + 1
+        if completed in endpoint_set:
+            results[completed] = PolicyPathResult(
+                policy=policy.name,
+                horizon_sessions=completed,
+                initial_value=float(initial_value),
+                sample_fingerprint=f"{common_fingerprint}:{completed}",
+                ending_value=total.copy(),
+                maximum_drawdown=maximum_drawdown.copy(),
+                traded_notional=traded_total.copy(),
+                trading_cost=trading_cost_total.copy(),
+                fx_converted_notional=fx_notional_total.copy(),
+                fx_cost=fx_cost_total.copy(),
+            )
+        cadence = policy.rebalance_every_sessions
+        if cadence is not None and completed % cadence == 0 and completed < requested[-1]:
+            rebalance(_drift_rebalance_mask(values, target_weights=target, policy=policy))
+            total = values.sum(axis=1)
+            maximum_drawdown = np.maximum(maximum_drawdown, 1.0 - total / running_peak)
+    return results
+
+
 def summarize_policy_paths(result: PolicyPathResult) -> dict[str, float | int | str]:
     """Summarize pathwise outputs without interpreting frequencies as probabilities."""
 
@@ -385,9 +538,7 @@ def summarize_policy_paths(result: PolicyPathResult) -> dict[str, float | int | 
         "ending_value_p05": float(np.quantile(ending, 0.05)),
         "ending_value_median": float(np.median(ending)),
         "ending_value_p95": float(np.quantile(ending, 0.95)),
-        "scenario_fraction_below_start": float(
-            np.mean(ending < result.initial_value)
-        ),
+        "scenario_fraction_below_start": float(np.mean(ending < result.initial_value)),
         "maximum_drawdown_p95": float(np.quantile(drawdown, 0.95)),
         "maximum_drawdown_median": float(np.median(drawdown)),
         "traded_notional_mean": float(np.mean(result.traded_notional)),
@@ -454,6 +605,7 @@ __all__ = [
     "sample_joint_return_paths",
     "shrunk_covariance",
     "simulate_policy_paths",
+    "simulate_policy_path_endpoints",
     "summarize_policy_paths",
     "validate_return_frame",
 ]

@@ -123,6 +123,11 @@ def test_reviewed_catalog_maps_wshr_and_flags_unverified_securities() -> None:
     assert instrument("SPWO").inception_date == date(2023, 12, 19)
     assert instrument("GLDM").sharia_status == "not_issuer_verified"
     assert instrument("MU").sharia_status == "not_issuer_verified"
+    assert instrument("UMMA").inception_date == date(2022, 1, 7)
+    assert instrument("MNZL").inception_date == date(2025, 11, 18)
+    assert instrument("SPRE").sharia_status == "issuer_mandate"
+    assert instrument("TSM").vendor_mapping("yahoo").symbol == "TSM"
+    assert instrument("GOOGL").sharia_status == "not_issuer_verified"
 
 
 def test_yahoo_parser_uses_completed_session_close_and_never_fills_missing_bar() -> None:

@@ -29,6 +29,12 @@ def test_private_paths_reject_git_root_and_permissive_input(tmp_path: Path) -> N
     inside = repository / "fictional.json"
     inside.write_text("{}", encoding="utf-8")
     os.chmod(inside, 0o600)
+    with pytest.raises(PrivatePathError, match="at least one forbidden"):
+        validate_private_paths(
+            input_path=inside,
+            output_directory=private,
+            forbidden_roots=[],
+        )
     with pytest.raises(PrivatePathError, match="forbidden root"):
         validate_private_paths(
             input_path=inside,
