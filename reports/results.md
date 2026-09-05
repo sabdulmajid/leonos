@@ -1,15 +1,26 @@
 # Leonos v1 results
 
-Primary seed: 42. Test span: 2025-01-03 through 2026-08-21 (signals trade at the next session open). Costs are 5 bps per side; cash return is zero.
+Primary seed: 42. Forecast origins span 2025-01-02 through 2026-08-20. Portfolio execution/valuation spans 2025-01-03 through 2026-08-21; each post-close signal first trades at the next session open. Costs are 5 bps per side; cash return is zero.
 
 The ranking evidence is inconclusive because the paired 95% interval contains zero: mean daily RankIC difference (Kronos − LightGBM) was -0.0056 with paired moving-block 95% CI [-0.0746, 0.0496] across 409 dates. LightGBM also produced the higher 5-bps net return.
 
-| Model | Coverage | Mean RankIC | Paired Δ RankIC (95% CI) | MAE (bp) | Net return | CAGR | Net Sharpe | Max drawdown | Σ daily turnover rate | Costs | Inference seconds | Peak GPU allocated | Peak GPU reserved |
+| Model | Coverage | Mean RankIC | Paired Δ RankIC (95% CI) | MAE (bp) | Net return | CAGR | Net Sharpe | Max drawdown | Σ daily turnover rate | Costs | Inference seconds | Peak GPU allocated (per-worker maximum) | Peak GPU reserved (per-worker maximum) |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
 | kronos | 100.00% | -0.0032 | -0.0056 [-0.0746, 0.0496] | 403.7 | 49.99% | 28.37% | 0.84 | -36.91% | 72.40 | $47,777 | 862.0 | 1.19 GiB | 3.67 GiB |
 | lightgbm | 100.00% | 0.0025 | reference | 290.6 | 107.99% | 57.02% | 1.23 | -28.59% | 66.42 | $43,033 | 0.028 | NA | NA |
 
 The zero-score reference has RankIC `NA` and MAE 292.1 bp. The 95%-invested equal-weight buy-and-hold reference returned 28.99% net, with Sharpe 1.20, CAGR 16.98%, and maximum drawdown -16.36%.
+
+Primary-seed realized position drift at 5 bps:
+
+| Model | Median gross exposure | Maximum gross exposure | Median largest-stock weight | Maximum largest-stock weight | Minimum cash | Minimum cash/account |
+| --- | ---: | ---: | ---: | ---: | ---: | ---: |
+| kronos | 99.74% | 100.00% | 67.72% | 90.14% | $40.47 | 3.63e-05 |
+| lightgbm | 99.70% | 99.99% | 56.44% | 85.45% | $104.71 | 9.65e-05 |
+
+These are the unmodified Qlib strategy's realized weights: sizing, whole-share rounding, and market drift make them differ from a constant 95% exposure or exact equal weights.
+
+At 5 bps, seed 43 Kronos reached minimum cash -$13.03 (cash/account -1.42e-05). The worst declared-cost case was seed 43 Kronos at 0 bps: -$14.33 (-1.52e-05). These de-minimis whole-share rounding overdrafts are not intentional economic leverage, but strict no-leverage cannot be claimed.
 
 ## Figures
 
@@ -25,11 +36,13 @@ The 5-bps portfolio winner is not seed-stable: LightGBM wins seeds 42 and 43; Kr
 
 The primary-seed calendar-year RankIC difference changes sign (positive in 2025; negative in 2026).
 
-| Seed | Kronos RankIC | LightGBM RankIC | Δ RankIC (K−L) | Paired 95% CI | Kronos net, 5 bps | LightGBM net, 5 bps | Portfolio winner (margin) |
-| ---: | ---: | ---: | ---: | ---: | ---: | ---: | --- |
-| 42 | -0.0032 | 0.0025 | -0.0056 | [-0.0746, 0.0496] | 49.99% | 107.99% | LightGBM (+58.00 pp) |
-| 43 | -0.0035 | 0.0001 | -0.0036 | [-0.0656, 0.0462] | 35.02% | 126.09% | LightGBM (+91.07 pp) |
-| 44 | -0.0020 | 0.0069 | -0.0089 | [-0.0774, 0.0474] | 53.98% | 51.42% | Kronos (+2.56 pp) |
+| Seed | Kronos RankIC | LightGBM RankIC | Δ RankIC (K−L) | Paired 95% CI | Kronos net, 5 bps | LightGBM net, 5 bps | LightGBM selection | Portfolio winner (margin) |
+| ---: | ---: | ---: | ---: | ---: | ---: | ---: | --- | --- |
+| 42 | -0.0032 | 0.0025 | -0.0056 | [-0.0746, 0.0496] | 49.99% | 107.99% | l31_lr02@1 | LightGBM (+58.00 pp) |
+| 43 | -0.0035 | 0.0001 | -0.0036 | [-0.0656, 0.0462] | 35.02% | 126.09% | l31_subsample@1 | LightGBM (+91.07 pp) |
+| 44 | -0.0020 | 0.0069 | -0.0089 | [-0.0774, 0.0474] | 53.98% | 51.42% | l31_regularized@3 | Kronos (+2.56 pp) |
+
+Each sensitivity seed reran the full development-fit, validation-selection, and declared final-refit pipeline; selections are candidate@iteration.
 
 Primary-seed calendar-year RankIC:
 
