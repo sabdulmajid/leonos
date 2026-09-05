@@ -1,7 +1,7 @@
 {
   "block_length_sessions": 20,
   "bootstrap_seed": 20260905,
-  "distribution_path": "artifacts/scenarios/07db337afa2783c28d8c22ee038044ca81dec29b301c805b4f4d588c6297b718/paired_rankic_return_bootstrap.parquet",
+  "distribution_path": "artifacts/scenarios/ae0ccb181819c07db4091bca453a9f5f3a88117df450245c96ee710c41780ce6/paired_rankic_return_bootstrap.parquet",
   "distribution_sha256": "cfeb3321ea0a46a4252a0bec624f92f1711c70457034ad12d2acf9ad21193ab4",
   "effective_block_length_sessions": 20,
   "first_session": "2025-01-03",
@@ -11,21 +11,22 @@
   "normalized_initial_value": 100.0,
   "rankic_state_note": "daily cross-sectional RankIC resampling has no portfolio-state splice; the state limitation applies to resampled account-return paths",
   "replicates_per_scenario": 100000,
+  "resampled_date_paths": 100000,
   "run_provenance": {
     "config_hash": "7c6fdf5b112241292d463f4f3693562c85dac04478cfd56b529a9a90b70c63f4",
     "environment": {
-      "captured_at": "2026-09-05T13:37:41.666285+00:00",
+      "captured_at": "2026-09-05T13:43:05.419114+00:00",
       "hostname": "Latte",
-      "pid": 1318378,
+      "pid": 1323719,
       "platform": "Linux-6.8.0-117-generic-x86_64-with-glibc2.39",
       "python": "3.12.3"
     },
     "git": {
-      "commit": "5359261fedec6813bba9f8b67f60fccb8aa9f74d",
+      "commit": "fff9f079fd1352cabd8939a5d12f49afa98340d1",
       "dirty": false,
       "status": []
     },
-    "implementation_hash": "d18fbb6a1096cb4ebebec6ade2c7578daef6f32674adc689cfb64449c5acdc5a",
+    "implementation_hash": "a75a6ff53ffb6908c8e1d53c377312dd5905675144f0857cab1bffe35c5b1ae6",
     "scenario_config_hash": "d341b784d036b8b6834bb1a4ad44c4b9e34384535b448f75f22b8c93ff9e2a60"
   },
   "run_settings": {
@@ -47,7 +48,7 @@
     "scenario_config_hash": "d341b784d036b8b6834bb1a4ad44c4b9e34384535b448f75f22b8c93ff9e2a60",
     "seed": 20260905
   },
-  "run_signature": "07db337afa2783c28d8c22ee038044ca81dec29b301c805b4f4d588c6297b718",
+  "run_signature": "ae0ccb181819c07db4091bca453a9f5f3a88117df450245c96ee710c41780ce6",
   "scenario_count": 9,
   "scenario_path_evaluations": 900000,
   "scenarios": {
@@ -1044,6 +1045,5 @@
     }
   ],
   "state_limitation": "a block can begin from an already-invested original portfolio state; sampled returns retain original strategy states inside blocks, while holdings, orders, costs, and deployment are not recomputed at concatenated block boundaries",
-  "status": "complete",
-  "unique_resampled_date_paths": 100000
+  "status": "complete"
 }

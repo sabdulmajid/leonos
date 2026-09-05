@@ -6,9 +6,9 @@
   three forecast seeds and three cost cases (900,000 scenario evaluations). Every
   resampled RankIC-difference interval still contains zero; LightGBM's portfolio
   leads in seeds 42/43 and Kronos narrowly leads in seed 44.
-- Verification: 100 tests and Ruff pass. The full scenario run took 18.6 seconds,
-  used 643 MiB peak RAM, and records clean commit `5359261` plus input/output
-  hashes under run signature `07db337a…`.
+- Verification: 100 tests and Ruff pass. The canonical scenario run took 18.7
+  seconds, used 643 MiB peak RAM, and records clean commit `fff9f07` plus
+  input/output hashes under run signature `ae0ccb18…`.
 - Active Leonos jobs: none. Forecast counts: 20,859 / 20,859 for seeds 42, 43,
   and 44; no GPU work was repeated.
 - Blocker: GitHub accepts branch pushes, but draft-PR creation remains HTTP 403

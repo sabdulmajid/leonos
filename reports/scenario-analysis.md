@@ -4,12 +4,12 @@ This analysis reuses completed forecasts and ledgers. It does not retrain either
 model or create new market forecasts. The canonical run drew 100,000 shared,
 paired circular moving-block paths of 409 sessions and evaluated each under three
 forecast seeds and three transaction-cost settings: 900,000 scenario-case rows.
-It finished on CPU in 18.6 seconds with 643 MiB peak resident memory.
+It finished on CPU in 18.7 seconds with 643 MiB peak resident memory.
 
 Run signature:
-`07db337afa2783c28d8c22ee038044ca81dec29b301c805b4f4d588c6297b718`.
+`ae0ccb181819c07db4091bca453a9f5f3a88117df450245c96ee710c41780ce6`.
 The machine-readable summary is
-[`results/summary/scenarios/07db337a…json`](../results/summary/scenarios/07db337afa2783c28d8c22ee038044ca81dec29b301c805b4f4d588c6297b718.json).
+[`results/summary/scenarios/ae0ccb18…json`](../results/summary/scenarios/ae0ccb181819c07db4091bca453a9f5f3a88117df450245c96ee710c41780ce6.json).
 
 ## What happened to a normalized USD 100 at five basis points per side
 
