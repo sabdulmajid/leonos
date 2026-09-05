@@ -2,7 +2,7 @@
 
 Primary seed: 42. Test span: 2025-01-03 through 2026-08-21 (signals trade at the next session open). Costs are 5 bps per side; cash return is zero.
 
-The ranking evidence is inconclusive because the paired 95% interval contains zero: mean daily RankIC difference (Kronos − LightGBM) was -0.0056 with paired moving-block 95% CI [-0.0746, 0.0496] across 409 dates. LightGBM also produced the higher 5-bps net return. All 3 declared seeds have the same RankIC-difference sign. The RankIC-difference sign changes across calendar-year segments.
+The ranking evidence is inconclusive because the paired 95% interval contains zero: mean daily RankIC difference (Kronos − LightGBM) was -0.0056 with paired moving-block 95% CI [-0.0746, 0.0496] across 409 dates. LightGBM also produced the higher 5-bps net return.
 
 | Model | Coverage | Mean RankIC | Paired Δ RankIC (95% CI) | MAE (bp) | Net return | CAGR | Net Sharpe | Max drawdown | Σ daily turnover rate | Costs | Inference seconds | Peak GPU allocated | Peak GPU reserved |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
@@ -10,6 +10,33 @@ The ranking evidence is inconclusive because the paired 95% interval contains ze
 | lightgbm | 100.00% | 0.0025 | reference | 290.6 | 107.99% | 57.02% | 1.23 | -28.59% | 66.42 | $43,033 | 0.028 | NA | NA |
 
 The zero-score reference has RankIC `NA` and MAE 292.1 bp. The 95%-invested equal-weight buy-and-hold reference returned 28.99% net, with Sharpe 1.20, CAGR 16.98%, and maximum drawdown -16.36%.
+
+## Figures
+
+![Paired daily RankIC difference](figures/rankic-difference.png)
+
+![Compounded net wealth at five bps per side](figures/net-wealth.png)
+
+## Seed and period stability
+
+All three declared-seed RankIC differences are negative, but each paired 95% CI contains zero; ranking evidence is not robust proof of a difference.
+
+The 5-bps portfolio winner is not seed-stable: LightGBM wins seeds 42 and 43; Kronos narrowly wins seed 44.
+
+The primary-seed calendar-year RankIC difference changes sign (positive in 2025; negative in 2026).
+
+| Seed | Kronos RankIC | LightGBM RankIC | Δ RankIC (K−L) | Paired 95% CI | Kronos net, 5 bps | LightGBM net, 5 bps | Portfolio winner (margin) |
+| ---: | ---: | ---: | ---: | ---: | ---: | ---: | --- |
+| 42 | -0.0032 | 0.0025 | -0.0056 | [-0.0746, 0.0496] | 49.99% | 107.99% | LightGBM (+58.00 pp) |
+| 43 | -0.0035 | 0.0001 | -0.0036 | [-0.0656, 0.0462] | 35.02% | 126.09% | LightGBM (+91.07 pp) |
+| 44 | -0.0020 | 0.0069 | -0.0089 | [-0.0774, 0.0474] | 53.98% | 51.42% | Kronos (+2.56 pp) |
+
+Primary-seed calendar-year RankIC:
+
+| Year | Dates | Kronos RankIC | LightGBM RankIC | Δ RankIC (K−L) |
+| ---: | ---: | ---: | ---: | ---: |
+| 2025 | 250 | 0.0008 | -0.0044 | 0.0052 |
+| 2026 | 159 | -0.0094 | 0.0133 | -0.0227 |
 
 ## Sensitivities
 
