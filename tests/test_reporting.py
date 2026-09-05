@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import json
 from pathlib import Path
 from types import SimpleNamespace
 
@@ -162,8 +163,8 @@ def test_saved_evaluation_uses_complete_artifacts_and_renders_report(
         "evaluation": {
             "minimum_daily_coverage": 3,
             "bootstrap": {
-                "block_length": 2,
-                "sensitivity_block_lengths": [1],
+                "block_length": 20,
+                "sensitivity_block_lengths": [10, 40],
                 "replicates": 20,
                 "seed": 42,
             },
@@ -179,7 +180,7 @@ def test_saved_evaluation_uses_complete_artifacts_and_renders_report(
         "elapsed_seconds": 10.0,
         "gpu_memory": {
             "peak_allocated_bytes": 2**30,
-            "peak_reserved_bytes": 2**30,
+            "peak_reserved_bytes": 2**31,
         },
         "device": "cuda:0",
     }
@@ -193,7 +194,7 @@ def test_saved_evaluation_uses_complete_artifacts_and_renders_report(
         "_load_lightgbm_artifact",
         lambda *_args: (
             lightgbm,
-            {"timing_seconds": {"test_prediction": 0.1, "total": 2.0}},
+            {"timing_seconds": {"test_prediction": 0.0277, "total": 2.0}},
             tmp_path / "lightgbm.parquet",
         ),
     )
@@ -255,12 +256,47 @@ def test_saved_evaluation_uses_complete_artifacts_and_renders_report(
     assert (tmp_path / "summaries/evaluation_seed_42.json").is_file()
     assert (tmp_path / "artifacts/evaluation/seed=42/aligned.parquet").is_file()
 
+    aggregate = tmp_path / "summaries/evaluation_seed_42.json"
+    saved = json.loads(aggregate.read_text(encoding="utf-8"))
+    saved["portfolio"]["worked_trade"] = {
+        "model": "kronos",
+        "selected_stock": "AAA",
+        "entry_signal_date": "2025-01-02T00:00:00",
+        "entry_execution_date": "2025-01-03T00:00:00",
+        "entry_price": 100.0,
+        "exit_signal_date": "2025-01-10T00:00:00",
+        "exit_execution_date": "2025-01-13T00:00:00",
+        "exit_price": 110.0,
+        "shares": 10.0,
+        "gross_result_dollars": 100.0,
+        "fees_dollars": 1.05,
+        "net_result_dollars": 98.95,
+    }
+    reporting.atomic_write_json(aggregate, saved)
+
     report_path = reporting.render_results_report(config)
     text = report_path.read_text(encoding="utf-8")
     assert "RankIC difference" in text
     assert "95% CI" in text
     assert "split-adjusted price-return simulation" in text
     assert "Seed sensitivity is incomplete (1/3" in text
+    assert "| kronos | 0.80% | 0.70% | 0.50% |" in text
+    assert "| lightgbm | 0.80% | 0.70% | 0.50% |" in text
+    assert "| 10 | 2.0000 | 2.0000 | 2.0000 |" in text
+    assert "| 40 | 2.0000 | 2.0000 | 2.0000 |" in text
+    assert "CAGR" in text
+    assert "Σ daily turnover rate" in text
+    assert "0.028" in text
+    assert "Peak GPU allocated" in text
+    assert "Peak GPU reserved" in text
+    assert "1.00 GiB" in text
+    assert "2.00 GiB" in text
+    assert "selected **AAA**" in text
+    assert "2025-01-02 post-close signal" in text
+    assert "next open on 2025-01-03" in text
+    assert "gross result $100.00, fees $1.05, and net result $98.95" in text
+    assert "not evidence of model skill" in text
+    assert "not a forced final liquidation" in text
 
 
 def test_complete_coverage_gate_rejects_a_failed_forecast() -> None:

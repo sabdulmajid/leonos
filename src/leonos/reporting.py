@@ -698,7 +698,10 @@ def evaluate_saved_predictions(config: Mapping[str, Any], seed: int = 42) -> dic
         "seed": int(seed),
         "prepare_signature": str(prepare_marker["run_signature"]),
         "dataset_revision": str(prepare_marker["dataset_revision"]),
-        "comparison": comparison.summary,
+        "comparison": {
+            **comparison.summary,
+            "bootstrap_sensitivity": _finite_json(comparison.bootstrap.to_dict("records")),
+        },
         "calendar_year_metrics": _finite_json(period_metrics.to_dict("records")),
         "rankic_qlib_reconciliation": reconciliation,
         "portfolio": {
@@ -740,6 +743,21 @@ def _number(value: Any, digits: int = 4) -> str:
 
 def _percent(value: Any, digits: int = 2) -> str:
     return "NA" if value is None else f"{100.0 * float(value):.{digits}f}%"
+
+
+def _duration_seconds(value: Any) -> str:
+    if value is None:
+        return "NA"
+    seconds = float(value)
+    return f"{seconds:.3f}" if abs(seconds) < 1.0 else f"{seconds:.1f}"
+
+
+def _gibibytes(value: Any) -> str:
+    return "NA" if value is None else f"{float(value) / 2**30:.2f} GiB"
+
+
+def _date(value: Any) -> str:
+    return "NA" if value is None else pd.Timestamp(value).date().isoformat()
 
 
 def render_results_report(config: Mapping[str, Any]) -> Path:
@@ -835,9 +853,10 @@ def render_results_report(config: Mapping[str, Any]) -> Path:
         portfolio = portfolios["models"][model]["5"]
         runtime = primary["runtime"][model]
         elapsed = runtime.get("test_wall_seconds", runtime.get("test_inference_seconds"))
-        memory = runtime.get(
+        allocated = runtime.get(
             "peak_allocated_bytes_per_worker_max", runtime.get("peak_memory_bytes")
         )
+        reserved = runtime.get("peak_reserved_bytes_per_worker_max")
         rows.append(
             "| "
             + " | ".join(
@@ -852,12 +871,14 @@ def render_results_report(config: Mapping[str, Any]) -> Path:
                     ),
                     _number(signal["mean_daily_mae_bps"], 1),
                     _percent(portfolio["net_cumulative_return"]),
+                    _percent(portfolio["cagr_252_session"]),
                     _number(portfolio["net_sharpe_zero_cash"], 2),
                     _percent(portfolio["max_drawdown"]),
                     _number(portfolio["turnover_rate_sum"], 2),
                     f"${portfolio['transaction_costs_dollars']:,.0f}",
-                    _number(elapsed, 1),
-                    "NA" if memory is None else f"{float(memory) / 2**30:.2f} GiB",
+                    _duration_seconds(elapsed),
+                    _gibibytes(allocated),
+                    _gibibytes(reserved),
                 ]
             )
             + " |"
@@ -879,14 +900,57 @@ def render_results_report(config: Mapping[str, Any]) -> Path:
         f"{_number(comparison['zero_score']['mean_daily_mae_bps'], 1)} bp. The "
         "95%-invested equal-weight buy-and-hold reference returned "
         f"{_percent(reference['net_cumulative_return'])} net, with Sharpe "
-        f"{_number(reference['net_sharpe_zero_cash'], 2)} and maximum drawdown "
+        f"{_number(reference['net_sharpe_zero_cash'], 2)}, CAGR "
+        f"{_percent(reference['cagr_252_session'])}, and maximum drawdown "
         f"{_percent(reference['max_drawdown'])}."
     )
     table_header = (
         "| Model | Coverage | Mean RankIC | Paired Δ RankIC (95% CI) | MAE (bp) | "
-        "Net return | Net Sharpe | Max drawdown | Turnover | Costs | Inference "
-        "seconds | Peak memory |"
+        "Net return | CAGR | Net Sharpe | Max drawdown | Σ daily turnover rate | "
+        "Costs | Inference seconds | Peak GPU allocated | Peak GPU reserved |"
     )
+    cost_rows = [
+        (
+            f"| {model} | "
+            f"{_percent(portfolios['models'][model]['0']['net_cumulative_return'])} | "
+            f"{_percent(portfolios['models'][model]['5']['net_cumulative_return'])} | "
+            f"{_percent(portfolios['models'][model]['15']['net_cumulative_return'])} |"
+        )
+        for model in MODEL_NAMES
+    ]
+    bootstrap_by_length = {
+        int(item["block_length"]): item for item in comparison.get("bootstrap_sensitivity", [])
+    }
+    missing_blocks = {10, 40}.difference(bootstrap_by_length)
+    if missing_blocks:
+        raise ValueError(
+            "saved evaluation JSON lacks declared bootstrap blocks "
+            f"{sorted(missing_blocks)}; regenerate evaluation"
+        )
+    bootstrap_rows = [
+        (
+            f"| {block_length} | {_number(item['estimate'])} | "
+            f"{_number(item['lower'])} | {_number(item['upper'])} |"
+        )
+        for block_length, item in sorted(bootstrap_by_length.items())
+    ]
+    worked = portfolios.get("worked_trade")
+    if worked is None:
+        worked_text = "No completed round trip was available for a worked example."
+    else:
+        worked_text = (
+            f"The {worked['model']} strategy selected **{worked['selected_stock']}** "
+            f"from the {_date(worked['entry_signal_date'])} post-close signal and "
+            f"bought {float(worked['shares']):,.0f} shares at the next open on "
+            f"{_date(worked['entry_execution_date'])} for "
+            f"${float(worked['entry_price']):,.4f}. Its {_date(worked['exit_signal_date'])} "
+            f"exit signal filled at the {_date(worked['exit_execution_date'])} open for "
+            f"${float(worked['exit_price']):,.4f}: gross result "
+            f"${float(worked['gross_result_dollars']):,.2f}, fees "
+            f"${float(worked['fees_dollars']):,.2f}, and net result "
+            f"${float(worked['net_result_dollars']):,.2f}. This deterministic accounting "
+            "example is not evidence of model skill and is not a forced final liquidation."
+        )
     text = "\n".join(
         [
             "# Leonos v1 results",
@@ -898,18 +962,27 @@ def render_results_report(config: Mapping[str, Any]) -> Path:
             table_header,
             (
                 "| --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | "
-                "---: | ---: | ---: |"
+                "---: | ---: | ---: | ---: | ---: |"
             ),
             *rows,
             "",
             reference_text,
             "",
-            (
-                "Cost sensitivities at 0 and 15 bps and block-bootstrap sensitivities "
-                "at 10 and 40 sessions are retained in the saved evaluation artifacts. "
-                "Remaining positions are marked at the last close and are not forcibly "
-                "liquidated."
-            ),
+            "## Sensitivities",
+            "",
+            "| Model | Net return, 0 bps | Net return, 5 bps | Net return, 15 bps |",
+            "| --- | ---: | ---: | ---: |",
+            *cost_rows,
+            "",
+            "| Bootstrap block (sessions) | Mean Δ RankIC | 95% CI lower | 95% CI upper |",
+            "| ---: | ---: | ---: | ---: |",
+            *bootstrap_rows,
+            "",
+            "## Worked accounting example",
+            "",
+            worked_text,
+            "",
+            ("Remaining positions are marked at the last close and are not forcibly liquidated."),
             "",
             "## Limits",
             "",

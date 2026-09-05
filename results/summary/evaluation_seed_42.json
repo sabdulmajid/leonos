@@ -168,58 +168,58 @@
       },
       "lightgbm": {
         "0": {
-          "account_reconciliation_max_abs_dollars": 9.313225746154785e-10,
-          "cagr_252_session": 0.020556154002542515,
+          "account_reconciliation_max_abs_dollars": 1.6298145055770874e-09,
+          "cagr_252_session": 0.6021116068361292,
           "cash_return_convention": "zero",
-          "ending_cash": 33895.970111846924,
-          "ending_market_value": 999680.0827178955,
-          "ending_value": 1033576.0528297424,
+          "ending_cash": 10632.318935394287,
+          "ending_market_value": 2138284.522628784,
+          "ending_value": 2148916.8415641785,
           "forced_final_liquidation": false,
-          "max_drawdown": -0.28838719816052427,
-          "net_cumulative_return": 0.0335760528297433,
-          "net_sharpe_zero_cash": 0.21838068348451364,
+          "max_drawdown": -0.2846961099483386,
+          "net_cumulative_return": 1.1489168415641777,
+          "net_sharpe_zero_cash": 1.279935002609013,
           "return_definition": "Qlib return - Qlib cost, compounded once",
           "sessions": 409,
           "transaction_costs_dollars": 0.0,
-          "turnover_dollars": 69198821.69409561,
-          "turnover_rate_sum": 69.8950300436949,
-          "unrealized_position_count": 5
+          "turnover_dollars": 87645472.21075821,
+          "turnover_rate_sum": 66.43778485252037,
+          "unrealized_position_count": 6
         },
         "15": {
-          "account_reconciliation_max_abs_dollars": 1.0477378964424133e-09,
-          "cagr_252_session": -0.04398728687565834,
+          "account_reconciliation_max_abs_dollars": 2.0954757928848267e-09,
+          "cagr_252_session": 0.5094090445470947,
           "cash_return_convention": "zero",
-          "ending_cash": 29841.215477269725,
-          "ending_market_value": 899750.4524230957,
-          "ending_value": 929591.6679003654,
+          "ending_cash": 9124.36750476886,
+          "ending_market_value": 1941647.6388168335,
+          "ending_value": 1950772.0063216023,
           "forced_final_liquidation": false,
-          "max_drawdown": -0.30565142901377085,
-          "net_cumulative_return": -0.07040833209963504,
-          "net_sharpe_zero_cash": 0.0006440643568073049,
+          "max_drawdown": -0.2885470552399877,
+          "net_cumulative_return": 0.9507720063216041,
+          "net_sharpe_zero_cash": 1.144202523763134,
           "return_definition": "Qlib return - Qlib cost, compounded once",
           "sessions": 409,
-          "transaction_costs_dollars": 98558.56067247962,
-          "turnover_dollars": 65705707.11498642,
-          "turnover_rate_sum": 69.83755326141747,
-          "unrealized_position_count": 5
+          "transaction_costs_dollars": 124563.01727611542,
+          "turnover_dollars": 83042011.51741028,
+          "turnover_rate_sum": 66.38833190685165,
+          "unrealized_position_count": 6
         },
         "5": {
-          "account_reconciliation_max_abs_dollars": 3.725290298461914e-09,
-          "cagr_252_session": -0.0012186609981379437,
+          "account_reconciliation_max_abs_dollars": 2.3283064365386963e-09,
+          "cagr_252_session": 0.5702075217198299,
           "cash_return_convention": "zero",
-          "ending_cash": 32758.842135871993,
-          "ending_market_value": 965264.0026931763,
-          "ending_value": 998022.8448290483,
+          "ending_cash": 10183.27544714944,
+          "ending_market_value": 2069711.7113113403,
+          "ending_value": 2079894.9867584899,
           "forced_final_liquidation": false,
-          "max_drawdown": -0.2936151943100913,
-          "net_cumulative_return": -0.0019771551709505397,
-          "net_sharpe_zero_cash": 0.1463746976185472,
+          "max_drawdown": -0.2859411115803391,
+          "net_cumulative_return": 1.0798949867584908,
+          "net_sharpe_zero_cash": 1.2341264918656636,
           "return_definition": "Qlib return - Qlib cost, compounded once",
           "sessions": 409,
-          "transaction_costs_dollars": 34012.090237174976,
-          "turnover_dollars": 68024180.47434998,
-          "turnover_rate_sum": 69.87653667031068,
-          "unrealized_position_count": 5
+          "transaction_costs_dollars": 43033.412247400316,
+          "turnover_dollars": 86066824.49480057,
+          "turnover_rate_sum": 66.42027476120931,
+          "unrealized_position_count": 6
         }
       }
     },
@@ -1571,28 +1571,20 @@
   "run_provenance": {
     "config_hash": "7c6fdf5b112241292d463f4f3693562c85dac04478cfd56b529a9a90b70c63f4",
     "environment": {
-      "captured_at": "2026-09-05T00:35:51.614712+00:00",
+      "captured_at": "2026-09-05T00:46:28.079562+00:00",
       "hostname": "Latte",
-      "pid": 754465,
+      "pid": 767329,
       "platform": "Linux-6.8.0-117-generic-x86_64-with-glibc2.39",
       "python": "3.12.3"
     },
     "git": {
-      "commit": "b7439e3482fa2b8798281021f74cd64851dfcae5",
+      "commit": "2e4ffcae9d5fd0f08e54bb2c37b7ce779c173469",
       "dirty": true,
       "status": [
-        "M reports/status.md",
-        " M src/leonos/reporting.py",
-        " M tests/test_reporting.py",
-        "?? reports/results.md",
-        "?? results/summary/evaluation_seed_42.json",
-        "?? results/summary/lightgbm_candidates_seed_43.parquet",
-        "?? results/summary/lightgbm_candidates_seed_44.parquet",
-        "?? results/summary/lightgbm_seed_43.json",
-        "?? results/summary/lightgbm_seed_44.json"
+        "M results/summary/evaluation_seed_42.json"
       ]
     },
-    "implementation_hash": "0b24f1f267e9c8c22ebf2a37ad68a1f01690d1f4c3738c16118e567d53d40f34",
+    "implementation_hash": "a8c52bd1de2c831e8082437412ea86a846185e0721af3e37d6f324bb2fb78ccb",
     "source_revisions": {
       "dataset": {
         "allow_patterns": [

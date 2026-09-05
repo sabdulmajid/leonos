@@ -13,11 +13,10 @@
   portfolio values are invalidated after exact LightGBM ties exposed unstable
   Qlib top-k ordering; deterministic tie handling and a saved-score rerun are
   active, with forecasts and signal metrics unaffected.
-- Active Leonos jobs: seed-43 worker 0/2, exec session `32475`, PID `757265`,
-  `cuda:0`; worker 1/2, exec session `38188`, PID `757267`, `cuda:1`.
-- Kronos forecasts: seed 42 complete (20,859 / 20,859); seed 43 running
-  (512 / 20,859 at the initial health check).
+- Active Leonos jobs: none.
+- Kronos forecasts: seed 42 complete (20,859 / 20,859); seed 43 complete
+  (20,859 / 20,859, with 208,590 finite horizon rows and no duplicate keys).
 - Blocker: GitHub accepted the integration-branch push, but draft-PR creation was
   rejected with HTTP 403 (`Resource not accessible by personal access token`).
-- Next command: wait directly on exec sessions `32475` and `38188`, then validate
-  both completion manifests once.
+- Next command: commit the expanded report renderer, then regenerate saved-score
+  evaluations for seeds 42 and 43 from a clean commit.
