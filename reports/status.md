@@ -1,10 +1,10 @@
 # Status
 
-- Milestone: M4 robustness and delivery review active (2026-09-04).
+- Milestone: M4 robustness and delivery complete (2026-09-04).
 - Completed evidence: pinned data accepted (515,779 rows, 51 tickers); exact splits
   and 61 causal features frozen; LightGBM validation mean daily RankIC 0.0650 on
   118 dates; 20,859/20,859 finite test forecasts saved without test inspection;
-  88 CPU/Qlib tests pass; Kronos validation smoke produced 2/2 aligned finite
+  96 installed CPU/Qlib tests pass; Kronos validation smoke produced 2/2 aligned finite
   forecasts; validation-only throughput selected batch 16 (14.57 origins/s,
   3.72 GiB peak reserved); seed-42 Kronos completed all 20,859 test origins
   (208,590 finite horizon rows, no duplicate keys) in 14.4 minutes wall time;
@@ -21,8 +21,9 @@
   across seeds (LightGBM wins 42/43, Kronos narrowly wins 44).
 - Blocker: GitHub accepted the integration-branch push, but draft-PR creation was
   rejected with HTTP 403 (`Resource not accessible by personal access token`).
-- Clean-clone gate: pushed commit `4f5b02d` synced from the lockfile without
-  data/model downloads; 87 tests passed, 3 optional-dependency tests skipped,
-  and CLI help passed.
-- Next command: regenerate the all-seed report, complete independent claim review,
-  and push the final delivery commit.
+- Clean-clone gate: pushed commit `fb797c2` synced from the lockfile without
+  data/model downloads; 93 tests passed, 3 expected optional-Qlib tests skipped,
+  and CLI help passed. Independent re-audit found no remaining critical or medium
+  issue in the final claims, diagnostics, accounting, or figures.
+- Next command: none; the branch is ready for review. Creating the draft PR still
+  requires a GitHub token with pull-request write permission.
