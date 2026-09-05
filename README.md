@@ -5,14 +5,19 @@ Leonos asks one question: on a fixed basket of U.S. equities, does frozen
 than a pooled LightGBM model, and does any ranking advantage improve the same
 long-only portfolio after transaction costs?
 
-**Status (2026-09-04): M2 model integration complete; no comparative result exists yet.**
+**Status (2026-09-04): the primary seed-42 comparison is complete and
+inconclusive.** Across 409 test dates and 20,859 common observations, Kronos's
+mean daily RankIC was -0.0032 versus 0.0025 for LightGBM. The paired difference
+was -0.0056 (95% moving-block-bootstrap CI [-0.0746, 0.0496]). Under the fixed
+portfolio at five basis points per side, Kronos returned 49.99% net versus
+54.33% for LightGBM, with lower Sharpe and deeper drawdown. See
+[the results](reports/results.md); the two declared sensitivity seeds remain in
+progress.
+
 The pinned snapshot passed the post-policy audit with 515,779 daily bars and all
-51 equities. The validation-only LightGBM search achieved mean daily RankIC
-0.0650 over 118 dates; its 20,859 frozen test forecasts are saved but will not be
-evaluated until matching Kronos forecasts exist.
-The real-data Kronos smoke passed 2/2 origins. A validation-only sweep selected
-batch size 16 at 14.57 origins/second on one GPU; the two-worker test plan is now
-frozen.
+51 equities. Both models covered every one of the 20,859 eligible test origins.
+The real-data Kronos smoke passed 2/2 origins, and the complete seed-42 inference
+finished on two GPUs in 14.4 minutes.
 The repository is an independent application of published components to a
 different equity panel, not an exact reproduction of the Kronos paper. A negative
 or inconclusive result is valid.

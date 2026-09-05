@@ -56,7 +56,8 @@ def test_worked_example_pairs_a_completed_trade_and_includes_both_fees() -> None
             "signal_date": pd.to_datetime(["2025-01-02", "2025-01-10"]),
             "execution_date": pd.to_datetime(["2025-01-03", "2025-01-13"]),
             "ticker": ["AAA", "AAA"],
-            "deal_amount": [10.0, 10.0],
+            # Qlib's saved order metrics sign sell quantities negatively.
+            "deal_amount": [10.0, -10.0],
             "trade_price": [100.0, 110.0],
             "trade_cost": [0.5, 0.55],
             "side": ["buy", "sell"],
@@ -64,6 +65,10 @@ def test_worked_example_pairs_a_completed_trade_and_includes_both_fees() -> None
     )
     example = reporting._worked_example(orders)
     assert example is not None
+    assert example["entry_signal_date"] == "2025-01-02T00:00:00"
+    assert example["entry_execution_date"] == "2025-01-03T00:00:00"
+    assert example["exit_execution_date"] == "2025-01-13T00:00:00"
+    assert example["selected_stock"] == "AAA"
     assert example["gross_result_dollars"] == 100.0
     assert example["fees_dollars"] == pytest.approx(1.05)
     assert example["net_result_dollars"] == pytest.approx(98.95)

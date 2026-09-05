@@ -447,7 +447,10 @@ def _worked_example(orders: pd.DataFrame) -> dict[str, Any] | None:
     buys: dict[str, dict[str, Any]] = {}
     for row in ordered.to_dict("records"):
         ticker = str(row["ticker"])
-        amount = float(row.get("deal_amount", 0.0))
+        # Pinned Qlib stores sell deal_amount/trade_value with a negative sign,
+        # even though trade_dir separately identifies the side.  Share matching
+        # uses magnitude; preserving the sign here previously skipped every exit.
+        amount = abs(float(row.get("deal_amount", 0.0)))
         price = float(row.get("trade_price", np.nan))
         if amount <= 0 or not np.isfinite(price):
             continue
@@ -455,7 +458,7 @@ def _worked_example(orders: pd.DataFrame) -> dict[str, Any] | None:
             buys[ticker] = row
         elif row.get("side") == "sell" and ticker in buys:
             entry = buys[ticker]
-            entry_amount = float(entry["deal_amount"])
+            entry_amount = abs(float(entry["deal_amount"]))
             shares = min(entry_amount, amount)
             if shares <= 0:
                 continue
@@ -465,8 +468,10 @@ def _worked_example(orders: pd.DataFrame) -> dict[str, Any] | None:
             return _finite_json(
                 {
                     "ticker": ticker,
+                    "selected_stock": ticker,
                     "entry_signal_date": entry.get("signal_date"),
                     "entry_execution_date": entry["execution_date"],
+                    "entry_timing": "signal after close; fill at next-session open",
                     "entry_price": float(entry["trade_price"]),
                     "exit_signal_date": row.get("signal_date"),
                     "exit_execution_date": row["execution_date"],
