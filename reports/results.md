@@ -1,5 +1,10 @@
 # Leonos v1 results
 
+> **Portfolio correction in progress:** independent reruns found unstable Qlib
+> ordering at exact LightGBM score ties. All portfolio values in the table below
+> are withdrawn pending a deterministic saved-score rerun. RankIC, MAE, coverage,
+> bootstrap intervals, and runtime values remain valid.
+
 Primary seed: 42. Test span: 2025-01-03 through 2026-08-21 (signals trade at the next session open). Costs are 5 bps per side; cash return is zero.
 
 The ranking evidence is inconclusive because the paired 95% interval contains zero: mean daily RankIC difference (Kronos − LightGBM) was -0.0056 with paired moving-block 95% CI [-0.0746, 0.0496] across 409 dates. LightGBM also produced the higher 5-bps net return. Seed sensitivity is incomplete (1/3 declared seeds). The RankIC-difference sign changes across calendar-year segments.

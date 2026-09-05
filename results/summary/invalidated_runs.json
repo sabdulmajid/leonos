@@ -29,6 +29,15 @@
       "run_signature": "d5e984aefc7d5d9a87ba343c9c19546a98da9b7a52e57f0fa7246b447d7e0cb1",
       "seed": 42,
       "status": "invalidated"
+    },
+    {
+      "affected_scope": "seed-42 portfolio outputs and portfolio-derived README/report claims only; saved predictions, RankIC, MAE, and bootstrap results remain valid",
+      "artifact_archive": "git:ac38d5b:results/summary/evaluation_seed_42.json",
+      "invalidated_at_utc": "2026-09-05T00:43:34Z",
+      "model": "shared_portfolio_evaluation",
+      "reason": "Exact LightGBM score ties at the top-k boundary exposed unstable Qlib ordering; repeated saved-score backtests selected different tied tickers and produced different portfolio returns. Portfolio outputs are withdrawn until deterministic score-descending/ticker-ascending tie-breaking is tested and the saved-artifact evaluation is rerun.",
+      "seed": 42,
+      "status": "invalidated"
     }
   ],
   "schema_version": "leonos.invalidated_runs.v1"

@@ -272,9 +272,7 @@ def write_qlib_day_dataset(
             "files": files,
         }
         manifest_payload = json.dumps(manifest, indent=2, sort_keys=True) + "\n"
-        (staging / "leonos_qlib_manifest.json").write_text(
-            manifest_payload, encoding="utf-8"
-        )
+        (staging / "leonos_qlib_manifest.json").write_text(manifest_payload, encoding="utf-8")
         os.replace(staging, destination)
     except BaseException:
         shutil.rmtree(staging_parent, ignore_errors=True)
@@ -285,7 +283,14 @@ def write_qlib_day_dataset(
 
 
 def build_information_date_signal(scores: pd.DataFrame) -> pd.Series:
-    """Build Qlib signal indexed by the unshifted post-close information date."""
+    """Build a deterministic portfolio-only rank on the information date.
+
+    Qlib's strategy needs only ordering.  Each date is sorted by raw score
+    descending and then ticker ascending; a unique ordinal signal removes its
+    input-order/hash-dependent behavior at exact ties.  The caller's raw scores
+    remain unchanged for RankIC and MAE, and the information-date index remains
+    unshifted for Qlib's inspected ``shift=1`` lookup.
+    """
 
     required = {"ticker", "origin", "score"}
     missing = sorted(required.difference(scores.columns))
@@ -304,10 +309,19 @@ def build_information_date_signal(scores: pd.DataFrame) -> pd.Series:
         raise QlibAdapterError("scores must be numeric") from exc
     if not np.isfinite(values).all():
         raise QlibAdapterError("scores must be finite before portfolio simulation")
+    clean["score"] = values
+    clean = clean.sort_values(
+        ["origin", "score", "ticker"],
+        ascending=[True, False, True],
+        kind="mergesort",
+    )
+    # Zero is best; subsequent unique negative integers preserve the complete
+    # lexicographic ordering without fragile floating-point epsilon arithmetic.
+    portfolio_values = -clean.groupby("origin", sort=False).cumcount().to_numpy(dtype=float)
     index = pd.MultiIndex.from_arrays(
         [clean["origin"], clean["ticker"]], names=["datetime", "instrument"]
     )
-    return pd.Series(values, index=index, name="score").sort_index()
+    return pd.Series(portfolio_values, index=index, name="score").sort_index()
 
 
 def verify_topk_shift_contract() -> None:
@@ -346,9 +360,7 @@ def init_qlib_us(provider_uri: Path) -> None:
 
 
 def _finite_positive_scalar(value: Any) -> bool:
-    return isinstance(value, (int, float, np.number)) and bool(
-        np.isfinite(value) and value > 1e-8
-    )
+    return isinstance(value, (int, float, np.number)) and bool(np.isfinite(value) and value > 1e-8)
 
 
 @lru_cache(maxsize=1)
@@ -368,9 +380,7 @@ def open_only_exchange_class() -> type:
             end_time: pd.Timestamp,
             method: str | None = "ts_data_last",
         ) -> Any:
-            return self.quote.get_data(
-                stock_id, start_time, end_time, field="$open", method=method
-            )
+            return self.quote.get_data(stock_id, start_time, end_time, field="$open", method=method)
 
         def is_stock_tradable(
             self,
@@ -381,9 +391,7 @@ def open_only_exchange_class() -> type:
         ) -> bool:
             # Deliberately inspect only the execution open: not high/low/close/full-day volume.
             del direction
-            return _finite_positive_scalar(
-                self._execution_open(stock_id, start_time, end_time)
-            )
+            return _finite_positive_scalar(self._execution_open(stock_id, start_time, end_time))
 
         def get_deal_price(
             self,
@@ -501,9 +509,7 @@ def run_qlib_topk_backtest(
     # interprets as its default CSI300 identifier.  Build the same infrastructure with
     # an explicit null benchmark to prevent that unwanted external dependency.
     account = Account(init_cash=spec.initial_cash, benchmark_config={"benchmark": None})
-    common_infrastructure = CommonInfrastructure(
-        trade_account=account, trade_exchange=exchange
-    )
+    common_infrastructure = CommonInfrastructure(trade_account=account, trade_exchange=exchange)
     strategy.reset_common_infra(common_infrastructure)
     executor.reset_common_infra(common_infrastructure)
     portfolio_metrics, indicator_metrics = backtest_loop(

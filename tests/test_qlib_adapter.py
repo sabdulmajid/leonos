@@ -1,5 +1,9 @@
 from __future__ import annotations
 
+import json
+import os
+import subprocess
+import sys
 from pathlib import Path
 
 import numpy as np
@@ -149,17 +153,52 @@ def test_signal_keeps_information_date_unshifted() -> None:
     scores = pd.DataFrame(
         {
             "ticker": ["MSFT", "AAPL", "MSFT", "AAPL"],
-            "origin": pd.to_datetime(
-                ["2025-01-02", "2025-01-02", "2025-01-03", "2025-01-03"]
-            ),
+            "origin": pd.to_datetime(["2025-01-02", "2025-01-02", "2025-01-03", "2025-01-03"]),
             "score": [0.2, 0.1, -0.1, 0.3],
         }
     )
+    original = scores.copy(deep=True)
     signal = build_information_date_signal(scores)
     assert signal.index.names == ["datetime", "instrument"]
-    assert signal.loc[(pd.Timestamp("2025-01-02"), "MSFT")] == 0.2
+    assert signal.loc[(pd.Timestamp("2025-01-02"), "MSFT")] == 0.0
+    assert signal.loc[(pd.Timestamp("2025-01-02"), "AAPL")] == -1.0
     assert signal.index.get_level_values("datetime").min() == pd.Timestamp("2025-01-02")
     assert pd.Timestamp("2025-01-04") not in signal.index.get_level_values("datetime")
+    pd.testing.assert_frame_equal(scores, original)
+
+
+def test_eight_way_cutoff_tie_is_ticker_ascending_and_permutation_stable() -> None:
+    tickers = ["HHH", "AAA", "FFF", "CCC", "BBB", "GGG", "EEE", "DDD"]
+    origin = pd.Timestamp("2025-01-02")
+    scores = pd.DataFrame({"ticker": tickers, "origin": origin, "score": 0.0})
+
+    selections = []
+    for random_state in (1, 2, 3, 4):
+        shuffled = scores.sample(frac=1.0, random_state=random_state)
+        signal = build_information_date_signal(shuffled).xs(origin)
+        assert signal.is_unique
+        selections.append(signal.nlargest(5).index.tolist())
+
+    assert selections == [["AAA", "BBB", "CCC", "DDD", "EEE"]] * 4
+
+
+def test_tie_break_is_stable_across_python_hash_seed_processes() -> None:
+    code = """
+import json
+import pandas as pd
+from leonos.qlib_adapter import build_information_date_signal
+tickers = set(['HHH','AAA','FFF','CCC','BBB','GGG','EEE','DDD'])
+frame = pd.DataFrame({'ticker': list(tickers), 'origin': pd.Timestamp('2025-01-02'), 'score': 0.0})
+signal = build_information_date_signal(frame).xs(pd.Timestamp('2025-01-02'))
+print(json.dumps(signal.nlargest(5).index.tolist()))
+"""
+    selections = []
+    for seed in ("1", "987654"):
+        environment = os.environ.copy()
+        environment["PYTHONHASHSEED"] = seed
+        output = subprocess.check_output([sys.executable, "-c", code], text=True, env=environment)
+        selections.append(json.loads(output))
+    assert selections == [["AAA", "BBB", "CCC", "DDD", "EEE"]] * 2
 
 
 def test_exact_us_exchange_settings_are_forwarded(monkeypatch: pytest.MonkeyPatch) -> None:
@@ -221,7 +260,7 @@ def test_qlib_executes_information_date_signal_at_next_open(tmp_path: Path) -> N
     pytest.importorskip("qlib", reason="locked Qlib extra is optional in CPU tests")
     sessions = pd.bdate_range("2025-01-02", periods=5)
     rows = []
-    tickers = ["AAA", "BBB", "CCC", "DDD", "EEE"]
+    tickers = ["HHH", "AAA", "FFF", "CCC", "BBB", "GGG", "EEE", "DDD"]
     for day_index, session in enumerate(sessions):
         for ticker_index, ticker in enumerate(tickers):
             open_price = 100.0 + 10.0 * ticker_index + day_index
@@ -242,7 +281,7 @@ def test_qlib_executes_information_date_signal_at_next_open(tmp_path: Path) -> N
         {
             "ticker": tickers,
             "origin": sessions[0],
-            "score": np.arange(len(tickers), dtype=float),
+            "score": np.zeros(len(tickers), dtype=float),
         }
     )
 
@@ -254,13 +293,12 @@ def test_qlib_executes_information_date_signal_at_next_open(tmp_path: Path) -> N
     )
     execution_date = pd.Timestamp(sessions[1])
     assert execution_date in outputs.positions
-    assert set(outputs.positions[execution_date].get_stock_list()) == set(tickers)
+    selected = sorted(tickers)[:5]
+    assert set(outputs.positions[execution_date].get_stock_list()) == set(selected)
     trade_prices = order_indicator_metric_series(
         outputs.order_history[execution_date], "trade_price"
     )
-    expected_opens = {
-        ticker: 101.0 + 10.0 * index for index, ticker in enumerate(tickers)
-    }
+    expected_opens = {ticker: 101.0 + 10.0 * tickers.index(ticker) for ticker in selected}
     for ticker, price in expected_opens.items():
         assert trade_prices.loc[ticker] == pytest.approx(price)
     assert outputs.report.loc[execution_date, "total_cost"] > 0
