@@ -142,8 +142,29 @@ def test_yahoo_parser_uses_completed_session_close_and_never_fills_missing_bar()
     assert not bool(result.bars.loc[1, "is_eligible"])
     assert "missing:close" in result.bars.loc[1, "quality"]
     assert result.eligible_bars["session"].dt.date.tolist() == [date(2026, 9, 3)]
+    assert result.missing_completed_sessions == ()
     assert len(result.actions) == 1
     assert result.actions.loc[0, "action_type"] == "dividends"
+
+
+def test_result_reports_omitted_internal_sessions_without_synthesizing_rows() -> None:
+    timestamps = [
+        int(pd.Timestamp("2026-09-01T13:30Z").timestamp()),
+        int(pd.Timestamp("2026-09-03T13:30Z").timestamp()),
+    ]
+    payload = _yahoo_payload(
+        timestamps=timestamps,
+        opens=[35.0, 35.2],
+        highs=[35.2, 35.4],
+        lows=[34.9, 35.1],
+        closes=[35.1, 35.3],
+        adjusted=[35.0, 35.2],
+        volumes=[100, 200],
+    )
+    result = parse_yahoo_chart(payload, instrument("WSHR"), retrieved_at_utc=AS_OF)
+
+    assert result.bars["session"].dt.date.tolist() == [date(2026, 9, 1), date(2026, 9, 3)]
+    assert result.missing_completed_sessions == (date(2026, 9, 2),)
 
 
 def test_yahoo_parser_keeps_close_and_distribution_adjusted_close_distinct() -> None:
@@ -281,7 +302,10 @@ def test_public_snapshot_is_provenanced_and_restricted_to_ignored_roots(tmp_path
 
     assert manifest["schema_version"] == "leonos.public_market_snapshot.v1"
     assert manifest["symbol"] == "WSHR"
+    assert manifest["instrument"]["currency"] == "CAD"
+    assert manifest["instrument"]["vendor_mappings"][0]["symbol"] == "WSHR.NE"
     assert manifest["provider"] == "yahoo"
+    assert manifest["missing_completed_sessions"] == []
     assert manifest["files"][0]["sha256"]
     assert (manifest_path.parent / "bars.parquet").is_file()
     assert (manifest_path.parent / "actions.parquet").is_file()

@@ -19,7 +19,7 @@ import json
 import math
 import tempfile
 from collections.abc import Callable, Mapping, Sequence
-from dataclasses import dataclass, field
+from dataclasses import asdict, dataclass, field
 from datetime import UTC, date, datetime, time, timedelta
 from pathlib import Path
 from typing import Any, Literal, Protocol
@@ -428,6 +428,30 @@ class DailyBarResult:
         if eligible.empty:
             return None
         return eligible.sort_values("session").iloc[-1]
+
+    @property
+    def missing_completed_sessions(self) -> tuple[date, ...]:
+        """Return omitted exchange sessions between the first and last returned rows.
+
+        A missing-valued row is not an omitted session: it remains in ``bars`` and
+        is identified by its quality flags.  A missing leading/trailing requested
+        session cannot be inferred from a result alone; callers needing an exact
+        endpoint should also use :meth:`PublicMarketDataAdapter.fetch_daily`'s
+        ``required_session`` argument.
+        """
+
+        if self.bars.empty or self.spec.calendar is None:
+            return ()
+        calendar = xcals.get_calendar(self.spec.calendar)
+        first = pd.Timestamp(self.bars["session"].min())
+        last = pd.Timestamp(self.bars["session"].max())
+        observed = set(self.bars["session"].dt.date)
+        return tuple(
+            label.date()
+            for label in calendar.sessions_in_range(first, last)
+            if calendar.session_close(label) <= self.retrieved_at_utc
+            and label.date() not in observed
+        )
 
 
 @dataclass
@@ -1182,6 +1206,7 @@ def save_public_snapshot(
     manifest = {
         "schema_version": MARKET_SNAPSHOT_SCHEMA,
         "symbol": result.spec.symbol,
+        "instrument": _jsonable(asdict(result.spec)),
         "provider": result.provider,
         "source_url": result.source_url,
         "retrieved_at_utc": result.retrieved_at_utc.isoformat(),
@@ -1191,6 +1216,9 @@ def save_public_snapshot(
     }
     if isinstance(result, DailyBarResult):
         manifest["price_basis"] = result.price_basis
+        manifest["missing_completed_sessions"] = [
+            missing.isoformat() for missing in result.missing_completed_sessions
+        ]
     manifest_path = destination / "manifest.json"
     with tempfile.NamedTemporaryFile(
         mode="w", encoding="utf-8", dir=destination, suffix=".json", delete=False

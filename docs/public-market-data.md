@@ -67,7 +67,10 @@ and makes the row eligible only after that regular-session close.
 Missing values remain missing. The adapter never forward-fills, backward-fills,
 or reconstructs OHLCV. It rejects duplicate sessions and flags missing required
 fields, non-sessions, incomplete sessions, nonpositive prices, negative volume,
-and candles whose high/low envelope does not contain open and close.
+and candles whose high/low envelope does not contain open and close. The result
+also exposes omitted completed sessions between its first and last returned rows;
+`required_session` separately enforces a requested endpoint without synthesizing
+a row.
 
 Twelve Data is an opt-in, API-key-backed fallback. It is instantiated only with
 a caller-supplied key, constrains WSHR to MIC NEOE, requests
@@ -85,8 +88,8 @@ manifest, hashes, source URL, retrieval time, metadata, and diagnostics.
 ## Completed-session check on 2026-09-05
 
 The following public response was retrieved at
-2026-09-05T15:18:09.973247Z. All U.S. and Canadian regular sessions in the table
-closed at 2026-09-04T20:00:00Z while Eastern Daylight Time was in effect.
+2026-09-05T15:18:09.973247Z. The relevant U.S. and Canadian regular sessions on
+September 3 and 4 closed at 20:00:00Z while Eastern Daylight Time was in effect.
 `regularMarketTime` is separately reported because it is provider quote
 metadata, not the normalized daily-bar completion timestamp.
 
@@ -171,7 +174,8 @@ dropping zero weights and `Cash & Other`. Values are percentage points of NAV.
 | SPUS–SPWO | 0 | 0.00 pp |
 | SPWO–HLAL | 1 (`SCCO`) | 0.05 pp |
 
-This is reproducible identifier overlap, not total economic overlap. It
+This is reproducible identifier overlap using the files' published, rounded
+weights, not total economic overlap. It
 undercounts equivalent ADR/local listings, dual share classes, and issuers whose
 vendors use different identifiers. WSHR is excluded because its freshest public
 official disclosure supplies only the top 25, not a same-date full portfolio.
